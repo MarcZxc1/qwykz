@@ -1,0 +1,127 @@
+import {
+  cancel,
+  confirm,
+  intro,
+  isCancel,
+  outro,
+  select,
+  text,
+} from "@clack/prompts";
+import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
+
+function stopOnCancel(value: unknown): asserts value {
+  if (isCancel(value)) {
+    cancel("Operation cancelled.");
+    process.exit(0);
+  }
+}
+
+function normalizePackageName(name: string) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+}
+
+export async function promptForProjectOptions(): Promise<ProjectOptions> {
+  intro("Welcome to qwykz - Quick & Ready Boilerplate Builder");
+
+  const projectName = await text({
+    message: "What is the name of your project?",
+    placeholder: "qwykz-app",
+    validate(value) {
+      if (!value || value.trim().length === 0) return "Project name cannot be empty.";
+      if (!/^[a-zA-Z0-9-_ ]+$/.test(value)) {
+        return "Use letters, numbers, spaces, hyphens, or underscores only.";
+      }
+    },
+  });
+  stopOnCancel(projectName);
+
+  const dbTarget = await select({
+    message: "Select your PostgreSQL environment target:",
+    options: [
+      { value: "supabase", label: "Supabase (remote cloud database)" },
+      { value: "local", label: "Local PostgreSQL (installed on host)" },
+      { value: "docker", label: "Dockerized PostgreSQL (self-contained)" },
+    ],
+  });
+  stopOnCancel(dbTarget);
+
+  const extraPackages: ExtraPackage[] = [];
+
+  const shouldInstallZod = await confirm({
+    message: "Install Zod for request validation?",
+    initialValue: false,
+  });
+  stopOnCancel(shouldInstallZod);
+  if (shouldInstallZod) extraPackages.push("zod");
+
+  const shouldInstallHelmet = await confirm({
+    message: "Install Helmet for security headers?",
+    initialValue: false,
+  });
+  stopOnCancel(shouldInstallHelmet);
+  if (shouldInstallHelmet) extraPackages.push("helmet");
+
+  const shouldInstallCors = await confirm({
+    message: "Install CORS for cross-origin requests?",
+    initialValue: false,
+  });
+  stopOnCancel(shouldInstallCors);
+  if (shouldInstallCors) extraPackages.push("cors");
+
+  return {
+    projectName: normalizePackageName(String(projectName)),
+    dbTarget: dbTarget as DbTarget,
+    extraPackages,
+  };
+}
+
+export async function promptForAutomaticSetup(options: ProjectOptions) {
+  if (options.dbTarget === "supabase") {
+    return false;
+  }
+
+  const shouldRunSetup = await confirm({
+    message: "Run the setup commands now?",
+    initialValue: false,
+  });
+  stopOnCancel(shouldRunSetup);
+  return shouldRunSetup;
+}
+
+export function showSuccess(options: ProjectOptions, setupRan = false) {
+  if (setupRan) {
+    outro(`Your boilerplate "${options.projectName}" is ready.
+
+Setup commands completed automatically.
+
+Next command:
+  cd ${options.projectName}
+  bun dev`);
+    return;
+  }
+
+  if (options.dbTarget === "supabase") {
+    outro(`Your boilerplate "${options.projectName}" is ready.
+
+⚠️  ACTION REQUIRED:
+1. Open "${options.projectName}/.env"
+2. Replace the placeholders with your Supabase credentials
+3. Run the following commands to finish setup:
+
+  cd ${options.projectName}
+  bun install
+  bun run db:generate
+  bun run db:push
+  bun dev`);
+    return;
+  }
+
+  outro(`Your boilerplate "${options.projectName}" is ready.
+
+Next commands:
+  cd ${options.projectName}
+  bun install
+  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}bun run db:generate
+  bun run db:push
+  bun dev`);
+}

@@ -1,0 +1,19 @@
+{
+  "name": "qwykz",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "qwykz": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^25.9.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1"
+  }
+}

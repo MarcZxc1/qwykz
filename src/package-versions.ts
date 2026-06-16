@@ -1,0 +1,21 @@
+export const packageVersions = {
+  dependencies: {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    cors: "^2.8.6",
+    dotenv: "^17.4.2",
+    express: "^5.2.1",
+    helmet: "^8.2.0",
+    pg: "^8.21.0",
+    zod: "^4.4.3",
+  },
+  devDependencies: {
+    "@types/bun": "^1.3.14",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.3",
+    "@types/pg": "^8.20.0",
+    prisma: "^7.8.0",
+    typescript: "^6.0.3",
+  },
+} as const;
