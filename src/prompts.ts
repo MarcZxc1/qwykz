@@ -65,15 +65,12 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   }
 
   console.log(pc.cyan(`
-  ▄██████▄  ▄█     █▄  ▄██   ▄      ▄█   ▄█▄  ▀█████████▄  
- ███    ███ ███     ███ ███   ██▄   ███ ▄███▀    ███    ███ 
- ███    ███ ███     ███ ███▄▄▄███   ███▐██▀      ███    █▀  
- ███    ███ ███     ███ ▀▀▀▀▀▀███  ▄█████▀      ▄███▄▄▄     
- ███    ███ ███     ███ ▄██   ███ ▀▀█████▄     ▀▀███▀▀▀     
- ███    ███ ███     ███ ███   ███   ███▐██▄      ███    █▄  
- ███    ███ ███ ▄█▄ ███ ███   ███   ███ ▀███▄    ███    ███ 
-  ▀██████▀   ▀███▀███▀   ▀█████▀    ███   ▀█▀  ▄█████████▀  
-                                    ▀                       
+                       _         
+   __ ___      ___   _| | __ ____
+  / _\` \\ \\ /\\ / / | | | |/ /|_  /
+ | (_| |\\ V  V /| |_| |   <  / / 
+  \\__, | \\_/\\_/  \\__, |_|\\_\\/___|
+     |_|         |___/           
   `));
   intro("⚡ " + pc.bold(pc.cyan("qwykz")) + " ⚡ - Quick & Ready Boilerplate Builder");
 
@@ -147,6 +144,10 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
 
 export function showSuccess(options: ProjectOptions, setupRan = false) {
   if (setupRan) {
+    if (options.dbTarget === "docker") {
+      outro(`Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`);
+      return;
+    }
     outro(`Your boilerplate "${options.projectName}" is ready.
 
 Setup commands completed automatically.
