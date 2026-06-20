@@ -1,6 +1,10 @@
-import { test, expect, afterEach, beforeEach, describe } from "bun:test";
+import { test, expect, afterEach, beforeEach, describe, setSystemTime } from "bun:test";
 import { join } from "node:path";
 import { mkdirSync, rmSync, existsSync } from "node:fs";
+import { test as bunTest } from "bun:test";
+
+// Increase timeout to 15 seconds to account for slow NPM registry lookups
+bunTest.setTimeout(15000);
 
 const CLI_PATH = join(import.meta.dirname!, "..", "src", "index.ts");
 const TMP_BASE = join(import.meta.dirname!, "..", ".test-tmp");
