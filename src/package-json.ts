@@ -128,8 +128,8 @@ export async function createPackageJson(
       "db:generate": "bunx --bun prisma generate",
       "db:push":
         dbTarget === "docker"
-          ? "bun run db:wait && bunx --bun prisma db push"
-          : "bunx --bun prisma db push",
+          ? "bun run db:wait && bunx --bun prisma db push --accept-data-loss"
+          : "bunx --bun prisma db push --accept-data-loss",
       "db:studio": "bunx --bun prisma studio",
       ...(dbTarget === "docker"
         ? { "db:wait": "bun src/lib/wait-for-postgres.ts" }
