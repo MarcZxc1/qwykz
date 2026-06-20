@@ -1,4 +1,5 @@
 import { packageVersions } from "./package-versions";
+import { resolveLatestVersions } from "./npm-registry";
 import type {
   DbTarget,
   ExtraPackage,
@@ -6,49 +7,111 @@ import type {
   ProjectPackageJson,
 } from "./types";
 
-const optionalPackages: Record<
+// ---------------------------------------------------------------------------
+// All packages the generated project might need (names only)
+// ---------------------------------------------------------------------------
+
+const CORE_DEPS = [
+  "@prisma/adapter-pg",
+  "@prisma/client",
+  "argon2",
+  "dotenv",
+  "express",
+  "jsonwebtoken",
+  "pg",
+] as const;
+
+const CORE_DEV_DEPS = [
+  "@types/bun",
+  "@types/express",
+  "@types/jsonwebtoken",
+  "@types/node",
+  "@types/pg",
+  "prisma",
+  "typescript",
+] as const;
+
+const OPTIONAL_PACKAGES: Record<
   ExtraPackage,
-  { dependencies?: PackageMap; devDependencies?: PackageMap }
+  { dependencies?: string[]; devDependencies?: string[] }
 > = {
-  cors: {
-    dependencies: { cors: packageVersions.dependencies.cors },
-    devDependencies: {
-      "@types/cors": packageVersions.devDependencies["@types/cors"],
-    },
-  },
-  helmet: {
-    dependencies: { helmet: packageVersions.dependencies.helmet },
-  },
-  zod: {
-    dependencies: { zod: packageVersions.dependencies.zod },
-  },
+  cors: { dependencies: ["cors"], devDependencies: ["@types/cors"] },
+  helmet: { dependencies: ["helmet"] },
+  zod: { dependencies: ["zod"] },
 };
 
-export function createPackageJson(
+// ---------------------------------------------------------------------------
+// Version resolution
+// ---------------------------------------------------------------------------
+
+/**
+ * Collect all package names that need version resolution based on the
+ * user's selected options.
+ */
+function collectAllPackageNames(extraPackages: ExtraPackage[]): string[] {
+  const names = new Set<string>([...CORE_DEPS, ...CORE_DEV_DEPS]);
+
+  for (const pkg of extraPackages) {
+    for (const dep of OPTIONAL_PACKAGES[pkg].dependencies ?? []) names.add(dep);
+    for (const dep of OPTIONAL_PACKAGES[pkg].devDependencies ?? []) names.add(dep);
+  }
+
+  return [...names];
+}
+
+/**
+ * Build a version map by resolving latest versions dynamically.
+ * Falls back to hardcoded versions if the network/cache fails.
+ */
+async function resolveVersionMap(
+  extraPackages: ExtraPackage[],
+): Promise<Record<string, string>> {
+  const allNames = collectAllPackageNames(extraPackages);
+  const resolved = await resolveLatestVersions(allNames);
+
+  // Ensure we have a version for every package (fill gaps with hardcoded)
+  const hardcoded: Record<string, string> = {
+    ...packageVersions.dependencies,
+    ...packageVersions.devDependencies,
+  };
+
+  for (const name of allNames) {
+    if (!resolved[name]) {
+      resolved[name] = hardcoded[name] ?? "latest";
+    }
+  }
+
+  return resolved;
+}
+
+// ---------------------------------------------------------------------------
+// Package.json builder
+// ---------------------------------------------------------------------------
+
+export async function createPackageJson(
   projectName: string,
   dbTarget: DbTarget,
   extraPackages: ExtraPackage[],
-): ProjectPackageJson {
-  const dependencies: PackageMap = {
-    "@prisma/adapter-pg": packageVersions.dependencies["@prisma/adapter-pg"],
-    "@prisma/client": packageVersions.dependencies["@prisma/client"],
-    dotenv: packageVersions.dependencies.dotenv,
-    express: packageVersions.dependencies.express,
-    pg: packageVersions.dependencies.pg,
-  };
+): Promise<ProjectPackageJson> {
+  const versions = await resolveVersionMap(extraPackages);
 
-  const devDependencies: PackageMap = {
-    "@types/bun": packageVersions.devDependencies["@types/bun"],
-    "@types/express": packageVersions.devDependencies["@types/express"],
-    "@types/node": packageVersions.devDependencies["@types/node"],
-    "@types/pg": packageVersions.devDependencies["@types/pg"],
-    prisma: packageVersions.devDependencies.prisma,
-    typescript: packageVersions.devDependencies.typescript,
-  };
+  const dependencies: PackageMap = {};
+  for (const dep of CORE_DEPS) {
+    dependencies[dep] = versions[dep]!;
+  }
+
+  const devDependencies: PackageMap = {};
+  for (const dep of CORE_DEV_DEPS) {
+    devDependencies[dep] = versions[dep]!;
+  }
 
   for (const pkg of extraPackages) {
-    Object.assign(dependencies, optionalPackages[pkg].dependencies);
-    Object.assign(devDependencies, optionalPackages[pkg].devDependencies);
+    for (const dep of OPTIONAL_PACKAGES[pkg].dependencies ?? []) {
+      dependencies[dep] = versions[dep]!;
+    }
+    for (const dep of OPTIONAL_PACKAGES[pkg].devDependencies ?? []) {
+      devDependencies[dep] = versions[dep]!;
+    }
   }
 
   return {

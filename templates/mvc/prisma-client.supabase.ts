@@ -26,7 +26,6 @@ export const prisma =
   globalPrisma.prisma ||
   new PrismaClient({
     adapter,
-    // Fix 3: Added missing colon and corrected array syntax
     log: ["query", "info", "warn", "error"],
   });
 

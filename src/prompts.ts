@@ -20,8 +20,62 @@ function normalizePackageName(name: string) {
   return name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
 }
 
+// ---------------------------------------------------------------------------
+// CLI flag parsing helpers
+// ---------------------------------------------------------------------------
+
+function hasFlag(flag: string): boolean {
+  return process.argv.includes(flag);
+}
+
+function getFlagValue(flag: string): string | undefined {
+  const idx = process.argv.indexOf(flag);
+  if (idx === -1 || idx + 1 >= process.argv.length) return undefined;
+  return process.argv[idx + 1];
+}
+
+/** Non-interactive mode: --yes or -y */
+export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
+
+// ---------------------------------------------------------------------------
+// Prompts
+// ---------------------------------------------------------------------------
+
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
-  intro("Welcome to qwykz - Quick & Ready Boilerplate Builder");
+  // Non-interactive mode: use flags or sensible defaults
+  if (isNonInteractive) {
+    const name = getFlagValue("--name") ?? "qwykz-app";
+    const dbRaw = getFlagValue("--db") ?? "local";
+    const dbTarget: DbTarget = (["supabase", "local", "docker"].includes(dbRaw)
+      ? dbRaw
+      : "local") as DbTarget;
+
+    // In non-interactive mode, no extra packages unless explicitly requested
+    const extraPackages: ExtraPackage[] = [];
+    if (hasFlag("--zod")) extraPackages.push("zod");
+    if (hasFlag("--helmet")) extraPackages.push("helmet");
+    if (hasFlag("--cors")) extraPackages.push("cors");
+
+    return {
+      projectName: normalizePackageName(name),
+      dbTarget,
+      extraPackages,
+    };
+  }
+
+  // Interactive mode (existing behavior)
+  console.log(`
+  ▄██████▄  ▄█     █▄  ▄██   ▄      ▄█   ▄█▄  ▀█████████▄  
+ ███    ███ ███     ███ ███   ██▄   ███ ▄███▀    ███    ███ 
+ ███    ███ ███     ███ ███▄▄▄███   ███▐██▀      ███    █▀  
+ ███    ███ ███     ███ ▀▀▀▀▀▀███  ▄█████▀      ▄███▄▄▄     
+ ███    ███ ███     ███ ▄██   ███ ▀▀█████▄     ▀▀███▀▀▀     
+ ███    ███ ███     ███ ███   ███   ███▐██▄      ███    █▄  
+ ███    ███ ███ ▄█▄ ███ ███   ███   ███ ▀███▄    ███    ███ 
+  ▀██████▀   ▀███▀███▀   ▀█████▀    ███   ▀█▀  ▄█████████▀  
+                                    ▀                       
+  `);
+  intro("Quick & Ready Boilerplate Builder");
 
   const projectName = await text({
     message: "What is the name of your project?",
@@ -76,6 +130,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 }
 
 export async function promptForAutomaticSetup(options: ProjectOptions) {
+  // In non-interactive mode, skip setup commands (user can run them manually)
+  if (isNonInteractive) return false;
+
   if (options.dbTarget === "supabase") {
     return false;
   }

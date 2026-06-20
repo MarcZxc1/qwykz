@@ -6,6 +6,10 @@
   "bin": {
     "qwykz": "./src/index.ts"
   },
+  "scripts": {
+    "build:bin": "bun run scripts/build-bin.ts",
+    "test": "bun test"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^25.9.3"
@@ -14,6 +18,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@clack/prompts": "^1.5.1"
+    "@clack/prompts": "^1.5.1",
+    "picocolors": "^1.1.1"
   }
 }

@@ -1,0 +1,21 @@
+services:
+  qwykz-db:
+    image: postgres:17-alpine
+    container_name: {{PROJECT_NAME}}-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: {{PROJECT_NAME}}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d {{PROJECT_NAME}}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - qwykz_data:/var/lib/postgresql/data
+
+volumes:
+  qwykz_data:
