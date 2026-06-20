@@ -1,8 +1,8 @@
 # Dependency Resolution
 
-One of `qwykz`'s standout features is that it doesn't hardcode package versions into the templates, preventing generated projects from instantly suffering from outdated dependencies.
+`qwykz` doesn't hardcode package versions into the templates, which keeps generated projects from starting out with outdated dependencies.
 
-Instead, `src/npm-registry.ts` queries the public NPM registry at runtime to resolve the `latest` tag for every required package.
+Instead, `src/npm-registry.ts` queries the NPM registry at runtime to resolve the `latest` tag for every required package.
 
 ### The 3-Tier Fallback Strategy
 

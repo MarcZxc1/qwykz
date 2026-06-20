@@ -2,16 +2,16 @@
 
 `qwykz` avoids massive hardcoded strings in TypeScript files. Instead, all templates live as real files inside `templates/mvc/`.
 
-This provides massive benefits:
-- Syntax highlighting in your IDE when editing templates.
+This provides a few benefits:
+- IDE syntax highlighting works for templates.
 - Clear separation of concerns.
-- Easier to read diffs in PRs.
+- Cleaner diffs in pull requests.
 
-### How Variable Injection Works
+### Variable Injection
 
 Templates use standard double-curly-brace syntax: `{{VARIABLE_NAME}}`.
 
-When `generator.ts` calls `injectVariables()`, it passes a dictionary of keys. **Crucially**, if a template contains a `{{PLACEHOLDER}}` that isn't provided in the dictionary, the engine will throw an error immediately rather than generating broken code.
+When `generator.ts` calls `injectVariables()`, it passes a dictionary of keys. If a template contains a `{{PLACEHOLDER}}` missing from the dictionary, the engine throws an error immediately to prevent generating broken code.
 
 ### Compiled Mode vs Development Mode
 
