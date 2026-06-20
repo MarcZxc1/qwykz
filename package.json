@@ -1,6 +1,10 @@
 {
-  "name": "qwykz",
+  "name": "@marczxc1/qwykz",
   "version": "1.0.1",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": "https://github.com/MarcZxc1/qwykz.git",
   "module": "index.ts",
   "type": "module",
   "bin": {
