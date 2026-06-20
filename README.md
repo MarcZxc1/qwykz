@@ -99,5 +99,4 @@ Contributions are welcome and appreciated.
 ---
 
 <div align="center">
-Made by the Open Source Community
 </div>
