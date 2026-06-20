@@ -92,6 +92,14 @@ export async function runCli() {
       await runSetupCommands(options);
       s.stop("Setup commands completed.");
       showSuccess(options, true);
+      if (options.dbTarget === "docker") {
+        console.log(pc.green("\n🚀 Starting development server..."));
+        const proc = Bun.spawn(["bun", "dev"], {
+          cwd: join(process.cwd(), options.projectName),
+          stdio: ["inherit", "inherit", "inherit"],
+        });
+        await proc.exited;
+      }
       process.exit(0);
     }
 
