@@ -106,6 +106,7 @@ export async function generateProject(options: ProjectOptions) {
     authRoutes,
     waitForPostgres,
     dockerCompose,
+    exampleTest,
   ] = await Promise.all([
     readTemplate("mvc/schema.prisma"),
     readTemplate("mvc/prisma.config.ts"),
@@ -127,6 +128,7 @@ export async function generateProject(options: ProjectOptions) {
     options.dbTarget === "docker"
       ? resolveDockerCompose(options.projectName)
       : Promise.resolve(null),
+    readTemplate("mvc/example.test.ts"),
   ]);
 
   // Assemble file list
@@ -137,6 +139,7 @@ export async function generateProject(options: ProjectOptions) {
     [".env", envFile],
     ["src/lib/prisma.ts", prismaClient],
     ["src/index.ts", serverSource],
+    ["src/index.test.ts", exampleTest],
     ["src/middlewares/error.middleware.ts", errorMiddleware],
     ["src/middlewares/auth.middleware.ts", authMiddleware],
     ["src/routes/health.routes.ts", healthRoutes],

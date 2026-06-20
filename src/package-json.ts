@@ -123,6 +123,7 @@ export async function createPackageJson(
       dev: "bun --watch src/index.ts",
       build: "bun build ./src/index.ts --outdir ./dist --target bun",
       start: "bun dist/index.js",
+      test: "bun test",
       typecheck: "tsc --noEmit",
       postinstall: "prisma generate",
       "db:generate": "bunx --bun prisma generate",
