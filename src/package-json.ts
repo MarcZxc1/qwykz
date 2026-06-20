@@ -27,6 +27,7 @@ const CORE_DEV_DEPS = [
   "@types/jsonwebtoken",
   "@types/node",
   "@types/pg",
+  "effect",
   "prisma",
   "typescript",
 ] as const;

@@ -18,6 +18,7 @@ export const packageVersions = {
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^25.9.3",
     "@types/pg": "^8.20.0",
+    effect: "^3.11.0",
     prisma: "^7.8.0",
     typescript: "^6.0.3",
   },

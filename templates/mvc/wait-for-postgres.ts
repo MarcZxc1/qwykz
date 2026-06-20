@@ -6,7 +6,7 @@ const childProcess = Bun.spawn({
     "-d",
     "--wait",
     "--wait-timeout",
-    "60",
+    "120",
   ],
   stdout: "inherit",
   stderr: "inherit",

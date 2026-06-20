@@ -69,7 +69,7 @@ async function runSetupCommands(options: Awaited<ReturnType<typeof promptForProj
   await runCommand(["bun", "install"], targetDir);
 
   if (options.dbTarget === "docker") {
-    await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "60"], targetDir);
+    await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
   }
 
   await runCommand(["bun", "run", "db:generate"], targetDir);
