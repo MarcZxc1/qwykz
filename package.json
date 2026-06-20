@@ -1,6 +1,6 @@
 {
   "name": "qwykz",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "repository": "https://github.com/MarcZxc1/qwykz.git",
   "module": "index.ts",
   "type": "module",
