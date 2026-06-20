@@ -1,8 +1,8 @@
 {
   "name": "qwykz",
+  "version": "1.0.0",
   "module": "index.ts",
   "type": "module",
-  "private": true,
   "bin": {
     "qwykz": "./src/index.ts"
   },
