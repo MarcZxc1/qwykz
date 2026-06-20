@@ -64,15 +64,15 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     };
   }
 
-  console.log(pc.cyan(`
+  console.log(pc.bold(pc.cyan(`
                        _         
    __ ___      ___   _| | __ ____
   / _\` \\ \\ /\\ / / | | | |/ /|_  /
  | (_| |\\ V  V /| |_| |   <  / / 
   \\__, | \\_/\\_/  \\__, |_|\\_\\/___|
      |_|         |___/           
-  `));
-  intro("⚡ " + pc.bold(pc.cyan("qwykz")) + " ⚡ - Quick & Ready Boilerplate Builder");
+  `)));
+  intro("Quick & Ready Boilerplate Builder");
 
   const projectName = await text({
     message: "What is the name of your project?",
