@@ -8,32 +8,32 @@
 [![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 [![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 
-A blazing-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold production-ready Express + Prisma applications. 
+A fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Express + Prisma applications. 
 
-[Features](#sparkles-features) • [Installation](#cd-installation) • [Usage](#rocket-usage) • [Wiki / Docs](docs/home.md) • [Contributing](#handshake-contributing)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Wiki / Docs](docs/home.md) • [Contributing](#contributing)
 
 </div>
 
 ---
 
-## :sparkles: Features
+## Features
 
-* 🚀 **Blazing Fast**: Powered by Bun for near-instant execution and scaffolding.
-* 📦 **Dynamic Dependencies**: Automatically fetches the latest stable versions from the npm registry for all your packages, with offline cache fallback.
-* 🗄️ **Database Ready**: Choose your PostgreSQL flavor instantly:
+* **Fast**: Powered by Bun for quick execution and scaffolding.
+* **Dynamic Dependencies**: Automatically fetches the latest stable versions from the npm registry for all your packages, with offline cache fallback.
+* **Database Ready**: Choose your PostgreSQL setup:
   * Local Installation
   * Fully Dockerized (includes `docker-compose.yml` and wait scripts)
   * Supabase Cloud
-* 🛡️ **Production Grade**: 
-  * TypeScript out-of-the-box
-  * Prisma ORM pre-configured
+* **Modern Stack**: 
+  * TypeScript configured
+  * Prisma ORM included
   * Built-in error handling middlewares
   * Helmet & CORS integration
   * Zod request validation
-* 🔐 **Built-in Auth**: Optional argon2 password hashing and JWT authentication out-of-the-box.
-* 🤖 **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated setups.
+* **Built-in Auth**: Optional argon2 password hashing and JWT authentication.
+* **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated setups.
 
-## :cd: Installation
+## Installation
 
 ### Run without installing (Recommended)
 You can run `qwykz` directly using `bunx`:
@@ -47,7 +47,7 @@ If you prefer to install it globally:
 bun install -g qwykz
 ```
 
-## :rocket: Usage
+## Usage
 
 ### Interactive Mode
 Simply run the command and follow the beautiful CLI prompts:
@@ -78,7 +78,7 @@ Available flags:
 * `--helmet`: Include Helmet security headers
 * `--cors`: Include CORS middleware
 
-## :open_book: Documentation
+## Documentation
 
 Check out the [Wiki Guides](docs/home.md) for deep dives into:
 * [Architecture Overview](docs/architecture.md)
@@ -86,9 +86,9 @@ Check out the [Wiki Guides](docs/home.md) for deep dives into:
 * [Dependency Resolution](docs/dependency-resolution.md)
 * [Adding New Features](docs/contributing.md)
 
-## :handshake: Contributing
+## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are welcome and appreciated.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -99,5 +99,5 @@ Contributions are what make the open source community such an amazing place to l
 ---
 
 <div align="center">
-Made with ❤️ by the Open Source Community
+Made by the Open Source Community
 </div>
