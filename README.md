@@ -38,7 +38,7 @@ A fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Express +
 ### Run without installing (Recommended)
 You can run `qwykz` directly using `bunx`:
 ```bash
-bunx @marczxc1/qwykz
+bunx qwykz@latest or bunx qwykz
 ```
 
 ### Global Install
