@@ -7,6 +7,7 @@ import {
   select,
   text,
 } from "@clack/prompts";
+import pc from "picocolors";
 import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
 
 function stopOnCancel(value: unknown): asserts value {
@@ -64,18 +65,8 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   }
 
   // Interactive mode (existing behavior)
-  console.log(`
-  ▄██████▄  ▄█     █▄  ▄██   ▄      ▄█   ▄█▄  ▀█████████▄  
- ███    ███ ███     ███ ███   ██▄   ███ ▄███▀    ███    ███ 
- ███    ███ ███     ███ ███▄▄▄███   ███▐██▀      ███    █▀  
- ███    ███ ███     ███ ▀▀▀▀▀▀███  ▄█████▀      ▄███▄▄▄     
- ███    ███ ███     ███ ▄██   ███ ▀▀█████▄     ▀▀███▀▀▀     
- ███    ███ ███     ███ ███   ███   ███▐██▄      ███    █▄  
- ███    ███ ███ ▄█▄ ███ ███   ███   ███ ▀███▄    ███    ███ 
-  ▀██████▀   ▀███▀███▀   ▀█████▀    ███   ▀█▀  ▄█████████▀  
-                                    ▀                       
-  `);
-  intro("Quick & Ready Boilerplate Builder");
+  console.log("");
+  intro(pc.bold(pc.cyan("# ⚡ qwykz ⚡")) + " - Quick & Ready Boilerplate Builder");
 
   const projectName = await text({
     message: "What is the name of your project?",
