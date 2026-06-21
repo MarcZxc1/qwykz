@@ -98,6 +98,8 @@ export async function runCli() {
           cwd: join(process.cwd(), options.projectName),
           stdio: ["inherit", "inherit", "inherit"],
         });
+        process.on("SIGINT", () => proc.kill());
+        process.on("SIGTERM", () => proc.kill());
         await proc.exited;
       }
       process.exit(0);

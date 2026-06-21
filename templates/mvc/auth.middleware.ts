@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
+import { HttpError } from "./error.middleware";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
@@ -14,7 +15,7 @@ export function authMiddleware(req: AuthRequest, _res: Response, next: NextFunct
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new Error("Missing or malformed Authorization header"));
+    return next(new HttpError(401, "Missing or malformed Authorization header"));
   }
 
   const token = authHeader.slice(7);
@@ -24,6 +25,6 @@ export function authMiddleware(req: AuthRequest, _res: Response, next: NextFunct
     req.user = { id: payload.sub };
     next();
   } catch {
-    next(new Error("Invalid or expired token"));
+    next(new HttpError(401, "Invalid or expired token"));
   }
 }

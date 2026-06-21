@@ -55,6 +55,16 @@ console.log(`✅ Generated ${ENGINE_BUILD}`);
 // Now compile with the patched file
 // We need to temporarily swap the files, compile, then restore
 const originalEngine = readFileSync(ENGINE_SRC, "utf-8");
+
+// Ensure template-engine.ts is always restored, even if the process is killed
+// mid-compilation (SIGINT, SIGTERM, or unexpected exit).
+const restoreEngine = () => {
+  try { writeFileSync(ENGINE_SRC, originalEngine); } catch {}
+};
+process.on("exit", restoreEngine);
+process.on("SIGINT", () => { restoreEngine(); process.exit(130); });
+process.on("SIGTERM", () => { restoreEngine(); process.exit(143); });
+
 writeFileSync(ENGINE_SRC, patched);
 
 try {
@@ -63,7 +73,14 @@ try {
       "bun", "build",
       "./src/index.ts",
       "--compile",
-      "--outfile", join(process.env.HOME ?? "/home/marc", ".local", "bin", "qwykz"),
+      "--outfile", (() => {
+        const homeDir = process.env.HOME;
+        if (!homeDir) {
+          console.error("❌ HOME environment variable is not set. Cannot determine install location.");
+          process.exit(1);
+        }
+        return join(homeDir, ".local", "bin", "qwykz");
+      })(),
     ],
     cwd: ROOT,
     stdout: "inherit",

@@ -168,7 +168,9 @@ describe("qwykz CLI integration", () => {
 
     const projectDir = join(testDir, projectName);
     const prismaClient = await Bun.file(join(projectDir, "src/lib/prisma.ts")).text();
-    expect(prismaClient).toContain("DB URL DETECTED");
+    expect(prismaClient).toContain('throw new Error("DATABASE_URL is not defined');
+    expect(prismaClient).not.toContain("DB URL DETECTED");
+    expect(prismaClient).not.toContain("console.log");
 
     // Supabase should NOT have docker-compose
     expect(existsSync(join(projectDir, "docker-compose.yml"))).toBe(false);

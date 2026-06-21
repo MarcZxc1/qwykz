@@ -1,7 +1,26 @@
 {
   "name": "qwykz",
-  "version": "1.0.2",
+  "version": "1.0.3",
+  "description": "Fast Express + TypeScript + Prisma boilerplate generator built with Bun",
   "repository": "https://github.com/MarcZxc1/qwykz.git",
+  "keywords": [
+    "boilerplate",
+    "scaffold",
+    "generator",
+    "cli",
+    "express",
+    "typescript",
+    "bun",
+    "prisma",
+    "postgresql",
+    "mvc",
+    "rest",
+    "api",
+    "jwt",
+    "authentication",
+    "argon2",
+    "docker"
+  ],
   "module": "index.ts",
   "type": "module",
   "bin": {

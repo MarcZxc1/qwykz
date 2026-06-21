@@ -19,6 +19,7 @@ const CORE_DEPS = [
   "express",
   "jsonwebtoken",
   "pg",
+  "zod",  // always required — auth.controller.ts imports zod unconditionally
 ] as const;
 
 const CORE_DEV_DEPS = [
@@ -38,7 +39,7 @@ const OPTIONAL_PACKAGES: Record<
 > = {
   cors: { dependencies: ["cors"], devDependencies: ["@types/cors"] },
   helmet: { dependencies: ["helmet"] },
-  zod: { dependencies: ["zod"] },
+  zod: {},  // zod is in CORE_DEPS; this flag only controls the user controller variant
 };
 
 // ---------------------------------------------------------------------------
@@ -129,8 +130,8 @@ export async function createPackageJson(
       "db:generate": "bunx --bun prisma generate",
       "db:push":
         dbTarget === "docker"
-          ? "bun run db:wait && bunx --bun prisma db push --accept-data-loss"
-          : "bunx --bun prisma db push --accept-data-loss",
+          ? "bun run db:wait && bunx --bun prisma db push"
+          : "bunx --bun prisma db push",
       "db:studio": "bunx --bun prisma studio",
       ...(dbTarget === "docker"
         ? { "db:wait": "bun src/lib/wait-for-postgres.ts" }

@@ -13,6 +13,9 @@ const CACHE_FILE = join(CACHE_DIR, "npm-versions.json");
 /** Per-request timeout in ms */
 const FETCH_TIMEOUT_MS = 5_000;
 
+/** Validates that a string conforms to the npm package name spec before fetching or caching. */
+const VALID_NPM_PACKAGE_NAME = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
+
 interface CacheData {
   /** ISO date string (YYYY-MM-DD) for the day the cache was written */
   date: string;
@@ -58,6 +61,10 @@ function writeCache(versions: Record<string, string>): void {
  * Returns a `^version` string (e.g. `"^5.2.1"`).
  */
 async function fetchLatestVersion(packageName: string): Promise<string> {
+  if (!VALID_NPM_PACKAGE_NAME.test(packageName)) {
+    throw new Error(`Invalid npm package name: "${packageName}"`);
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
