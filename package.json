@@ -2,7 +2,10 @@
   "name": "qwykz",
   "version": "1.0.3",
   "description": "Fast Express + TypeScript + Prisma boilerplate generator built with Bun",
-  "repository": "https://github.com/MarcZxc1/qwykz.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcZxc1/qwykz.git"
+  },
   "keywords": [
     "boilerplate",
     "scaffold",
@@ -24,7 +27,7 @@
   "module": "index.ts",
   "type": "module",
   "bin": {
-    "qwykz": "./src/index.ts"
+    "qwykz": "src/index.ts"
   },
   "scripts": {
     "build:bin": "bun run scripts/build-bin.ts",
