@@ -8,6 +8,7 @@ import {
   text,
 } from "@clack/prompts";
 import pc from "picocolors";
+import pkg from "../package.json";
 import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
 
 function stopOnCancel(value: unknown): asserts value {
@@ -76,7 +77,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   \\__, | \\_/\\_/  \\__, |_|\\_\\/___|
      |_|         |___/           
   `)));
-  intro("Quick & Ready Boilerplate Builder");
+  intro(`Quick & Ready Boilerplate Builder v${pkg.version}`);
 
   const projectName = await text({
     message: "What is the name of your project?",
