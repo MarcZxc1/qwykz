@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: {{DB_PASSWORD}}
       POSTGRES_DB: {{PROJECT_NAME}}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:54320:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d {{PROJECT_NAME}}"]
       interval: 5s
