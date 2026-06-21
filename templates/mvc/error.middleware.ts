@@ -15,13 +15,14 @@ export const notFoundHandler: RequestHandler = (req, _res, next) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
-  const statusCode = error instanceof HttpError ? error.statusCode : 500;
-  const message = error instanceof Error ? error.message : "Unexpected server error";
+  if (error instanceof HttpError) {
+    return res.status(error.statusCode).json({
+      error: { message: error.message, details: error.details },
+    });
+  }
 
-  res.status(statusCode).json({
-    error: {
-      message,
-      details: error instanceof HttpError ? error.details : undefined,
-    },
-  });
+  // Log real error server-side only — never expose internals to the client
+  console.error(error);
+
+  res.status(500).json({ error: { message: "An unexpected error occurred." } });
 };

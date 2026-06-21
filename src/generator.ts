@@ -1,8 +1,23 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
 import { readTemplate, injectVariables } from "./template-engine";
 import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
+
+// ---------------------------------------------------------------------------
+// Cryptographic secret helpers
+// ---------------------------------------------------------------------------
+
+/** Generate a 48-byte (96-char hex) secret suitable for JWT_SECRET. */
+function generateJwtSecret(): string {
+  return randomBytes(48).toString("hex");
+}
+
+/** Generate a 16-byte (32-char hex) password for the Docker PostgreSQL user. */
+function generateDbPassword(): string {
+  return randomBytes(16).toString("hex");
+}
 
 const PROJECT_FOLDERS = [
   "src/controllers",
@@ -21,7 +36,12 @@ async function writeJson(path: string, value: unknown) {
 // Template resolvers — pick the right variant and inject variables
 // ---------------------------------------------------------------------------
 
-async function resolveEnvFile(dbTarget: DbTarget, projectName: string): Promise<string> {
+async function resolveEnvFile(
+  dbTarget: DbTarget,
+  projectName: string,
+  jwtSecret: string,
+  dbPassword: string,
+): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
     supabase: "mvc/env.supabase.txt",
     docker: "mvc/env.docker.txt",
@@ -30,15 +50,28 @@ async function resolveEnvFile(dbTarget: DbTarget, projectName: string): Promise<
 
   const raw = await readTemplate(variantMap[dbTarget]);
 
-  // Supabase .env has no project-specific variables
-  if (dbTarget === "supabase") return raw;
+  if (dbTarget === "supabase") {
+    return injectVariables(raw, { JWT_SECRET: jwtSecret });
+  }
 
-  return injectVariables(raw, { PROJECT_NAME: projectName });
+  if (dbTarget === "docker") {
+    return injectVariables(raw, {
+      PROJECT_NAME: projectName,
+      JWT_SECRET: jwtSecret,
+      DB_PASSWORD: dbPassword,
+    });
+  }
+
+  // local
+  return injectVariables(raw, {
+    PROJECT_NAME: projectName,
+    JWT_SECRET: jwtSecret,
+  });
 }
 
-async function resolveDockerCompose(projectName: string): Promise<string> {
+async function resolveDockerCompose(projectName: string, dbPassword: string): Promise<string> {
   const raw = await readTemplate("mvc/docker-compose.yml");
-  return injectVariables(raw, { PROJECT_NAME: projectName });
+  return injectVariables(raw, { PROJECT_NAME: projectName, DB_PASSWORD: dbPassword });
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
@@ -81,6 +114,11 @@ async function resolveUserController(extraPackages: ExtraPackage[]): Promise<str
 export async function generateProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
 
+  // Generate cryptographically secure secrets once per scaffold run.
+  // These are never printed to the terminal.
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+
   // Create directory structure
   await Promise.all(
     PROJECT_FOLDERS.map((folder) =>
@@ -111,7 +149,7 @@ export async function generateProject(options: ProjectOptions) {
     readTemplate("mvc/schema.prisma"),
     readTemplate("mvc/prisma.config.ts"),
     readTemplate("mvc/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages),
     readTemplate("mvc/error.middleware.ts"),
@@ -126,7 +164,7 @@ export async function generateProject(options: ProjectOptions) {
       ? readTemplate("mvc/wait-for-postgres.ts")
       : Promise.resolve(null),
     options.dbTarget === "docker"
-      ? resolveDockerCompose(options.projectName)
+      ? resolveDockerCompose(options.projectName, dbPassword)
       : Promise.resolve(null),
     readTemplate("mvc/example.test.ts"),
   ]);

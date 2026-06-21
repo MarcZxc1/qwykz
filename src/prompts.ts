@@ -17,8 +17,12 @@ function stopOnCancel(value: unknown): asserts value {
   }
 }
 
-function normalizePackageName(name: string) {
-  return name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+function normalizePackageName(name: string): string {
+  const normalized = name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+  // Strip leading digits/dashes (invalid npm name start) and trailing dashes
+  const clean = normalized.replace(/^[-0-9]+/, "").replace(/-+$/, "");
+  if (!clean) return "qwykz-app";
+  return clean.slice(0, 64); // npm name length limit
 }
 
 // ---------------------------------------------------------------------------
