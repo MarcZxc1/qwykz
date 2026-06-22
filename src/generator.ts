@@ -43,9 +43,9 @@ async function resolveEnvFile(
   dbPassword: string,
 ): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
-    supabase: "mvc/env.supabase.txt",
-    docker: "mvc/env.docker.txt",
-    local: "mvc/env.local.txt",
+    supabase: "express/env.supabase.txt",
+    docker: "express/env.docker.txt",
+    local: "express/env.local.txt",
   };
 
   const raw = await readTemplate(variantMap[dbTarget]);
@@ -70,14 +70,14 @@ async function resolveEnvFile(
 }
 
 async function resolveDockerCompose(projectName: string, dbPassword: string): Promise<string> {
-  const raw = await readTemplate("mvc/docker-compose.yml");
+  const raw = await readTemplate("express/docker-compose.yml");
   return injectVariables(raw, { PROJECT_NAME: projectName, DB_PASSWORD: dbPassword });
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
   const variant = dbTarget === "supabase"
-    ? "mvc/prisma-client.supabase.ts"
-    : "mvc/prisma-client.default.ts";
+    ? "express/prisma-client.supabase.ts"
+    : "express/prisma-client.default.ts";
   return readTemplate(variant);
 }
 
@@ -93,7 +93,7 @@ async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<strin
   if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
   if (hasCors) extraMiddleware += "app.use(cors());\n";
 
-  const raw = await readTemplate("mvc/server.ts");
+  const raw = await readTemplate("express/server.ts");
   return injectVariables(raw, {
     EXTRA_IMPORTS: extraImports,
     EXTRA_MIDDLEWARE: extraMiddleware,
@@ -102,8 +102,8 @@ async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<strin
 
 async function resolveUserController(extraPackages: ExtraPackage[]): Promise<string> {
   const variant = extraPackages.includes("zod")
-    ? "mvc/user.controller.zod.ts"
-    : "mvc/user.controller.default.ts";
+    ? "express/user.controller.zod.ts"
+    : "express/user.controller.default.ts";
   return readTemplate(variant);
 }
 
@@ -111,7 +111,7 @@ async function resolveUserController(extraPackages: ExtraPackage[]): Promise<str
 // Main generator
 // ---------------------------------------------------------------------------
 
-export async function generateProject(options: ProjectOptions) {
+export async function generateExpressProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
 
   // Generate cryptographically secure secrets once per scaffold run.
@@ -146,27 +146,27 @@ export async function generateProject(options: ProjectOptions) {
     dockerCompose,
     exampleTest,
   ] = await Promise.all([
-    readTemplate("mvc/schema.prisma"),
-    readTemplate("mvc/prisma.config.ts"),
-    readTemplate("mvc/tsconfig.json"),
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
     resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages),
-    readTemplate("mvc/error.middleware.ts"),
-    readTemplate("mvc/health.routes.ts"),
-    readTemplate("mvc/user.routes.ts"),
+    readTemplate("express/error.middleware.ts"),
+    readTemplate("express/health.routes.ts"),
+    readTemplate("express/user.routes.ts"),
     resolveUserController(options.extraPackages),
-    readTemplate("mvc/user.service.ts"),
-    readTemplate("mvc/auth.controller.ts"),
-    readTemplate("mvc/auth.middleware.ts"),
-    readTemplate("mvc/auth.routes.ts"),
+    readTemplate("express/user.service.ts"),
+    readTemplate("express/auth.controller.ts"),
+    readTemplate("express/auth.middleware.ts"),
+    readTemplate("express/auth.routes.ts"),
     options.dbTarget === "docker"
-      ? readTemplate("mvc/wait-for-postgres.ts")
+      ? readTemplate("express/wait-for-postgres.ts")
       : Promise.resolve(null),
     options.dbTarget === "docker"
       ? resolveDockerCompose(options.projectName, dbPassword)
       : Promise.resolve(null),
-    readTemplate("mvc/example.test.ts"),
+    readTemplate("express/example.test.ts"),
   ]);
 
   // Assemble file list
@@ -203,3 +203,17 @@ export async function generateProject(options: ProjectOptions) {
     ).then((pkgJson) => writeJson(join(targetDir, "package.json"), pkgJson)),
   ]);
 }
+
+async function generateLaravelProject(options: ProjectOptions){
+  const targetDir = join(process.cwd(), options.projectName);
+  console.log(`Generating Laravel Project Inside ${targetDir}... (Coming soon!)`);
+  
+}
+
+export async function generateProject(options: ProjectOptions){
+  if(options.framework === "express"){
+    await generateExpressProject(options);
+  }else if(options.framework === "laravel"){
+    await generateLaravelProject(options);
+  }
+};

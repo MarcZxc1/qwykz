@@ -48,8 +48,8 @@ export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
 // ---------------------------------------------------------------------------
 
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
-  // Non-interactive mode: use flags or sensible defaults
-  if (isNonInteractive) {
+  // Non-interactive mode: use flags or sensible default
+    if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
     const dbTarget: DbTarget = (["supabase", "local", "docker"].includes(dbRaw)
@@ -90,6 +90,16 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     },
   });
   stopOnCancel(projectName);
+
+  const framework = await select({
+    message: "What backend framework do you want to generate?",
+    options:[
+      {value: "express", label: "Express.js + Typescript"},
+      {value: "laravel", label: "Vanilla Laravel(PHP)"},
+
+    ],
+  });
+  stopOnCancel(framework);
 
   const dbTarget = await select({
     message: "Select your PostgreSQL environment target:",
