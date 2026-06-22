@@ -14,7 +14,7 @@ const isVerbose = process.argv.includes("--verbose");
 async function runCommand(command: string[], cwd: string) {
   try {
     const proc = Bun.spawn({
-      cmd: command,
+      cmd: ["bash", "-c", command.join(" ")],
       cwd,
       stdout: isVerbose ? "inherit" : "ignore",
       stderr: isVerbose ? "inherit" : "pipe",
@@ -47,13 +47,17 @@ async function runCommand(command: string[], cwd: string) {
     console.error("");
     console.error(pc.cyan("  Suggestions:"));
     console.error(pc.dim("    • Check your internet connection"));
-    console.error(pc.dim("    • Ensure Bun is installed and up-to-date (https://bun.sh)"));
+    console.error(
+      pc.dim("    • Ensure Bun is installed and up-to-date (https://bun.sh)"),
+    );
 
     if (cmdStr.includes("docker")) {
       console.error(pc.dim("    • Ensure Docker Desktop is running"));
     }
     if (cmdStr.includes("prisma")) {
-      console.error(pc.dim("    • Ensure your DATABASE_URL is correct in .env"));
+      console.error(
+        pc.dim("    • Ensure your DATABASE_URL is correct in .env"),
+      );
     }
 
     console.error(pc.dim("    • Re-run with --verbose for full output"));
@@ -63,17 +67,26 @@ async function runCommand(command: string[], cwd: string) {
   }
 }
 
-async function runSetupCommands(options: Awaited<ReturnType<typeof promptForProjectOptions>>) {
+async function runSetupCommands(
+  options: Awaited<ReturnType<typeof promptForProjectOptions>>,
+) {
   const targetDir = join(process.cwd(), options.projectName);
 
-  await runCommand(["bun", "install"], targetDir);
+  if (options.framework === "express") {
+    await runCommand(["bun", "install"], targetDir);
 
-  if (options.dbTarget === "docker") {
-    await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
+    if (options.dbTarget === "docker") {
+      await runCommand(
+        ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
+        targetDir,
+      );
+    }
+
+    await runCommand(["bun", "run", "db:generate"], targetDir);
+    await runCommand(["bun", "run", "db:push"], targetDir);
+  } else if (options.framework === "laravel") {
+    await runCommand(["php", "artisan", "migrate"], targetDir);
   }
-
-  await runCommand(["bun", "run", "db:generate"], targetDir);
-  await runCommand(["bun", "run", "db:push"], targetDir);
 }
 
 export async function runCli() {
@@ -94,13 +107,23 @@ export async function runCli() {
       showSuccess(options, true);
       if (options.dbTarget === "docker") {
         console.log(pc.green("\n🚀 Starting development server..."));
-        const proc = Bun.spawn(["bun", "dev"], {
-          cwd: join(process.cwd(), options.projectName),
-          stdio: ["inherit", "inherit", "inherit"],
-        });
-        process.on("SIGINT", () => proc.kill());
-        process.on("SIGTERM", () => proc.kill());
-        await proc.exited;
+        if (options.framework === "express") {
+          const proc = Bun.spawn(["bash", "-c", "bun dev"], {
+            cwd: join(process.cwd(), options.projectName),
+            stdio: ["inherit", "inherit", "inherit"],
+          });
+          process.on("SIGINT", () => proc.kill());
+          process.on("SIGTERM", () => proc.kill());
+          await proc.exited;
+        } else if (options.framework === "laravel") {
+          const proc = Bun.spawn(["bash", "-c", "php artisan serve"], {
+            cwd: join(process.cwd(), options.projectName),
+            stdio: ["inherit", "inherit", "inherit"],
+          });
+          process.on("SIGINT", () => proc.kill());
+          process.on("SIGTERM", () => proc.kill());
+          await proc.exited;
+        }
       }
       process.exit(0);
     }

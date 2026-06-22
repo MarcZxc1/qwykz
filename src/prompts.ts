@@ -9,7 +9,12 @@ import {
 } from "@clack/prompts";
 import pc from "picocolors";
 import pkg from "../package.json";
-import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
+import type {
+  DbTarget,
+  ExtraPackage,
+  ProjectOptions,
+  Framework,
+} from "./types";
 
 function stopOnCancel(value: unknown): asserts value {
   if (isCancel(value)) {
@@ -19,7 +24,10 @@ function stopOnCancel(value: unknown): asserts value {
 }
 
 function normalizePackageName(name: string): string {
-  const normalized = name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+  const normalized = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-");
   // Strip leading digits/dashes (invalid npm name start) and trailing dashes
   const clean = normalized.replace(/^[-0-9]+/, "").replace(/-+$/, "");
   if (!clean) return "qwykz-app";
@@ -49,12 +57,12 @@ export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
 
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
   // Non-interactive mode: use flags or sensible default
-    if (isNonInteractive) {
+  if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
-    const dbTarget: DbTarget = (["supabase", "local", "docker"].includes(dbRaw)
-      ? dbRaw
-      : "local") as DbTarget;
+    const dbTarget: DbTarget = (
+      ["supabase", "local", "docker"].includes(dbRaw) ? dbRaw : "local"
+    ) as DbTarget;
 
     // In non-interactive mode, no extra packages unless explicitly requested
     const extraPackages: ExtraPackage[] = [];
@@ -63,27 +71,33 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     if (hasFlag("--cors")) extraPackages.push("cors");
 
     return {
+      framework: "express",
       projectName: normalizePackageName(name),
       dbTarget,
       extraPackages,
     };
   }
 
-  console.log(pc.bold(pc.cyan(`
+  console.log(
+    pc.bold(
+      pc.cyan(`
                        _         
    __ ___      ___   _| | __ ____
   / _\` \\ \\ /\\ / / | | | |/ /|_  /
  | (_| |\\ V  V /| |_| |   <  / / 
   \\__, | \\_/\\_/  \\__, |_|\\_\\/___|
      |_|         |___/           
-  `)));
+  `),
+    ),
+  );
   intro(`Quick & Ready Boilerplate Builder v${pkg.version}`);
 
   const projectName = await text({
     message: "What is the name of your project?",
     placeholder: "qwykz-app",
     validate(value) {
-      if (!value || value.trim().length === 0) return "Project name cannot be empty.";
+      if (!value || value.trim().length === 0)
+        return "Project name cannot be empty.";
       if (!/^[a-zA-Z0-9-_ ]+$/.test(value)) {
         return "Use letters, numbers, spaces, hyphens, or underscores only.";
       }
@@ -93,10 +107,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const framework = await select({
     message: "What backend framework do you want to generate?",
-    options:[
-      {value: "express", label: "Express.js + Typescript"},
-      {value: "laravel", label: "Vanilla Laravel(PHP)"},
-
+    options: [
+      { value: "express", label: "Express.js + Typescript" },
+      { value: "laravel", label: "Vanilla Laravel(PHP)" },
     ],
   });
   stopOnCancel(framework);
@@ -113,28 +126,31 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const extraPackages: ExtraPackage[] = [];
 
-  const shouldInstallZod = await confirm({
-    message: "Install Zod for request validation?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallZod);
-  if (shouldInstallZod) extraPackages.push("zod");
+  if (framework === "express") {
+    const shouldInstallZod = await confirm({
+      message: "Install Zod for request validation?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallZod);
+    if (shouldInstallZod) extraPackages.push("zod");
 
-  const shouldInstallHelmet = await confirm({
-    message: "Install Helmet for security headers?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallHelmet);
-  if (shouldInstallHelmet) extraPackages.push("helmet");
+    const shouldInstallHelmet = await confirm({
+      message: "Install Helmet for security headers?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallHelmet);
+    if (shouldInstallHelmet) extraPackages.push("helmet");
 
-  const shouldInstallCors = await confirm({
-    message: "Install CORS for cross-origin requests?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallCors);
-  if (shouldInstallCors) extraPackages.push("cors");
+    const shouldInstallCors = await confirm({
+      message: "Install CORS for cross-origin requests?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallCors);
+    if (shouldInstallCors) extraPackages.push("cors");
+  }
 
   return {
+    framework: framework as Framework,
     projectName: normalizePackageName(String(projectName)),
     dbTarget: dbTarget as DbTarget,
     extraPackages,
@@ -160,7 +176,9 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
 export function showSuccess(options: ProjectOptions, setupRan = false) {
   if (setupRan) {
     if (options.dbTarget === "docker") {
-      outro(`Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`);
+      outro(
+        `Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`,
+      );
       return;
     }
     outro(`Your boilerplate "${options.projectName}" is ready.

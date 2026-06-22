@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
 import { readTemplate, injectVariables } from "./template-engine";
@@ -69,19 +70,28 @@ async function resolveEnvFile(
   });
 }
 
-async function resolveDockerCompose(projectName: string, dbPassword: string): Promise<string> {
+async function resolveDockerCompose(
+  projectName: string,
+  dbPassword: string,
+): Promise<string> {
   const raw = await readTemplate("express/docker-compose.yml");
-  return injectVariables(raw, { PROJECT_NAME: projectName, DB_PASSWORD: dbPassword });
+  return injectVariables(raw, {
+    PROJECT_NAME: projectName,
+    DB_PASSWORD: dbPassword,
+  });
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
-  const variant = dbTarget === "supabase"
-    ? "express/prisma-client.supabase.ts"
-    : "express/prisma-client.default.ts";
+  const variant =
+    dbTarget === "supabase"
+      ? "express/prisma-client.supabase.ts"
+      : "express/prisma-client.default.ts";
   return readTemplate(variant);
 }
 
-async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<string> {
+async function resolveServerSource(
+  extraPackages: ExtraPackage[],
+): Promise<string> {
   const hasCors = extraPackages.includes("cors");
   const hasHelmet = extraPackages.includes("helmet");
 
@@ -100,7 +110,9 @@ async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<strin
   });
 }
 
-async function resolveUserController(extraPackages: ExtraPackage[]): Promise<string> {
+async function resolveUserController(
+  extraPackages: ExtraPackage[],
+): Promise<string> {
   const variant = extraPackages.includes("zod")
     ? "express/user.controller.zod.ts"
     : "express/user.controller.default.ts";
@@ -149,7 +161,12 @@ export async function generateExpressProject(options: ProjectOptions) {
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
     readTemplate("express/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    resolveEnvFile(
+      options.dbTarget,
+      options.projectName,
+      jwtSecret,
+      dbPassword,
+    ),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages),
     readTemplate("express/error.middleware.ts"),
@@ -195,7 +212,9 @@ export async function generateExpressProject(options: ProjectOptions) {
 
   // Write all files + package.json in parallel
   await Promise.all([
-    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    ...files.map(([path, content]) =>
+      writeFile(join(targetDir, path), content),
+    ),
     createPackageJson(
       options.projectName,
       options.dbTarget,
@@ -204,16 +223,32 @@ export async function generateExpressProject(options: ProjectOptions) {
   ]);
 }
 
-async function generateLaravelProject(options: ProjectOptions){
+async function generateLaravelProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  console.log(`Generating Laravel Project Inside ${targetDir}... (Coming soon!)`);
-  
+
+  console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
+
+  const proc = Bun.spawn({
+    cmd: ["composer", "create-project", "laravel/laravel", options.projectName],
+    cwd: process.cwd(),
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+
+  const exitCode = await proc.exited;
+  if (exitCode !== 0) {
+    throw new Error(
+      "Composer failed to install Laravel. Do you have PHP/Composer installed?",
+    );
+  }
+
+  console.log(`✅ Laravel installation complete!`);
 }
 
-export async function generateProject(options: ProjectOptions){
-  if(options.framework === "express"){
+export async function generateProject(options: ProjectOptions) {
+  if (options.framework === "express") {
     await generateExpressProject(options);
-  }else if(options.framework === "laravel"){
+  } else if (options.framework === "laravel") {
     await generateLaravelProject(options);
   }
-};
+}
