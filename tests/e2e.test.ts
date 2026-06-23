@@ -39,8 +39,8 @@ test("E2E: Express with Docker Postgres", async () => {
   const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
 
   try {
-    await waitForServer("http://127.0.0.1:3000/api/health");
-    const res = await fetch("http://127.0.0.1:3000/api/health");
+    await waitForServer("http://127.0.0.1:3000/health");
+    const res = await fetch("http://127.0.0.1:3000/health");
     expect(res.status).toBe(200);
 
     const authRes = await fetch("http://127.0.0.1:3000/api/auth/register", {
