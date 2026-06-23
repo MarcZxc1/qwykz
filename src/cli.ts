@@ -85,6 +85,13 @@ async function runSetupCommands(
     await runCommand(["bun", "run", "db:generate"], targetDir);
     await runCommand(["bun", "run", "db:push"], targetDir);
   } else if (options.framework === "laravel") {
+    if (options.dbTarget === "docker") {
+      await runCommand(
+        ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
+        targetDir,
+      );
+    }
+    await runCommand(["php", "artisan", "key:generate"], targetDir);
     await runCommand(["php", "artisan", "migrate"], targetDir);
   }
 }
@@ -101,30 +108,22 @@ export async function runCli() {
 
     const shouldRunSetup = await promptForAutomaticSetup(options);
     if (shouldRunSetup) {
-      s.start("Running setup commands...");
+      s.stop("Running setup commands...");
       await runSetupCommands(options);
       s.stop("Setup commands completed.");
       showSuccess(options, true);
-      if (options.dbTarget === "docker") {
-        console.log(pc.green("\n🚀 Starting development server..."));
-        if (options.framework === "express") {
-          const proc = Bun.spawn(["bash", "-c", "bun dev"], {
-            cwd: join(process.cwd(), options.projectName),
-            stdio: ["inherit", "inherit", "inherit"],
-          });
-          process.on("SIGINT", () => proc.kill());
-          process.on("SIGTERM", () => proc.kill());
-          await proc.exited;
-        } else if (options.framework === "laravel") {
-          const proc = Bun.spawn(["bash", "-c", "php artisan serve"], {
-            cwd: join(process.cwd(), options.projectName),
-            stdio: ["inherit", "inherit", "inherit"],
-          });
-          process.on("SIGINT", () => proc.kill());
-          process.on("SIGTERM", () => proc.kill());
-          await proc.exited;
-        }
-      }
+      console.log(pc.green("\n🚀 Starting development server..."));
+
+      const devCmd =
+        options.framework === "laravel" ? "php artisan serve" : "bun dev";
+
+      const proc = Bun.spawn(["bash", "-c", devCmd], {
+        cwd: join(process.cwd(), options.projectName),
+        stdio: ["inherit", "inherit", "inherit"],
+      });
+      process.on("SIGINT", () => proc.kill());
+      process.on("SIGTERM", () => proc.kill());
+      await proc.exited;
       process.exit(0);
     }
 

@@ -1,6 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
 import { readTemplate, injectVariables } from "./template-engine";
@@ -225,11 +224,18 @@ export async function generateExpressProject(options: ProjectOptions) {
 
 async function generateLaravelProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
+  const dbPassword = generateDbPassword();
 
   console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
 
   const proc = Bun.spawn({
-    cmd: ["composer", "create-project", "laravel/laravel", options.projectName],
+    cmd: [
+      "composer",
+      "create-project",
+      "laravel/laravel",
+      options.projectName,
+      "--no-scripts",
+    ],
     cwd: process.cwd(),
     stdout: "inherit",
     stderr: "inherit",
@@ -243,6 +249,47 @@ async function generateLaravelProject(options: ProjectOptions) {
   }
 
   console.log(`✅ Laravel installation complete!`);
+
+  console.log(`\n💉 Injecting PostgreSQL configuration.
+  ..`);
+
+  const envExamplePath = join(targetDir, ".env.example");
+  const envPath = join(targetDir, ".env");
+
+  let envContent = await Bun.file(envExamplePath).text();
+
+  envContent = envContent.replace(
+    "DB_CONNECTION=sqlite",
+    "DB_CONNECTION=pgsql",
+  );
+
+  envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
+  envContent = envContent.replace("# DB_PORT=3306", "DB_PORT=5432");
+  envContent = envContent.replace(
+    "# DB_DATABASE=laravel",
+    `DB_DATABASE=${options.projectName}`,
+  );
+  envContent = envContent.replace("# DB_USERNAME=root", "DB_USERNAME=postgres");
+  envContent = envContent.replace(
+    "# DB_PASSWORD=",
+    `DB_PASSWORD=${options.dbTarget === "docker" ? dbPassword : "postgres"}`,
+  );
+
+  await writeFile(envPath, envContent);
+
+  if (options.dbTarget === "docker") {
+    console.log(`\n🐳 Generating docker-compose.yml...
+  `);
+
+    const dockerCompose = await resolveDockerCompose(
+      options.projectName,
+      dbPassword,
+    );
+
+    await writeFile(join(targetDir, "docker-compose.yml"), dockerCompose);
+  } else if (options.dbTarget === "local") {
+  } else if (options.dbTarget === "supabase") {
+  }
 }
 
 export async function generateProject(options: ProjectOptions) {

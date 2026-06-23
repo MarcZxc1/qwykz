@@ -174,20 +174,24 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
 }
 
 export function showSuccess(options: ProjectOptions, setupRan = false) {
+  const devCommand =
+    options.framework === "laravel" ? "php artisan serve" : "bun dev";
+
+  const installCmd =
+    options.framework === "laravel" ? "" : "  bun install\n";
+
+  const generateCmd =
+    options.framework === "laravel"
+      ? "php artisan key:generate"
+      : "bun run db:generate";
+
+  const pushCmd =
+    options.framework === "laravel" ? "php artisan migrate" : "bun run db:push";
+
   if (setupRan) {
-    if (options.dbTarget === "docker") {
-      outro(
-        `Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`,
-      );
-      return;
-    }
-    outro(`Your boilerplate "${options.projectName}" is ready.
-
-Setup commands completed automatically.
-
-Next command:
-  cd ${options.projectName}
-  bun dev`);
+    outro(
+      `Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`,
+    );
     return;
   }
 
@@ -200,10 +204,9 @@ Next command:
 3. Run the following commands to finish setup:
 
   cd ${options.projectName}
-  bun install
-  bun run db:generate
-  bun run db:push
-  bun dev`);
+${installCmd}  ${generateCmd}
+  ${pushCmd}
+  ${devCommand}`);
     return;
   }
 
@@ -211,8 +214,7 @@ Next command:
 
 Next commands:
   cd ${options.projectName}
-  bun install
-  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}bun run db:generate
-  bun run db:push
-  bun dev`);
+${installCmd}  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}${generateCmd}
+  ${pushCmd}
+  ${devCommand}`);
 }
