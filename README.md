@@ -1,7 +1,7 @@
 <div align="center">
 
 # ⚡ qwykz ⚡
-**The Ultimate Dual-Stack API Boilerplate Builder**
+**Quick & Ready Boilerplate Builder**
 
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
