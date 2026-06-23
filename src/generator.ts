@@ -43,9 +43,9 @@ async function resolveEnvFile(
   dbPassword: string,
 ): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
-    supabase: "mvc/env.supabase.txt",
-    docker: "mvc/env.docker.txt",
-    local: "mvc/env.local.txt",
+    supabase: "express/env.supabase.txt",
+    docker: "express/env.docker.txt",
+    local: "express/env.local.txt",
   };
 
   const raw = await readTemplate(variantMap[dbTarget]);
@@ -69,19 +69,28 @@ async function resolveEnvFile(
   });
 }
 
-async function resolveDockerCompose(projectName: string, dbPassword: string): Promise<string> {
-  const raw = await readTemplate("mvc/docker-compose.yml");
-  return injectVariables(raw, { PROJECT_NAME: projectName, DB_PASSWORD: dbPassword });
+async function resolveDockerCompose(
+  projectName: string,
+  dbPassword: string,
+): Promise<string> {
+  const raw = await readTemplate("express/docker-compose.yml");
+  return injectVariables(raw, {
+    PROJECT_NAME: projectName,
+    DB_PASSWORD: dbPassword,
+  });
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
-  const variant = dbTarget === "supabase"
-    ? "mvc/prisma-client.supabase.ts"
-    : "mvc/prisma-client.default.ts";
+  const variant =
+    dbTarget === "supabase"
+      ? "express/prisma-client.supabase.ts"
+      : "express/prisma-client.default.ts";
   return readTemplate(variant);
 }
 
-async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<string> {
+async function resolveServerSource(
+  extraPackages: ExtraPackage[],
+): Promise<string> {
   const hasCors = extraPackages.includes("cors");
   const hasHelmet = extraPackages.includes("helmet");
 
@@ -93,17 +102,19 @@ async function resolveServerSource(extraPackages: ExtraPackage[]): Promise<strin
   if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
   if (hasCors) extraMiddleware += "app.use(cors());\n";
 
-  const raw = await readTemplate("mvc/server.ts");
+  const raw = await readTemplate("express/server.ts");
   return injectVariables(raw, {
     EXTRA_IMPORTS: extraImports,
     EXTRA_MIDDLEWARE: extraMiddleware,
   });
 }
 
-async function resolveUserController(extraPackages: ExtraPackage[]): Promise<string> {
+async function resolveUserController(
+  extraPackages: ExtraPackage[],
+): Promise<string> {
   const variant = extraPackages.includes("zod")
-    ? "mvc/user.controller.zod.ts"
-    : "mvc/user.controller.default.ts";
+    ? "express/user.controller.zod.ts"
+    : "express/user.controller.default.ts";
   return readTemplate(variant);
 }
 
@@ -111,7 +122,7 @@ async function resolveUserController(extraPackages: ExtraPackage[]): Promise<str
 // Main generator
 // ---------------------------------------------------------------------------
 
-export async function generateProject(options: ProjectOptions) {
+export async function generateExpressProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
 
   // Generate cryptographically secure secrets once per scaffold run.
@@ -146,27 +157,32 @@ export async function generateProject(options: ProjectOptions) {
     dockerCompose,
     exampleTest,
   ] = await Promise.all([
-    readTemplate("mvc/schema.prisma"),
-    readTemplate("mvc/prisma.config.ts"),
-    readTemplate("mvc/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
+    resolveEnvFile(
+      options.dbTarget,
+      options.projectName,
+      jwtSecret,
+      dbPassword,
+    ),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages),
-    readTemplate("mvc/error.middleware.ts"),
-    readTemplate("mvc/health.routes.ts"),
-    readTemplate("mvc/user.routes.ts"),
+    readTemplate("express/error.middleware.ts"),
+    readTemplate("express/health.routes.ts"),
+    readTemplate("express/user.routes.ts"),
     resolveUserController(options.extraPackages),
-    readTemplate("mvc/user.service.ts"),
-    readTemplate("mvc/auth.controller.ts"),
-    readTemplate("mvc/auth.middleware.ts"),
-    readTemplate("mvc/auth.routes.ts"),
+    readTemplate("express/user.service.ts"),
+    readTemplate("express/auth.controller.ts"),
+    readTemplate("express/auth.middleware.ts"),
+    readTemplate("express/auth.routes.ts"),
     options.dbTarget === "docker"
-      ? readTemplate("mvc/wait-for-postgres.ts")
+      ? readTemplate("express/wait-for-postgres.ts")
       : Promise.resolve(null),
     options.dbTarget === "docker"
       ? resolveDockerCompose(options.projectName, dbPassword)
       : Promise.resolve(null),
-    readTemplate("mvc/example.test.ts"),
+    readTemplate("express/example.test.ts"),
   ]);
 
   // Assemble file list
@@ -195,11 +211,136 @@ export async function generateProject(options: ProjectOptions) {
 
   // Write all files + package.json in parallel
   await Promise.all([
-    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    ...files.map(([path, content]) =>
+      writeFile(join(targetDir, path), content),
+    ),
     createPackageJson(
       options.projectName,
       options.dbTarget,
       options.extraPackages,
     ).then((pkgJson) => writeJson(join(targetDir, "package.json"), pkgJson)),
   ]);
+}
+
+async function generateLaravelProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  const dbPassword = generateDbPassword();
+
+  console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
+
+  const proc = Bun.spawn({
+    cmd: [
+      "composer",
+      "create-project",
+      "laravel/laravel",
+      options.projectName,
+      "--no-scripts",
+    ],
+    cwd: process.cwd(),
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+
+  const exitCode = await proc.exited;
+  if (exitCode !== 0) {
+    throw new Error(
+      "Composer failed to install Laravel. Do you have PHP/Composer installed?",
+    );
+  }
+
+  console.log(`✅ Laravel installation complete!`);
+
+  console.log(`\n🏗️  Installing API Routes & Sanctum...`);
+  const apiProc = Bun.spawn(["php", "artisan", "install:api", "--without-migration-prompt"], {
+    cwd: targetDir,
+    stdout: "ignore",
+    stderr: "ignore",
+  });
+  await apiProc.exited;
+
+  const apiStubPath = join(process.cwd(), "templates/laravel/routes/api.stub");
+  const apiRoutePath = join(targetDir, "routes/api.php");
+  const stub = await Bun.file(apiStubPath).text();
+  const existing = await Bun.file(apiRoutePath).text();
+  await Bun.write(apiRoutePath, existing + "\n" + stub);
+
+  console.log(`\n🔑 Enabling API Tokens on User Model...`);
+  const userModelPath = join(targetDir, "app/Models/User.php");
+  let userModelContent = await Bun.file(userModelPath).text();
+  userModelContent = userModelContent.replace(
+    "use HasFactory, Notifiable;",
+    "use \\Laravel\\Sanctum\\HasApiTokens, HasFactory, Notifiable;"
+  );
+  await Bun.write(userModelPath, userModelContent);
+
+  console.log(`\n💉 Injecting PostgreSQL configuration.
+  ..`);
+
+  const envExamplePath = join(targetDir, ".env.example");
+  const envPath = join(targetDir, ".env");
+
+  let envContent = await Bun.file(envExamplePath).text();
+
+  envContent = envContent.replace(
+    "DB_CONNECTION=sqlite",
+    "DB_CONNECTION=pgsql",
+  );
+
+  if (options.dbTarget === "supabase") {
+  }
+  envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
+  envContent = envContent.replace("# DB_PORT=3306", `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`);
+  envContent = envContent.replace(
+    "# DB_DATABASE=laravel",
+    `DB_DATABASE=${options.projectName}`,
+  );
+  envContent = envContent.replace("# DB_USERNAME=root", "DB_USERNAME=postgres");
+  envContent = envContent.replace(
+    "# DB_PASSWORD=",
+    `DB_PASSWORD=${options.dbTarget === "docker" ? dbPassword : "postgres"}`,
+  );
+
+  await writeFile(envPath, envContent);
+
+  if (options.dbTarget === "docker") {
+    console.log(`\n🐳 Generating docker-compose.yml...
+  `);
+
+    const dockerCompose = await resolveDockerCompose(
+      options.projectName,
+      dbPassword,
+    );
+
+    await writeFile(join(targetDir, "docker-compose.yml"), dockerCompose);
+  } else if (options.dbTarget === "local") {
+  } else if (options.dbTarget === "supabase") {
+  }
+
+  // Create advanced Service structure
+  console.log(`\n🏗️  Scaffolding Pro Architecture (Services & Controllers)...`);
+  
+  await mkdir(join(targetDir, "app/Services"), { recursive: true });
+  await mkdir(join(targetDir, "app/Http/Controllers/Api"), { recursive: true });
+
+  const [authService, userService, authController, userController] = await Promise.all([
+    readTemplate("laravel/app/Services/AuthService.php"),
+    readTemplate("laravel/app/Services/UserService.php"),
+    readTemplate("laravel/app/Http/Controllers/Api/AuthController.php"),
+    readTemplate("laravel/app/Http/Controllers/Api/UserController.php"),
+  ]);
+
+  await Promise.all([
+    writeFile(join(targetDir, "app/Services/AuthService.php"), authService),
+    writeFile(join(targetDir, "app/Services/UserService.php"), userService),
+    writeFile(join(targetDir, "app/Http/Controllers/Api/AuthController.php"), authController),
+    writeFile(join(targetDir, "app/Http/Controllers/Api/UserController.php"), userController),
+  ]);
+}
+
+export async function generateProject(options: ProjectOptions) {
+  if (options.framework === "express") {
+    await generateExpressProject(options);
+  } else if (options.framework === "laravel") {
+    await generateLaravelProject(options);
+  }
 }
