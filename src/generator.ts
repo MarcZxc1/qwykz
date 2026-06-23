@@ -286,18 +286,25 @@ async function generateLaravelProject(options: ProjectOptions) {
   );
 
   if (options.dbTarget === "supabase") {
+    const parsed = new URL(options.supabaseDbUrl || "postgresql://postgres:postgres@aws-0-eu-central-1.pooler.supabase.com:5432/postgres");
+    envContent = envContent.replace("# DB_HOST=127.0.0.1", `DB_HOST=${parsed.hostname}`);
+    envContent = envContent.replace("# DB_PORT=3306", `DB_PORT=${parsed.port || "5432"}`);
+    envContent = envContent.replace("# DB_DATABASE=laravel", `DB_DATABASE=postgres`);
+    envContent = envContent.replace("# DB_USERNAME=root", `DB_USERNAME=${parsed.username}`);
+    envContent = envContent.replace("# DB_PASSWORD=", `DB_PASSWORD=${parsed.password}`);
+  } else {
+    envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
+    envContent = envContent.replace("# DB_PORT=3306", `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`);
+    envContent = envContent.replace(
+      "# DB_DATABASE=laravel",
+      `DB_DATABASE=${options.projectName}`,
+    );
+    envContent = envContent.replace("# DB_USERNAME=root", "DB_USERNAME=postgres");
+    envContent = envContent.replace(
+      "# DB_PASSWORD=",
+      `DB_PASSWORD=${options.dbTarget === "docker" ? dbPassword : "postgres"}`,
+    );
   }
-  envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
-  envContent = envContent.replace("# DB_PORT=3306", `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`);
-  envContent = envContent.replace(
-    "# DB_DATABASE=laravel",
-    `DB_DATABASE=${options.projectName}`,
-  );
-  envContent = envContent.replace("# DB_USERNAME=root", "DB_USERNAME=postgres");
-  envContent = envContent.replace(
-    "# DB_PASSWORD=",
-    `DB_PASSWORD=${options.dbTarget === "docker" ? dbPassword : "postgres"}`,
-  );
 
   await writeFile(envPath, envContent);
 
