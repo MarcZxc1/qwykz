@@ -9,7 +9,12 @@ import {
 } from "@clack/prompts";
 import pc from "picocolors";
 import pkg from "../package.json";
-import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
+import type {
+  DbTarget,
+  ExtraPackage,
+  ProjectOptions,
+  Framework,
+} from "./types";
 
 function stopOnCancel(value: unknown): asserts value {
   if (isCancel(value)) {
@@ -19,7 +24,10 @@ function stopOnCancel(value: unknown): asserts value {
 }
 
 function normalizePackageName(name: string): string {
-  const normalized = name.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+  const normalized = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-");
   // Strip leading digits/dashes (invalid npm name start) and trailing dashes
   const clean = normalized.replace(/^[-0-9]+/, "").replace(/-+$/, "");
   if (!clean) return "qwykz-app";
@@ -48,13 +56,14 @@ export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
 // ---------------------------------------------------------------------------
 
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
-  // Non-interactive mode: use flags or sensible defaults
+  // Non-interactive mode: use flags or sensible default
   if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
-    const dbTarget: DbTarget = (["supabase", "local", "docker"].includes(dbRaw)
-      ? dbRaw
-      : "local") as DbTarget;
+    const frameworkRaw = getFlagValue("--framework") ?? "express";
+    const dbTarget: DbTarget = (
+      ["supabase", "local", "docker"].includes(dbRaw) ? dbRaw : "local"
+    ) as DbTarget;
 
     // In non-interactive mode, no extra packages unless explicitly requested
     const extraPackages: ExtraPackage[] = [];
@@ -63,33 +72,50 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     if (hasFlag("--cors")) extraPackages.push("cors");
 
     return {
+      framework: (["express", "laravel"].includes(frameworkRaw)
+        ? frameworkRaw
+        : "express") as Framework,
       projectName: normalizePackageName(name),
       dbTarget,
       extraPackages,
     };
   }
 
-  console.log(pc.bold(pc.cyan(`
+  console.log(
+    pc.bold(
+      pc.cyan(`
                        _         
    __ ___      ___   _| | __ ____
   / _\` \\ \\ /\\ / / | | | |/ /|_  /
  | (_| |\\ V  V /| |_| |   <  / / 
   \\__, | \\_/\\_/  \\__, |_|\\_\\/___|
      |_|         |___/           
-  `)));
+  `),
+    ),
+  );
   intro(`Quick & Ready Boilerplate Builder v${pkg.version}`);
 
   const projectName = await text({
     message: "What is the name of your project?",
     placeholder: "qwykz-app",
     validate(value) {
-      if (!value || value.trim().length === 0) return "Project name cannot be empty.";
+      if (!value || value.trim().length === 0)
+        return "Project name cannot be empty.";
       if (!/^[a-zA-Z0-9-_ ]+$/.test(value)) {
         return "Use letters, numbers, spaces, hyphens, or underscores only.";
       }
     },
   });
   stopOnCancel(projectName);
+
+  const framework = await select({
+    message: "What backend framework do you want to generate?",
+    options: [
+      { value: "express", label: "Express.js + Typescript" },
+      { value: "laravel", label: "Vanilla Laravel(PHP)" },
+    ],
+  });
+  stopOnCancel(framework);
 
   const dbTarget = await select({
     message: "Select your PostgreSQL environment target:",
@@ -103,28 +129,31 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const extraPackages: ExtraPackage[] = [];
 
-  const shouldInstallZod = await confirm({
-    message: "Install Zod for request validation?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallZod);
-  if (shouldInstallZod) extraPackages.push("zod");
+  if (framework === "express") {
+    const shouldInstallZod = await confirm({
+      message: "Install Zod for request validation?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallZod);
+    if (shouldInstallZod) extraPackages.push("zod");
 
-  const shouldInstallHelmet = await confirm({
-    message: "Install Helmet for security headers?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallHelmet);
-  if (shouldInstallHelmet) extraPackages.push("helmet");
+    const shouldInstallHelmet = await confirm({
+      message: "Install Helmet for security headers?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallHelmet);
+    if (shouldInstallHelmet) extraPackages.push("helmet");
 
-  const shouldInstallCors = await confirm({
-    message: "Install CORS for cross-origin requests?",
-    initialValue: false,
-  });
-  stopOnCancel(shouldInstallCors);
-  if (shouldInstallCors) extraPackages.push("cors");
+    const shouldInstallCors = await confirm({
+      message: "Install CORS for cross-origin requests?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallCors);
+    if (shouldInstallCors) extraPackages.push("cors");
+  }
 
   return {
+    framework: framework as Framework,
     projectName: normalizePackageName(String(projectName)),
     dbTarget: dbTarget as DbTarget,
     extraPackages,
@@ -148,18 +177,23 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
 }
 
 export function showSuccess(options: ProjectOptions, setupRan = false) {
+  const devCommand =
+    options.framework === "laravel" ? "php artisan serve" : "bun dev";
+
+  const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
+
+  const generateCmd =
+    options.framework === "laravel"
+      ? "php artisan key:generate"
+      : "bun run db:generate";
+
+  const pushCmd =
+    options.framework === "laravel" ? "php artisan migrate" : "bun run db:push";
+
   if (setupRan) {
-    if (options.dbTarget === "docker") {
-      outro(`Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`);
-      return;
-    }
-    outro(`Your boilerplate "${options.projectName}" is ready.
-
-Setup commands completed automatically.
-
-Next command:
-  cd ${options.projectName}
-  bun dev`);
+    outro(
+      `Your boilerplate "${options.projectName}" is ready.\n\nSetup commands completed automatically.`,
+    );
     return;
   }
 
@@ -172,10 +206,9 @@ Next command:
 3. Run the following commands to finish setup:
 
   cd ${options.projectName}
-  bun install
-  bun run db:generate
-  bun run db:push
-  bun dev`);
+${installCmd}  ${generateCmd}
+  ${pushCmd}
+  ${devCommand}`);
     return;
   }
 
@@ -183,8 +216,7 @@ Next command:
 
 Next commands:
   cd ${options.projectName}
-  bun install
-  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}bun run db:generate
-  bun run db:push
-  bun dev`);
+${installCmd}  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}${generateCmd}
+  ${pushCmd}
+  ${devCommand}`);
 }
