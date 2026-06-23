@@ -1,6 +1,6 @@
 {
   "name": "qwykz",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Fast Express + TypeScript + Prisma boilerplate generator built with Bun",
   "repository": {
     "type": "git",
