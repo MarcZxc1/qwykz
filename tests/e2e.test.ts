@@ -37,13 +37,13 @@ test("E2E: Express with Docker Postgres", async () => {
   await run("bun run db:push", cwd);
 
   const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
-  await waitForServer("http://localhost:8000/api/health");
 
   try {
-    const res = await fetch("http://localhost:8000/api/health");
+    await waitForServer("http://127.0.0.1:3000/api/health");
+    const res = await fetch("http://127.0.0.1:3000/api/health");
     expect(res.status).toBe(200);
 
-    const authRes = await fetch("http://localhost:8000/api/auth/register", {
+    const authRes = await fetch("http://127.0.0.1:3000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test", email: "test@example.com", password: "password123" })
@@ -68,13 +68,13 @@ test("E2E: Laravel with Docker Postgres", async () => {
   await run("php artisan migrate --force", cwd);
 
   const server = spawn("php", ["artisan", "serve"], { cwd, stdio: "ignore" });
-  await waitForServer("http://localhost:8000/api/health");
 
   try {
-    const res = await fetch("http://localhost:8000/api/health");
+    await waitForServer("http://127.0.0.1:8000/api/health");
+    const res = await fetch("http://127.0.0.1:8000/api/health");
     expect(res.status).toBe(200);
 
-    const authRes = await fetch("http://localhost:8000/api/auth/register", {
+    const authRes = await fetch("http://127.0.0.1:8000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({ name: "Test", email: "test2@example.com", password: "password123" })
