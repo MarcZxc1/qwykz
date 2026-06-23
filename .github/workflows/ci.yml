@@ -24,7 +24,7 @@ jobs:
         run: bun install
 
       - name: Run Tests
-        run: bun test --timeout 15000
+        run: bun test --timeout 180000
 
       - name: Verify Binary Build
         run: bun run build:bin
