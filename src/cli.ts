@@ -91,6 +91,7 @@ async function runSetupCommands(
         targetDir,
       );
     }
+
     await runCommand(["php", "artisan", "key:generate"], targetDir);
     await runCommand(["php", "artisan", "migrate"], targetDir);
   }

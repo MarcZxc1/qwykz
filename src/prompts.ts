@@ -60,6 +60,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
+    const frameworkRaw = getFlagValue("--framework") ?? "express";
     const dbTarget: DbTarget = (
       ["supabase", "local", "docker"].includes(dbRaw) ? dbRaw : "local"
     ) as DbTarget;
@@ -71,7 +72,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     if (hasFlag("--cors")) extraPackages.push("cors");
 
     return {
-      framework: "express",
+      framework: (["express", "laravel"].includes(frameworkRaw)
+        ? frameworkRaw
+        : "express") as Framework,
       projectName: normalizePackageName(name),
       dbTarget,
       extraPackages,
@@ -177,8 +180,7 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
   const devCommand =
     options.framework === "laravel" ? "php artisan serve" : "bun dev";
 
-  const installCmd =
-    options.framework === "laravel" ? "" : "  bun install\n";
+  const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
 
   const generateCmd =
     options.framework === "laravel"

@@ -250,6 +250,29 @@ async function generateLaravelProject(options: ProjectOptions) {
 
   console.log(`✅ Laravel installation complete!`);
 
+  console.log(`\n🏗️  Installing API Routes & Sanctum...`);
+  const apiProc = Bun.spawn(["php", "artisan", "install:api", "--without-migration-prompt"], {
+    cwd: targetDir,
+    stdout: "ignore",
+    stderr: "ignore",
+  });
+  await apiProc.exited;
+
+  const apiStubPath = join(process.cwd(), "templates/laravel/routes/api.stub");
+  const apiRoutePath = join(targetDir, "routes/api.php");
+  const stub = await Bun.file(apiStubPath).text();
+  const existing = await Bun.file(apiRoutePath).text();
+  await Bun.write(apiRoutePath, existing + "\n" + stub);
+
+  console.log(`\n🔑 Enabling API Tokens on User Model...`);
+  const userModelPath = join(targetDir, "app/Models/User.php");
+  let userModelContent = await Bun.file(userModelPath).text();
+  userModelContent = userModelContent.replace(
+    "use HasFactory, Notifiable;",
+    "use \\Laravel\\Sanctum\\HasApiTokens, HasFactory, Notifiable;"
+  );
+  await Bun.write(userModelPath, userModelContent);
+
   console.log(`\n💉 Injecting PostgreSQL configuration.
   ..`);
 
@@ -263,8 +286,10 @@ async function generateLaravelProject(options: ProjectOptions) {
     "DB_CONNECTION=pgsql",
   );
 
+  if (options.dbTarget === "supabase") {
+  }
   envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
-  envContent = envContent.replace("# DB_PORT=3306", "DB_PORT=5432");
+  envContent = envContent.replace("# DB_PORT=3306", `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`);
   envContent = envContent.replace(
     "# DB_DATABASE=laravel",
     `DB_DATABASE=${options.projectName}`,
@@ -290,6 +315,26 @@ async function generateLaravelProject(options: ProjectOptions) {
   } else if (options.dbTarget === "local") {
   } else if (options.dbTarget === "supabase") {
   }
+
+  // Create advanced Service structure
+  console.log(`\n🏗️  Scaffolding Pro Architecture (Services & Controllers)...`);
+  
+  await mkdir(join(targetDir, "app/Services"), { recursive: true });
+  await mkdir(join(targetDir, "app/Http/Controllers/Api"), { recursive: true });
+
+  const [authService, userService, authController, userController] = await Promise.all([
+    readTemplate("laravel/app/Services/AuthService.php"),
+    readTemplate("laravel/app/Services/UserService.php"),
+    readTemplate("laravel/app/Http/Controllers/Api/AuthController.php"),
+    readTemplate("laravel/app/Http/Controllers/Api/UserController.php"),
+  ]);
+
+  await Promise.all([
+    writeFile(join(targetDir, "app/Services/AuthService.php"), authService),
+    writeFile(join(targetDir, "app/Services/UserService.php"), userService),
+    writeFile(join(targetDir, "app/Http/Controllers/Api/AuthController.php"), authController),
+    writeFile(join(targetDir, "app/Http/Controllers/Api/UserController.php"), userController),
+  ]);
 }
 
 export async function generateProject(options: ProjectOptions) {
