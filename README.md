@@ -1,14 +1,14 @@
 <div align="center">
 
 # ⚡ qwykz ⚡
-**Quick & Ready Boilerplate Builder**
+**The Ultimate Dual-Stack API Boilerplate Builder**
 
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
+[![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
 [![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 
-A fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Express + Prisma applications. 
+A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Enterprise-grade **Express** and **Laravel** APIs. 
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Wiki / Docs](docs/home.md) • [Contributing](#contributing)
 
@@ -18,20 +18,16 @@ A fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Express +
 
 ## Features
 
-* **Fast**: Powered by Bun for quick execution and scaffolding.
-* **Dynamic Dependencies**: Automatically fetches the latest stable versions from the npm registry for all your packages, with offline cache fallback.
-* **Database Ready**: Choose your PostgreSQL setup:
-  * Local Installation
-  * Fully Dockerized (includes `docker-compose.yml` and wait scripts)
-  * Supabase Cloud
-* **Modern Stack**: 
-  * TypeScript configured
-  * Prisma ORM included
-  * Built-in error handling middlewares
-  * Helmet & CORS integration
-  * Zod request validation
-* **Built-in Auth**: Optional argon2 password hashing and JWT authentication.
-* **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated setups.
+* **Dual-Stack Scaffolding**: Generate exact 1-to-1 API architectures in either Node.js (Express) or PHP (Laravel 11). 
+* **Enterprise Architecture**: Automatically generates a scalable Service/Controller pattern right out of the box.
+* **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
+  * **Local Installation**
+  * **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)
+  * **Supabase Cloud** (automatically formats IPv4 Pooler connections and skips local migrations)
+* **Out-of-the-Box API Security**: 
+  * Express: JWT authentication, Argon2 hashing, Helmet, CORS, and Zod validation.
+  * Laravel: Silent Sanctum installation, automatic User model traits, and built-in Auth endpoints.
+* **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated testing setups.
 
 ## Installation
 
@@ -58,27 +54,25 @@ qwykz
 ```
 You will be prompted to:
 1. Name your project
-2. Select your Database Target (Local, Docker, or Supabase)
-3. Opt-in to Zod, Helmet, and CORS
+2. Select your Framework (Express or Vanilla Laravel)
+3. Select your Database Target (Local, Docker, or Supabase)
+4. (Express only) Opt-in to Zod, Helmet, and CORS
 
 ### Non-Interactive Mode (Automated)
-Perfect for scripts! Use the `--yes` or `-y` flag combined with options:
+Perfect for scripts or CI/CD pipelines! Use the `--yes` or `-y` flag combined with options:
 ```bash
 qwykz --yes \
   --name my-awesome-api \
-  --db docker \
-  --zod \
-  --helmet \
-  --cors
+  --framework laravel \
+  --db docker
 ```
 
 Available flags:
 * `--yes` or `-y`: Skip all prompts and use defaults/flags
 * `--name <string>`: Name of your project directory
+* `--framework <express|laravel>`: Choose your backend stack
 * `--db <supabase|local|docker>`: Select database environment
-* `--zod`: Include Zod validation
-* `--helmet`: Include Helmet security headers
-* `--cors`: Include CORS middleware
+* `--zod`, `--helmet`, `--cors`: (Express only) Include extra middlewares
 
 ## Documentation
 

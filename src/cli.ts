@@ -113,6 +113,7 @@ export async function runCli() {
       await runSetupCommands(options);
       s.stop("Setup commands completed.");
       showSuccess(options, true);
+      console.log(pc.yellow("\n⭐ Please leave a star if you like this package: https://github.com/MarcZxc1/qwykz\n"));
       console.log(pc.green("\n🚀 Starting development server..."));
 
       const devCmd =
@@ -129,6 +130,7 @@ export async function runCli() {
     }
 
     showSuccess(options, false);
+    console.log(pc.yellow("\n⭐ Please leave a star if you like this package: https://github.com/MarcZxc1/qwykz\n"));
     process.exit(0);
   } catch (error) {
     s.stop(pc.red("Configuration failed."));
