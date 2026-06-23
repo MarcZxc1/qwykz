@@ -258,9 +258,8 @@ async function generateLaravelProject(options: ProjectOptions) {
   });
   await apiProc.exited;
 
-  const apiStubPath = join(process.cwd(), "templates/laravel/routes/api.stub");
   const apiRoutePath = join(targetDir, "routes/api.php");
-  const stub = await Bun.file(apiStubPath).text();
+  const stub = await readTemplate("laravel/routes/api.stub");
   const existing = await Bun.file(apiRoutePath).text();
   await Bun.write(apiRoutePath, existing + "\n" + stub);
 
