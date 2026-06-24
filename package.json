@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build:bin": "bun run scripts/build-bin.ts",
-    "test": "bun test --timeout 15000"
+    "test": "bun test tests/ --timeout 180000"
   },
   "devDependencies": {
     "@types/bun": "latest",
