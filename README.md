@@ -18,8 +18,13 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold
 
 ## Features
 
-* **Dual-Stack Scaffolding**: Generate exact 1-to-1 API architectures in either Node.js (Express) or PHP (Laravel 11). 
-* **Enterprise Architecture**: Automatically generates a scalable Service/Controller pattern right out of the box.
+* **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Laravel), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
+* **Enterprise Architecture**: Automatically generates scalable Service/Controller/Model patterns for backend code right out of the box.
+* **Frontend Powerhouses**:
+  * React & Vue apps are generated using high-speed Vite.
+  * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
+  * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js` natively.
+  * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
 * **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
   * **Local Installation**
   * **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)
@@ -54,9 +59,9 @@ qwykz
 ```
 You will be prompted to:
 1. Name your project
-2. Select your Framework (Express or Vanilla Laravel)
-3. Select your Database Target (Local, Docker, or Supabase)
-4. (Express only) Opt-in to Zod, Helmet, and CORS
+2. Select your Stack (Express, Laravel, Next.js, React, or Vue)
+3. Select your Database Target (Local, Docker, or Supabase) *[Backend only]*
+4. Opt-in to extra features (Zod, Helmet, CORS) *[Express only]*
 
 ### Non-Interactive Mode (Automated)
 Perfect for scripts or CI/CD pipelines! Use the `--yes` or `-y` flag combined with options:
