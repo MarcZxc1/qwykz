@@ -196,8 +196,12 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
 2. Replace the placeholders with your Supabase credentials
 3. Run the following commands to start your app:
 
+Manual Execution:
   cd ${options.projectName}
-${setupRan ? "" : installCmd}  ${devCommand}`);
+${setupRan ? "" : installCmd}  ${devCommand}
+
+Automated One-liner:
+  cd ${options.projectName}${setupRan ? "" : " && " + installCmd.trim()} && ${devCommand}`);
     return;
   }
 
@@ -224,18 +228,26 @@ ${setupRan ? "" : installCmd}  ${devCommand}`);
 2. Replace the placeholders with your Supabase credentials
 3. Run the following commands to finish setup:
 
+Manual Execution:
   cd ${options.projectName}
 ${installCmd}  ${generateCmd}
   ${pushCmd}
-  ${devCommand}`);
+  ${devCommand}
+  
+Automated One-liner:
+  cd ${options.projectName}${installCmd ? " && " + installCmd.trim() : ""} && ${generateCmd} && ${pushCmd} && ${devCommand}`);
     return;
   }
 
   outro(`Your boilerplate "${options.projectName}" is ready.
 
 Next commands:
+Manual Execution:
   cd ${options.projectName}
 ${installCmd}  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}${generateCmd}
   ${pushCmd}
-  ${devCommand}`);
+  ${devCommand}
+  
+Automated One-liner:
+  cd ${options.projectName}${installCmd ? " && " + installCmd.trim() : ""}${options.dbTarget === "docker" ? " && docker compose up -d" : ""} && ${generateCmd} && ${pushCmd} && ${devCommand}`);
 }
