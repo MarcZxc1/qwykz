@@ -27,49 +27,48 @@ async function waitForServer(url: string) {
 test("E2E: Express with Docker Postgres", async () => {
   const projectName = "e2e-express";
   await rm(projectName, { recursive: true, force: true });
-
-  await run(`bun run src/index.ts -y --name ${projectName} --framework express --db docker`, process.cwd());
   const cwd = join(process.cwd(), projectName);
-  
-  await run("bun install", cwd);
-  await run("docker compose up -d --wait", cwd);
-  await run("bun run db:generate", cwd);
-  await run("bun run db:push", cwd);
-
-  const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
 
   try {
-    await waitForServer("http://127.0.0.1:3000/health");
-    const res = await fetch("http://127.0.0.1:3000/health");
+    await run(`bun run src/index.ts -y --name ${projectName} --framework express --db docker`, process.cwd());
+    await run("bun install", cwd);
+    await run("docker compose up -d --wait", cwd);
+    await run("bun run db:generate", cwd);
+    await run("bun run db:push", cwd);
+
+    const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
+
+    await waitForServer("http://127.0.0.1:3000/api/health");
+    const res = await fetch("http://127.0.0.1:3000/api/health");
     expect(res.status).toBe(200);
 
-    const authRes = await fetch("http://127.0.0.1:3000/auth/register", {
+    const authRes = await fetch("http://127.0.0.1:3000/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test", email: "test@example.com", password: "password123" })
     });
     expect(authRes.status).toBe(201);
-  } finally {
     server.kill();
-    await run("docker compose down -v", cwd);
-    await rm(projectName, { recursive: true, force: true });
+  } finally {
+    await run("docker compose down -v", cwd).catch(() => {});
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 }, 120000);
 
 test("E2E: Laravel with Docker Postgres", async () => {
   const projectName = "e2e-laravel";
   await rm(projectName, { recursive: true, force: true });
-
-  await run(`bun run src/index.ts -y --name ${projectName} --framework laravel --db docker`, process.cwd());
   const cwd = join(process.cwd(), projectName);
-  
-  await run("docker compose up -d --wait", cwd);
-  await run("php artisan key:generate", cwd);
-  await run("php artisan migrate --force", cwd);
-
-  const server = spawn("php", ["artisan", "serve"], { cwd, stdio: "ignore" });
 
   try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework laravel --db docker`, process.cwd());
+    await run("docker compose up -d --wait", cwd);
+    await run("php artisan key:generate", cwd);
+    await new Promise(r => setTimeout(r, 3000)); // Wait for DB init
+    await run("php artisan migrate --force", cwd);
+
+    const server = spawn("php", ["artisan", "serve"], { cwd, stdio: "ignore" });
+
     await waitForServer("http://127.0.0.1:8000/api/health");
     const res = await fetch("http://127.0.0.1:8000/api/health");
     expect(res.status).toBe(200);
@@ -80,9 +79,41 @@ test("E2E: Laravel with Docker Postgres", async () => {
       body: JSON.stringify({ name: "Test", email: "test2@example.com", password: "password123" })
     });
     expect(authRes.status).toBe(201);
-  } finally {
     server.kill();
-    await run("docker compose down -v", cwd);
-    await rm(projectName, { recursive: true, force: true });
+  } finally {
+    await run("docker compose down -v", cwd).catch(() => {});
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 }, 120000);
+
+test("E2E: Next.js with Docker Postgres", async () => {
+  const projectName = "e2e-nextjs";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework nextjs --db docker`, process.cwd());
+    await run("bun install", cwd);
+    await run("docker compose up -d --wait", cwd);
+    await new Promise(r => setTimeout(r, 3000)); // Wait for DB init
+    await run("bun run db:generate", cwd);
+    await run("bun run db:push", cwd);
+
+    const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
+
+    await waitForServer("http://127.0.0.1:3000/api/health");
+    const res = await fetch("http://127.0.0.1:3000/api/health");
+    expect(res.status).toBe(200);
+
+    const authRes = await fetch("http://127.0.0.1:3000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Test Next", email: "next@example.com", password: "password123" })
+    });
+    expect(authRes.status).toBe(201);
+    server.kill();
+  } finally {
+    await run("docker compose down -v", cwd).catch(() => {});
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+}, 180000);

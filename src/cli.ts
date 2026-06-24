@@ -69,31 +69,45 @@ async function runCommand(command: string[], cwd: string) {
 
 async function runSetupCommands(
   options: Awaited<ReturnType<typeof promptForProjectOptions>>,
+  s: any
 ) {
   const targetDir = join(process.cwd(), options.projectName);
 
-  if (options.framework === "express") {
+  if (options.framework === "express" || options.framework === "nextjs") {
+    s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
 
     if (options.dbTarget === "docker") {
+      s.message("🐳 Booting up PostgreSQL container...");
       await runCommand(
         ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
         targetDir,
       );
     }
 
+    s.message("◓ Generating Prisma Client...");
     await runCommand(["bun", "run", "db:generate"], targetDir);
+    s.message("🚀 Pushing database schema...");
     await runCommand(["bun", "run", "db:push"], targetDir);
+    
+    s.message("🧪 Running automated test suite...");
+    await runCommand(["bun", "test"], targetDir);
   } else if (options.framework === "laravel") {
     if (options.dbTarget === "docker") {
+      s.message("🐳 Booting up PostgreSQL container...");
       await runCommand(
         ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
         targetDir,
       );
     }
 
-    await runCommand(["php", "artisan", "key:generate"], targetDir);
-    await runCommand(["php", "artisan", "migrate"], targetDir);
+    s.message("🔑 Generating Laravel app key...");
+    await runCommand(["php", "artisan", "key:generate", "--force", "-n"], targetDir);
+    s.message("🚀 Running database migrations...");
+    await runCommand(["php", "artisan", "migrate", "--force", "-n"], targetDir);
+  } else if (options.framework === "react" || options.framework === "vue") {
+    s.message("📦 Installing NPM dependencies...");
+    await runCommand(["bun", "install"], targetDir);
   }
 }
 
@@ -109,8 +123,8 @@ export async function runCli() {
 
     const shouldRunSetup = await promptForAutomaticSetup(options);
     if (shouldRunSetup) {
-      s.stop("Running setup commands...");
-      await runSetupCommands(options);
+      s.start("Running background setup commands...");
+      await runSetupCommands(options, s);
       s.stop("Setup commands completed.");
       showSuccess(options, true);
       console.log(pc.yellow("\n⭐ Please leave a star if you like this package: https://github.com/MarcZxc1/qwykz\n"));

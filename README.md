@@ -7,8 +7,13 @@
 [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com/)
 [![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://react.dev/)
+[![Vue](https://img.shields.io/badge/Vue.js-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)](https://vuejs.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-%233ECF8E.svg?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Enterprise-grade **Express** and **Laravel** APIs. 
+A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Enterprise-grade **Backend**, **Frontend**, and **Fullstack** applications. 
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Wiki / Docs](docs/home.md) • [Contributing](#contributing)
 
@@ -18,8 +23,13 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold
 
 ## Features
 
-* **Dual-Stack Scaffolding**: Generate exact 1-to-1 API architectures in either Node.js (Express) or PHP (Laravel 11). 
-* **Enterprise Architecture**: Automatically generates a scalable Service/Controller pattern right out of the box.
+* **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Laravel), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
+* **Enterprise Architecture**: Automatically generates scalable Service/Controller/Model patterns for backend code right out of the box.
+* **Frontend Powerhouses**:
+  * React & Vue apps are generated using high-speed Vite.
+  * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
+  * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js` natively.
+  * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
 * **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
   * **Local Installation**
   * **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)
@@ -54,9 +64,9 @@ qwykz
 ```
 You will be prompted to:
 1. Name your project
-2. Select your Framework (Express or Vanilla Laravel)
-3. Select your Database Target (Local, Docker, or Supabase)
-4. (Express only) Opt-in to Zod, Helmet, and CORS
+2. Select your Stack (Express, Laravel, Next.js, React, or Vue)
+3. Select your Database Target (Local, Docker, or Supabase) *[Backend only]*
+4. Opt-in to extra features (Zod, Helmet, CORS) *[Express only]*
 
 ### Non-Interactive Mode (Automated)
 Perfect for scripts or CI/CD pipelines! Use the `--yes` or `-y` flag combined with options:

@@ -23,6 +23,10 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        if (count($request->all()) > count($validated)) {
+            return response()->json(['message' => 'Invalid payload. Only required fields are allowed.'], 400);
+        }
+
         $result = $this->authService->register($validated);
 
         return response()->json($result, 201);
@@ -34,6 +38,10 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
+
+        if (count($request->all()) > count($validated)) {
+            return response()->json(['message' => 'Invalid payload. Only required fields are allowed.'], 400);
+        }
 
         $result = $this->authService->login($validated);
 

@@ -1,0 +1,169 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { z } from 'zod'
+import { supabase } from './lib/supabase'
+import { session, user, loading, initAuth, signOut } from './lib/auth'
+
+const email = ref('')
+const password = ref('')
+const authLoading = ref(false)
+const errors = ref<Record<string, string>>({})
+const serverError = ref<string | null>(null)
+const successMessage = ref<string | null>(null)
+const mode = ref<'login' | 'register'>('login')
+
+const authSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+})
+
+onMounted(() => {
+  initAuth()
+})
+
+const handleAuth = async () => {
+  authLoading.value = true
+  errors.value = {}
+  serverError.value = null
+  successMessage.value = null
+  
+  try {
+    const parsed = authSchema.parse({ email: email.value, password: password.value })
+    
+    const { data, error: err } = mode.value === 'login' 
+      ? await supabase.auth.signInWithPassword({ email: parsed.email, password: parsed.password })
+      : await supabase.auth.signUp({ email: parsed.email, password: parsed.password })
+      
+    if (err) {
+      if (err.status === 429) {
+        serverError.value = "Too many requests! You are being rate limited. Please wait a moment and try again."
+      } else {
+        serverError.value = err.message
+      }
+    } else if (mode.value === 'register' && data?.user && !data?.session) {
+      successMessage.value = "Success! Please check your email to verify your account."
+    }
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const fieldErrors: Record<string, string> = {}
+      err.errors.forEach(e => {
+        if (e.path[0]) fieldErrors[e.path[0].toString()] = e.message
+      })
+      errors.value = fieldErrors
+    }
+  } finally {
+    authLoading.value = false
+  }
+}
+</script>
+
+<template>
+  <div v-if="loading" class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="text-xl font-semibold text-gray-600">Loading...</div>
+  </div>
+
+  <div v-else-if="session" class="min-h-screen bg-gray-100">
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <h1 class="text-xl font-bold text-gray-900">Dashboard</h1>
+          </div>
+          <div class="flex items-center">
+            <button 
+              @click="signOut"
+              class="ml-4 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="px-4 py-6 sm:px-0">
+        <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 p-8 flex flex-col items-center justify-center bg-white">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome back!</h2>
+          <p class="text-gray-600">You are securely authenticated as <span class="font-bold">{{ user?.email }}</span></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div v-else class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        {{ mode === 'login' ? 'Sign in to your account' : 'Create a new account' }}
+      </h2>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <form class="space-y-6" @submit.prevent="handleAuth">
+          <div v-if="serverError" class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+            <div class="text-sm text-red-700">{{ serverError }}</div>
+          </div>
+
+          <div v-if="successMessage" class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+            <div class="text-sm text-green-700">{{ successMessage }}</div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Email address</label>
+            <div class="mt-1">
+              <input 
+                type="email" 
+                v-model="email"
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+              <p v-if="errors.email" class="mt-2 text-sm text-red-600">{{ errors.email }}</p>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1">
+              <input 
+                type="password" 
+                v-model="password"
+                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+              <p v-if="errors.password" class="mt-2 text-sm text-red-600">{{ errors.password }}</p>
+            </div>
+          </div>
+
+          <div>
+            <button 
+              type="submit" 
+              :disabled="authLoading"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              {{ authLoading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Sign Up') }}
+            </button>
+          </div>
+        </form>
+        
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300" />
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white text-gray-500">Or</span>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button
+              @click="mode = mode === 'login' ? 'register' : 'login'"
+              class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {{ mode === 'login' ? 'Create a new account instead' : 'Log in to existing account' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
