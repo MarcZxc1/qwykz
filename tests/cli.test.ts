@@ -211,7 +211,7 @@ describe("qwykz CLI integration", () => {
 
     // Server has auth routes mounted
     const serverSource = await Bun.file(join(projectDir, "src/index.ts")).text();
-    expect(serverSource).toContain('"/auth"');
+    expect(serverSource).toContain('"/api/auth"');
 
     // .env has JWT_SECRET
     const envContent = await Bun.file(join(projectDir, ".env")).text();
