@@ -11,14 +11,15 @@ if (!JWT_SECRET) {
 }
 
 const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-});
+}).strict();
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-});
+}).strict();
 
 export async function register(req: Request, res: Response) {
   const parsed = registerSchema.safeParse(req.body);
@@ -39,6 +40,7 @@ export async function register(req: Request, res: Response) {
 
   const user = await prisma.user.create({
     data: {
+      name: parsed.data.name,
       email: parsed.data.email,
       password: hashedPassword,
     },
