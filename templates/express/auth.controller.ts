@@ -46,10 +46,10 @@ export async function register(req: Request, res: Response) {
     },
   });
 
-  const token = sign({ sub: user.id }, JWT_SECRET!, { expiresIn: "15m" });
+  const token = sign({ sub: user.id, role: user.role }, JWT_SECRET!, { expiresIn: "15m" });
 
   res.status(201).json({
-    user: { id: user.id, email: user.email },
+    user: { id: user.id, email: user.email, role: user.role },
     token,
   });
 }
@@ -75,10 +75,10 @@ export async function login(req: Request, res: Response) {
     throw new HttpError(401, "Invalid email or password");
   }
 
-  const token = sign({ sub: user.id }, JWT_SECRET!, { expiresIn: "15m" });
+  const token = sign({ sub: user.id, role: user.role }, JWT_SECRET!, { expiresIn: "15m" });
 
   res.json({
-    user: { id: user.id, email: user.email },
+    user: { id: user.id, email: user.email, role: user.role },
     token,
   });
 }

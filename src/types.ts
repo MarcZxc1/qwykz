@@ -1,6 +1,6 @@
-export type Framework = "express" | "laravel" | "nextjs" | "react" | "vue";
+export type Framework = "express" | "laravel" | "nextjs" | "react" | "vue" | "hono" | "elysia";
 
-export type DbTarget = "supabase" | "local" | "docker";
+export type DbTarget = "supabase" | "local" | "docker" | "neon";
 
 export type ExtraPackage = "cors" | "helmet" | "zod";
 

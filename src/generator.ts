@@ -49,11 +49,12 @@ async function resolveEnvFile(
     supabase: "express/env.supabase.txt",
     docker: "express/env.docker.txt",
     local: "express/env.local.txt",
+    neon: "express/env.neon.txt",
   };
 
   const raw = await readTemplate(variantMap[dbTarget]);
 
-  if (dbTarget === "supabase") {
+  if (dbTarget === "supabase" || dbTarget === "neon") {
     return injectVariables(raw, { JWT_SECRET: jwtSecret });
   }
 

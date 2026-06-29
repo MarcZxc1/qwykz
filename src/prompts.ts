@@ -72,7 +72,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     if (hasFlag("--cors")) extraPackages.push("cors");
 
     return {
-      framework: (["express", "laravel", "nextjs", "react", "vue"].includes(frameworkRaw)
+      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia"].includes(frameworkRaw)
         ? frameworkRaw
         : "express") as Framework,
       projectName: normalizePackageName(name),
@@ -112,6 +112,8 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     message: "What stack do you want to generate?",
     options: [
       { value: "express", label: "Express.js + Typescript (Backend)" },
+      { value: "hono", label: "Hono - Edge Optimized (Backend)" },
+      { value: "elysia", label: "Elysia - Bun Native (Backend)" },
       { value: "laravel", label: "Vanilla Laravel (Backend)" },
       { value: "nextjs", label: "Next.js (Fullstack)" },
       { value: "react", label: "React + Vite (Frontend)" },
@@ -121,11 +123,12 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   stopOnCancel(framework);
 
   let dbTarget: string | symbol = "local";
-  if (["express", "laravel", "nextjs"].includes(framework as string)) {
+  if (["express", "laravel", "nextjs", "hono", "elysia"].includes(framework as string)) {
     dbTarget = await select({
       message: "Select your PostgreSQL environment target:",
       options: [
         { value: "supabase", label: "Supabase (remote cloud database)" },
+        { value: "neon", label: "Neon Serverless Postgres (remote cloud)" },
         { value: "local", label: "Local PostgreSQL (installed on host)" },
         { value: "docker", label: "Dockerized PostgreSQL (self-contained)" },
       ],
@@ -170,7 +173,7 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
   // In non-interactive mode, skip setup commands (user can run them manually)
   if (isNonInteractive) return false;
 
-  if (options.dbTarget === "supabase") {
+  if (options.dbTarget === "supabase" || options.dbTarget === "neon") {
     return false;
   }
 
@@ -220,12 +223,13 @@ Automated One-liner:
     return;
   }
 
-  if (options.dbTarget === "supabase") {
+  if (options.dbTarget === "supabase" || options.dbTarget === "neon") {
+    const providerName = options.dbTarget === "supabase" ? "Supabase" : "Neon Serverless Postgres";
     outro(`Your boilerplate "${options.projectName}" is ready.
 
 ⚠️  ACTION REQUIRED:
 1. Open "${options.projectName}/.env"
-2. Replace the placeholders with your Supabase credentials
+2. Replace the placeholders with your ${providerName} credentials
 3. Run the following commands to finish setup:
 
 Manual Execution:
