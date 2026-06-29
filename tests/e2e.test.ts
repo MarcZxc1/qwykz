@@ -117,3 +117,31 @@ test("E2E: Next.js with Docker Postgres", async () => {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 }, 180000);
+
+test("E2E: React with Vite Build", async () => {
+  const projectName = "e2e-react";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework react`, process.cwd());
+    await run("bun install", cwd);
+    await run("tsc -b && vite build", cwd);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+}, 180000);
+
+test("E2E: Vue with Vite Build", async () => {
+  const projectName = "e2e-vue";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework vue`, process.cwd());
+    await run("bun install", cwd);
+    await run("vue-tsc -b && vite build", cwd);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+}, 180000);
