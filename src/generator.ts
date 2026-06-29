@@ -597,6 +597,138 @@ async function generateRustProject(options: ProjectOptions) {
   await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
 }
 
+async function generateHonoProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+
+  await Promise.all(
+    PROJECT_FOLDERS.map((folder) =>
+      mkdir(join(targetDir, folder), { recursive: true }),
+    ),
+  );
+
+  const [
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose
+  ] = await Promise.all([
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    resolvePrismaClient(options.dbTarget),
+    readTemplate("hono/server.ts"),
+    readTemplate("hono/error.middleware.ts"),
+    readTemplate("hono/health.routes.ts"),
+    readTemplate("hono/user.routes.ts"),
+    options.extraPackages.includes("zod") ? readTemplate("hono/user.controller.zod.ts") : readTemplate("hono/user.controller.default.ts"),
+    readTemplate("express/user.service.ts"),
+    readTemplate("hono/auth.controller.ts"),
+    readTemplate("hono/auth.middleware.ts"),
+    readTemplate("hono/auth.routes.ts"),
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword) : Promise.resolve(null),
+  ]);
+
+  const files: Array<[string, string]> = [
+    ["prisma/schema.prisma", prismaSchema],
+    ["prisma.config.ts", prismaConfig],
+    ["tsconfig.json", tsconfig],
+    [".env", envFile],
+    ["src/lib/prisma.ts", prismaClient],
+    ["src/index.ts", serverSource],
+    ["src/middlewares/error.middleware.ts", errorMiddleware],
+    ["src/middlewares/auth.middleware.ts", authMiddleware],
+    ["src/routes/health.routes.ts", healthRoutes],
+    ["src/routes/user.routes.ts", userRoutes],
+    ["src/routes/auth.routes.ts", authRoutes],
+    ["src/controllers/user.controller.ts", userController],
+    ["src/controllers/auth.controller.ts", authController],
+    ["src/services/user.service.ts", userService],
+  ];
+
+  if (options.dbTarget === "docker") {
+    files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+    files.push(["docker-compose.yml", dockerCompose!]);
+  }
+
+  await Promise.all([
+    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
+      // Override for Hono
+      pkg.dependencies.hono = "^4.0.0";
+      delete pkg.dependencies.express;
+      delete pkg.devDependencies["@types/express"];
+      return writeJson(join(targetDir, "package.json"), pkg);
+    }),
+  ]);
+}
+
+async function generateElysiaProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+
+  await Promise.all(
+    PROJECT_FOLDERS.map((folder) =>
+      mkdir(join(targetDir, folder), { recursive: true }),
+    ),
+  );
+
+  const [
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose
+  ] = await Promise.all([
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    resolvePrismaClient(options.dbTarget),
+    readTemplate("elysia/server.ts"),
+    readTemplate("elysia/error.middleware.ts"),
+    readTemplate("elysia/health.routes.ts"),
+    readTemplate("elysia/user.routes.ts"),
+    options.extraPackages.includes("zod") ? readTemplate("elysia/user.controller.zod.ts") : readTemplate("elysia/user.controller.default.ts"),
+    readTemplate("express/user.service.ts"),
+    readTemplate("elysia/auth.controller.ts"),
+    readTemplate("elysia/auth.middleware.ts"),
+    readTemplate("elysia/auth.routes.ts"),
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword) : Promise.resolve(null),
+  ]);
+
+  const files: Array<[string, string]> = [
+    ["prisma/schema.prisma", prismaSchema],
+    ["prisma.config.ts", prismaConfig],
+    ["tsconfig.json", tsconfig],
+    [".env", envFile],
+    ["src/lib/prisma.ts", prismaClient],
+    ["src/index.ts", serverSource],
+    ["src/middlewares/error.middleware.ts", errorMiddleware],
+    ["src/middlewares/auth.middleware.ts", authMiddleware],
+    ["src/routes/health.routes.ts", healthRoutes],
+    ["src/routes/user.routes.ts", userRoutes],
+    ["src/routes/auth.routes.ts", authRoutes],
+    ["src/controllers/user.controller.ts", userController],
+    ["src/controllers/auth.controller.ts", authController],
+    ["src/services/user.service.ts", userService],
+  ];
+
+  if (options.dbTarget === "docker") {
+    files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+    files.push(["docker-compose.yml", dockerCompose!]);
+  }
+
+  await Promise.all([
+    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
+      // Override for Elysia
+      pkg.dependencies.elysia = "^1.0.0";
+      delete pkg.dependencies.express;
+      delete pkg.devDependencies["@types/express"];
+      return writeJson(join(targetDir, "package.json"), pkg);
+    }),
+  ]);
+}
+
 export async function generateProject(options: ProjectOptions) {
   if (options.framework === "express") {
     await generateExpressProject(options);
@@ -614,6 +746,10 @@ export async function generateProject(options: ProjectOptions) {
     await generateGoProject(options);
   } else if (options.framework === "rust") {
     await generateRustProject(options);
+  } else if (options.framework === "hono") {
+    await generateHonoProject(options);
+  } else if (options.framework === "elysia") {
+    await generateElysiaProject(options);
   }
 }
 
