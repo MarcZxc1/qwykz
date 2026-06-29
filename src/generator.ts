@@ -485,15 +485,24 @@ async function generateReactProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
-  const supabaseTs = await readTemplate("react/supabase.ts.stub");
-  const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
-  const appTsx = await readTemplate("react/App.tsx.stub");
   const viteConfig = await readTemplate("react/vite.config.ts.stub");
   const indexCss = await readTemplate("react/index.css.stub");
 
-  await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
-  await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
-  await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
+  if (options.dbTarget === "clerk") {
+    const clerkProvider = await readTemplate("react/clerk-provider.tsx.stub");
+    await Bun.write(join(targetDir, "src", "App.tsx"), clerkProvider);
+  } else if (options.dbTarget === "supabase") {
+    const supabaseTs = await readTemplate("react/supabase.ts.stub");
+    const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
+    const appTsx = await readTemplate("react/App.tsx.stub");
+    await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
+    await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
+    await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
+  } else {
+    // Basic App.tsx
+    await Bun.write(join(targetDir, "src", "App.tsx"), `export default function App() { return <h1>Ready</h1>; }`);
+  }
+
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "index.css"), indexCss);
 
@@ -502,16 +511,26 @@ async function generateReactProject(options: ProjectOptions) {
   pkgJson.dependencies = pkgJson.dependencies || {};
   pkgJson.devDependencies = pkgJson.devDependencies || {};
   
-  pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
   pkgJson.dependencies["zod"] = "^3.23.0";
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-
-  const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
-  await Bun.write(join(targetDir, ".env"), envContent);
-  await Bun.write(join(targetDir, ".env.example"), envContent);
+  if (options.dbTarget === "clerk") {
+    pkgJson.dependencies["@clerk/clerk-react"] = "^5.0.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_CLERK_PUBLISHABLE_KEY="pk_test_YOUR_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else if (options.dbTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else {
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    await Bun.write(join(targetDir, ".env"), "");
+  }
 }
 
 async function generateVueProject(options: ProjectOptions) {
@@ -525,15 +544,24 @@ async function generateVueProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
-  const supabaseTs = await readTemplate("vue/supabase.ts.stub");
-  const authTs = await readTemplate("vue/auth.ts.stub");
-  const appVue = await readTemplate("vue/App.vue.stub");
   const viteConfig = await readTemplate("vue/vite.config.ts.stub");
   const styleCss = await readTemplate("vue/style.css.stub");
 
-  await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
-  await Bun.write(join(targetDir, "src", "lib", "auth.ts"), authTs);
-  await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+  if (options.dbTarget === "clerk") {
+    const clerkPlugin = await readTemplate("vue/clerk-plugin.ts.stub");
+    await Bun.write(join(targetDir, "src", "lib", "clerk.ts"), clerkPlugin);
+    await Bun.write(join(targetDir, "src", "App.vue"), `<template><div>Clerk Ready</div></template>`);
+  } else if (options.dbTarget === "supabase") {
+    const supabaseTs = await readTemplate("vue/supabase.ts.stub");
+    const authTs = await readTemplate("vue/auth.ts.stub");
+    const appVue = await readTemplate("vue/App.vue.stub");
+    await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
+    await Bun.write(join(targetDir, "src", "lib", "auth.ts"), authTs);
+    await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+  } else {
+    await Bun.write(join(targetDir, "src", "App.vue"), `<template><div>Ready</div></template>`);
+  }
+
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "style.css"), styleCss);
 
@@ -542,16 +570,26 @@ async function generateVueProject(options: ProjectOptions) {
   pkgJson.dependencies = pkgJson.dependencies || {};
   pkgJson.devDependencies = pkgJson.devDependencies || {};
   
-  pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
   pkgJson.dependencies["zod"] = "^3.23.0";
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-
-  const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
-  await Bun.write(join(targetDir, ".env"), envContent);
-  await Bun.write(join(targetDir, ".env.example"), envContent);
+  if (options.dbTarget === "clerk") {
+    pkgJson.dependencies["vue-clerk"] = "^0.4.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_CLERK_PUBLISHABLE_KEY="pk_test_YOUR_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else if (options.dbTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else {
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    await Bun.write(join(targetDir, ".env"), "");
+  }
 }
 
 async function generatePythonProject(options: ProjectOptions) {
