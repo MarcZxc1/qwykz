@@ -137,6 +137,16 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       ],
     });
     stopOnCancel(dbTarget);
+  } else if (["react", "vue"].includes(framework as string)) {
+    dbTarget = await select({
+      message: "Select your Authentication Provider:",
+      options: [
+        { value: "supabase", label: "Supabase Auth (UI Components)" },
+        { value: "clerk", label: "Clerk Auth (React/Vue Integrations)" },
+        { value: "local", label: "None / Custom" },
+      ],
+    });
+    stopOnCancel(dbTarget);
   }
 
   const extraPackages: ExtraPackage[] = [];
