@@ -48,11 +48,16 @@ pub async fn register(
     State(state): State<AppState>,
     Json(payload): Json<RegisterRequest>,
 ) -> Result<(StatusCode, Json<AuthResponse>), (StatusCode, String)> {
-    let salt = SaltString::generate(&mut OsRng);
-    let argon2 = Argon2::default();
-    let password_hash = argon2.hash_password(payload.password.as_bytes(), &salt)
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
-        .to_string();
+    let password_clone = payload.password.clone();
+    let password_hash = tokio::task::spawn_blocking(move || {
+        let salt = SaltString::generate(&mut OsRng);
+        let argon2 = Argon2::default();
+        argon2.hash_password(password_clone.as_bytes(), &salt)
+            .map(|hash| hash.to_string())
+    })
+    .await
+    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
+    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
 
     let user = sqlx::query_as!(
         User,
@@ -96,11 +101,16 @@ pub async fn login(
     .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?
     .ok_or((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
 
-    let parsed_hash = PasswordHash::new(&user.password)
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
-        
-    Argon2::default().verify_password(payload.password.as_bytes(), &parsed_hash)
-        .map_err(|_| (StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
+    let password_clone = payload.password.clone();
+    let hash_clone = user.password.clone();
+    tokio::task::spawn_blocking(move || {
+        let parsed_hash = PasswordHash::new(&hash_clone)
+            .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+        Argon2::default().verify_password(password_clone.as_bytes(), &parsed_hash)
+            .map_err(|_| (StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))
+    })
+    .await
+    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))??;
 
     let token = generate_jwt(&user, &state.jwt_secret)?;
 
