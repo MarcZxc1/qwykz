@@ -105,11 +105,35 @@ async function resolveEnvFile(
 async function resolveDockerCompose(
   projectName: string,
   dbPassword: string,
+  cachingTarget: string,
 ): Promise<string> {
   const raw = await readTemplate("express/docker-compose.yml");
+  
+  let redisBlock = "";
+  let redisVolume = "";
+  
+  if (cachingTarget === "docker") {
+    redisBlock = `  qwykz-redis:
+    image: redis:7-alpine
+    container_name: {{PROJECT_NAME}}-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "127.0.0.1:63790:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - qwykz_redis_data:/data\n`;
+    redisVolume = "\n  qwykz_redis_data:";
+  }
+  
   return injectVariables(raw, {
     PROJECT_NAME: projectName,
     DB_PASSWORD: dbPassword,
+    REDIS_BLOCK: redisBlock,
+    REDIS_VOLUME: redisVolume,
   });
 }
 
@@ -213,7 +237,7 @@ export async function generateExpressProject(options: ProjectOptions) {
       ? readTemplate("express/wait-for-postgres.ts")
       : Promise.resolve(null),
     options.dbTarget === "docker"
-      ? resolveDockerCompose(options.projectName, dbPassword)
+      ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget)
       : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
@@ -375,6 +399,7 @@ async function generateLaravelProject(options: ProjectOptions) {
     const dockerCompose = await resolveDockerCompose(
       options.projectName,
       dbPassword,
+      options.cachingTarget
     );
 
     await writeFile(join(targetDir, "docker-compose.yml"), dockerCompose);
@@ -478,7 +503,7 @@ async function generateNextJsProject(options: ProjectOptions) {
   ];
 
   if (options.dbTarget === "docker") {
-    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword)]);
+    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget)]);
   }
 
   await Promise.all(
@@ -681,7 +706,7 @@ async function generateHonoProject(options: ProjectOptions) {
   );
 
   const [
-    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose, exampleTest
   ] = await Promise.all([
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
@@ -698,7 +723,8 @@ async function generateHonoProject(options: ProjectOptions) {
     readTemplate("hono/auth.middleware.ts"),
     readTemplate("hono/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword) : Promise.resolve(null),
+    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget) : Promise.resolve(null),
+    readTemplate("express/example.test.ts"),
   ]);
 
   const files: Array<[string, string]> = [
@@ -716,6 +742,7 @@ async function generateHonoProject(options: ProjectOptions) {
     ["src/controllers/user.controller.ts", userController],
     ["src/controllers/auth.controller.ts", authController],
     ["src/services/user.service.ts", userService],
+    ["src/index.test.ts", exampleTest],
   ];
 
   if (options.dbTarget === "docker") {
@@ -747,7 +774,7 @@ async function generateElysiaProject(options: ProjectOptions) {
   );
 
   const [
-    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose, exampleTest
   ] = await Promise.all([
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
@@ -764,7 +791,8 @@ async function generateElysiaProject(options: ProjectOptions) {
     readTemplate("elysia/auth.middleware.ts"),
     readTemplate("elysia/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword) : Promise.resolve(null),
+    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget) : Promise.resolve(null),
+    readTemplate("express/example.test.ts"),
   ]);
 
   const files: Array<[string, string]> = [
@@ -782,6 +810,7 @@ async function generateElysiaProject(options: ProjectOptions) {
     ["src/controllers/user.controller.ts", userController],
     ["src/controllers/auth.controller.ts", authController],
     ["src/services/user.service.ts", userService],
+    ["src/index.test.ts", exampleTest],
   ];
 
   if (options.dbTarget === "docker") {
