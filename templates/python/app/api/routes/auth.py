@@ -1,5 +1,6 @@
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, status
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -35,10 +36,11 @@ async def register(user_in: UserCreate, session: AsyncSession = Depends(get_db))
             detail="The user with this email already exists in the system.",
         )
     
+    hashed_pw = await run_in_threadpool(get_password_hash, user_in.password)
     user = User(
         email=user_in.email,
         name=user_in.name,
-        password=get_password_hash(user_in.password),
+        password=hashed_pw,
         role=user_in.role
     )
     session.add(user)
@@ -59,7 +61,11 @@ async def login(login_data: LoginRequest, session: AsyncSession = Depends(get_db
     """
     result = await session.exec(select(User).where(User.email == login_data.email))
     user = result.first()
-    if not user or not verify_password(login_data.password, user.password):
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    
+    is_valid = await run_in_threadpool(verify_password, login_data.password, user.password)
+    if not is_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
