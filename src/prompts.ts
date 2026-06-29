@@ -151,7 +151,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const extraPackages: ExtraPackage[] = [];
 
-  if (framework === "express") {
+  if (["express", "hono", "elysia"].includes(framework as string)) {
     const shouldInstallZod = await confirm({
       message: "Install Zod for request validation?",
       initialValue: false,
@@ -159,19 +159,21 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     stopOnCancel(shouldInstallZod);
     if (shouldInstallZod) extraPackages.push("zod");
 
-    const shouldInstallHelmet = await confirm({
-      message: "Install Helmet for security headers?",
-      initialValue: false,
-    });
-    stopOnCancel(shouldInstallHelmet);
-    if (shouldInstallHelmet) extraPackages.push("helmet");
+    if (framework === "express") {
+      const shouldInstallHelmet = await confirm({
+        message: "Install Helmet for security headers?",
+        initialValue: false,
+      });
+      stopOnCancel(shouldInstallHelmet);
+      if (shouldInstallHelmet) extraPackages.push("helmet");
 
-    const shouldInstallCors = await confirm({
-      message: "Install CORS for cross-origin requests?",
-      initialValue: false,
-    });
-    stopOnCancel(shouldInstallCors);
-    if (shouldInstallCors) extraPackages.push("cors");
+      const shouldInstallCors = await confirm({
+        message: "Install CORS for cross-origin requests?",
+        initialValue: false,
+      });
+      stopOnCancel(shouldInstallCors);
+      if (shouldInstallCors) extraPackages.push("cors");
+    }
   }
 
   return {
@@ -231,12 +233,21 @@ Automated One-liner:
   }
 
   if (options.framework === "react" || options.framework === "vue") {
+    const providerName = options.dbTarget === "clerk" ? "Clerk" : "Supabase";
+    let envInstructions = "";
+    
+    if (options.dbTarget !== "local") {
+      envInstructions = `⚠️  ACTION REQUIRED:
+1. Open "${options.projectName}/.env"
+2. Replace the placeholders with your ${providerName} credentials
+3. Run the following commands to start your app:`;
+    } else {
+      envInstructions = `Next commands:`;
+    }
+
     outro(`Your boilerplate "${options.projectName}" is ready.
 
-⚠️  ACTION REQUIRED:
-1. Open "${options.projectName}/.env"
-2. Replace the placeholders with your Supabase credentials
-3. Run the following commands to start your app:
+${envInstructions}
 
 Manual Execution:
   cd ${options.projectName}

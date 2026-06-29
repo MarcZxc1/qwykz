@@ -1,13 +1,10 @@
+mod api;
+
 use axum::{
     routing::get,
     Router,
-    Json,
 };
-use serde_json::{json, Value};
-
-async fn health_check() -> Json<Value> {
-    Json(json!({ "status": "ok" }))
-}
+use api::handlers::health::health_check;
 
 #[tokio::main]
 async fn main() {

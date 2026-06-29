@@ -594,28 +594,37 @@ async function generateVueProject(options: ProjectOptions) {
 
 async function generatePythonProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(targetDir, { recursive: true });
+  await mkdir(join(targetDir, "app", "api", "routes"), { recursive: true });
   console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
   
-  const mainPy = await readTemplate("python/main.py");
+  const mainPy = await readTemplate("python/app/main.py");
+  const initPy = "";
+  const healthPy = await readTemplate("python/app/api/routes/health.py");
   const requirementsTxt = await readTemplate("python/requirements.txt");
   const dockerfile = await readTemplate("python/Dockerfile");
 
-  await Bun.write(join(targetDir, "main.py"), mainPy);
+  await Bun.write(join(targetDir, "app", "main.py"), mainPy);
+  await Bun.write(join(targetDir, "app", "__init__.py"), initPy);
+  await Bun.write(join(targetDir, "app", "api", "__init__.py"), initPy);
+  await Bun.write(join(targetDir, "app", "api", "routes", "__init__.py"), initPy);
+  await Bun.write(join(targetDir, "app", "api", "routes", "health.py"), healthPy);
   await Bun.write(join(targetDir, "requirements.txt"), requirementsTxt);
   await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
 }
 
 async function generateGoProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(targetDir, { recursive: true });
+  await mkdir(join(targetDir, "cmd", "api"), { recursive: true });
+  await mkdir(join(targetDir, "internal", "handlers"), { recursive: true });
   console.log(`\n🚀 Scaffolding Go (Fiber)...`);
   
-  const mainGo = await readTemplate("go/main.go");
+  const mainGo = await readTemplate("go/cmd/api/main.go");
+  const healthGo = await readTemplate("go/internal/handlers/health.go");
   const goMod = await readTemplate("go/go.mod");
   const dockerfile = await readTemplate("go/Dockerfile");
 
-  await Bun.write(join(targetDir, "main.go"), mainGo);
+  await Bun.write(join(targetDir, "cmd", "api", "main.go"), mainGo.replace(/qwykz-app/g, options.projectName));
+  await Bun.write(join(targetDir, "internal", "handlers", "health.go"), healthGo);
   // We use simple replace for the module name
   await Bun.write(join(targetDir, "go.mod"), goMod.replace(/qwykz-app/g, options.projectName));
   await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
@@ -623,14 +632,20 @@ async function generateGoProject(options: ProjectOptions) {
 
 async function generateRustProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(join(targetDir, "src"), { recursive: true });
+  await mkdir(join(targetDir, "src", "api", "handlers"), { recursive: true });
   console.log(`\n🚀 Scaffolding Rust (Axum)...`);
   
-  const mainRs = await readTemplate("rust/main.rs");
+  const mainRs = await readTemplate("rust/src/main.rs");
+  const apiModRs = await readTemplate("rust/src/api/mod.rs");
+  const handlersModRs = await readTemplate("rust/src/api/handlers/mod.rs");
+  const healthRs = await readTemplate("rust/src/api/handlers/health.rs");
   const cargoToml = await readTemplate("rust/Cargo.toml");
   const dockerfile = await readTemplate("rust/Dockerfile");
 
   await Bun.write(join(targetDir, "src", "main.rs"), mainRs);
+  await Bun.write(join(targetDir, "src", "api", "mod.rs"), apiModRs);
+  await Bun.write(join(targetDir, "src", "api", "handlers", "mod.rs"), handlersModRs);
+  await Bun.write(join(targetDir, "src", "api", "handlers", "health.rs"), healthRs);
   await Bun.write(join(targetDir, "Cargo.toml"), cargoToml.replace(/qwykz-app/g, options.projectName));
   await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
 }
