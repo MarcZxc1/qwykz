@@ -4,16 +4,13 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"qwykz-app/internal/handlers"
 )
 
 func main() {
 	app := fiber.New()
 
-	app.Get("/health", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"status": "ok",
-		})
-	})
+	app.Get("/health", handlers.HealthCheck)
 
 	log.Fatal(app.Listen(":3000"))
 }
