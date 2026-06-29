@@ -1,2 +1,7 @@
 fastapi
 uvicorn
+sqlmodel
+asyncpg
+passlib[bcrypt]
+PyJWT
+pydantic-settings
