@@ -168,8 +168,8 @@ async function resolveServerSource(
   } else if (framework === "elysia") {
     if (hasCors) extraImports += 'import { cors } from "@elysiajs/cors";\n';
     if (hasHelmet) extraImports += 'import { helmet } from "elysia-helmet";\n';
-    if (hasHelmet) extraMiddleware += ".use(helmet())\n  ";
-    if (hasCors) extraMiddleware += ".use(cors())\n  ";
+    if (hasHelmet) extraMiddleware += "\n  .use(helmet())";
+    if (hasCors) extraMiddleware += "\n  .use(cors())";
   }
 
   const raw = await readTemplate(`${framework}/server.ts`);
