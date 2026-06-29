@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
 }
 
 export interface AuthRequest extends Request {
-  user?: { id: string };
+  user?: { id: string; role: string };
 }
 
 export function authMiddleware(req: AuthRequest, _res: Response, next: NextFunction) {
@@ -21,10 +21,22 @@ export function authMiddleware(req: AuthRequest, _res: Response, next: NextFunct
   const token = authHeader.slice(7);
 
   try {
-    const payload = verify(token, JWT_SECRET!) as { sub: string };
-    req.user = { id: payload.sub };
+    const payload = verify(token, JWT_SECRET!) as { sub: string; role: string };
+    req.user = { id: payload.sub, role: payload.role };
     next();
   } catch {
     next(new HttpError(401, "Invalid or expired token"));
   }
+}
+
+export function requireRole(roles: string[]) {
+  return (req: AuthRequest, _res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return next(new HttpError(401, "Authentication required"));
+    }
+    if (!roles.includes(req.user.role)) {
+      return next(new HttpError(403, "Forbidden: Insufficient role permissions"));
+    }
+    next();
+  };
 }
