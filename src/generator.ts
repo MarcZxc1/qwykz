@@ -554,6 +554,49 @@ async function generateVueProject(options: ProjectOptions) {
   await Bun.write(join(targetDir, ".env.example"), envContent);
 }
 
+async function generatePythonProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  await mkdir(targetDir, { recursive: true });
+  console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
+  
+  const mainPy = await readTemplate("python/main.py");
+  const requirementsTxt = await readTemplate("python/requirements.txt");
+  const dockerfile = await readTemplate("python/Dockerfile");
+
+  await Bun.write(join(targetDir, "main.py"), mainPy);
+  await Bun.write(join(targetDir, "requirements.txt"), requirementsTxt);
+  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+}
+
+async function generateGoProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  await mkdir(targetDir, { recursive: true });
+  console.log(`\n🚀 Scaffolding Go (Fiber)...`);
+  
+  const mainGo = await readTemplate("go/main.go");
+  const goMod = await readTemplate("go/go.mod");
+  const dockerfile = await readTemplate("go/Dockerfile");
+
+  await Bun.write(join(targetDir, "main.go"), mainGo);
+  // We use simple replace for the module name
+  await Bun.write(join(targetDir, "go.mod"), goMod.replace(/qwykz-app/g, options.projectName));
+  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+}
+
+async function generateRustProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  await mkdir(join(targetDir, "src"), { recursive: true });
+  console.log(`\n🚀 Scaffolding Rust (Axum)...`);
+  
+  const mainRs = await readTemplate("rust/main.rs");
+  const cargoToml = await readTemplate("rust/Cargo.toml");
+  const dockerfile = await readTemplate("rust/Dockerfile");
+
+  await Bun.write(join(targetDir, "src", "main.rs"), mainRs);
+  await Bun.write(join(targetDir, "Cargo.toml"), cargoToml.replace(/qwykz-app/g, options.projectName));
+  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+}
+
 export async function generateProject(options: ProjectOptions) {
   if (options.framework === "express") {
     await generateExpressProject(options);
@@ -565,5 +608,12 @@ export async function generateProject(options: ProjectOptions) {
     await generateReactProject(options);
   } else if (options.framework === "vue") {
     await generateVueProject(options);
+  } else if (options.framework === "python") {
+    await generatePythonProject(options);
+  } else if (options.framework === "go") {
+    await generateGoProject(options);
+  } else if (options.framework === "rust") {
+    await generateRustProject(options);
   }
 }
+

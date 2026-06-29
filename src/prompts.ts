@@ -72,7 +72,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     if (hasFlag("--cors")) extraPackages.push("cors");
 
     return {
-      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia"].includes(frameworkRaw)
+      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia", "python", "go", "rust"].includes(frameworkRaw)
         ? frameworkRaw
         : "express") as Framework,
       projectName: normalizePackageName(name),
@@ -115,6 +115,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       { value: "hono", label: "Hono - Edge Optimized (Backend)" },
       { value: "elysia", label: "Elysia - Bun Native (Backend)" },
       { value: "laravel", label: "Vanilla Laravel (Backend)" },
+      { value: "python", label: "Python FastAPI (Backend)" },
+      { value: "go", label: "Go Fiber (Backend)" },
+      { value: "rust", label: "Rust Axum (Backend)" },
       { value: "nextjs", label: "Next.js (Fullstack)" },
       { value: "react", label: "React + Vite (Frontend)" },
       { value: "vue", label: "Vue + Vite (Frontend)" },
@@ -190,6 +193,32 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
     options.framework === "laravel" ? "php artisan serve" : "bun dev";
 
   const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
+
+  if (["python", "go", "rust"].includes(options.framework)) {
+    let langCmds = "";
+    let langOneLiner = "";
+    if (options.framework === "python") {
+      langCmds = "  pip install -r requirements.txt\n  uvicorn main:app --reload";
+      langOneLiner = "pip install -r requirements.txt && uvicorn main:app --reload";
+    } else if (options.framework === "go") {
+      langCmds = "  go mod tidy\n  go run main.go";
+      langOneLiner = "go mod tidy && go run main.go";
+    } else if (options.framework === "rust") {
+      langCmds = "  cargo build\n  cargo run";
+      langOneLiner = "cargo build && cargo run";
+    }
+    
+    outro(`Your boilerplate "${options.projectName}" is ready.
+
+Next commands:
+Manual Execution:
+  cd ${options.projectName}
+${langCmds}
+
+Automated One-liner:
+  cd ${options.projectName} && ${langOneLiner}`);
+    return;
+  }
 
   if (options.framework === "react" || options.framework === "vue") {
     outro(`Your boilerplate "${options.projectName}" is ready.
