@@ -78,6 +78,10 @@ async function runSetupCommands(
     await runCommand(["bun", "install"], targetDir);
 
     if (options.dbTarget === "docker") {
+      s.message("🐳 Cleaning stale Docker volumes...");
+      try {
+        await runCommand(["docker", "compose", "down", "-v", "--remove-orphans"], targetDir);
+      } catch (e) {}
       s.message("🐳 Booting up PostgreSQL container...");
       await runCommand(
         ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
@@ -94,6 +98,10 @@ async function runSetupCommands(
     await runCommand(["bun", "test"], targetDir);
   } else if (options.framework === "laravel") {
     if (options.dbTarget === "docker") {
+      s.message("🐳 Cleaning stale Docker volumes...");
+      try {
+        await runCommand(["docker", "compose", "down", "-v", "--remove-orphans"], targetDir);
+      } catch (e) {}
       s.message("🐳 Booting up PostgreSQL container...");
       await runCommand(
         ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
