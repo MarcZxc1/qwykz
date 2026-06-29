@@ -279,6 +279,12 @@ export async function generateExpressProject(options: ProjectOptions) {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
   // Write all files + package.json in parallel
   await Promise.all([
     ...files.map(([path, content]) =>
@@ -288,6 +294,7 @@ export async function generateExpressProject(options: ProjectOptions) {
       options.projectName,
       options.dbTarget,
       options.extraPackages,
+      options.cachingTarget,
     ).then((pkgJson) => writeJson(join(targetDir, "package.json"), pkgJson)),
   ]);
 }
@@ -519,6 +526,12 @@ async function generateNextJsProject(options: ProjectOptions) {
     files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget)]);
   }
 
+  if (options.cachingTarget === "docker") {
+    files.push(["lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
   await Promise.all(
     files.map(async ([path, content]) => {
       const fullPath = join(targetDir, path);
@@ -538,6 +551,11 @@ async function generateNextJsProject(options: ProjectOptions) {
     "db:push": "bunx --bun prisma db push",
     "db:studio": "bunx --bun prisma studio",
   };
+  if (options.cachingTarget === "docker") {
+    pkgJson.dependencies["ioredis"] = "^5.4.1";
+  } else if (options.cachingTarget === "upstash") {
+    pkgJson.dependencies["@upstash/redis"] = "^1.31.5";
+  }
   await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
 }
 
@@ -763,9 +781,15 @@ async function generateHonoProject(options: ProjectOptions) {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget).then((pkg) => {
       // Override for Hono
       pkg.dependencies.hono = "^4.0.0";
       delete pkg.dependencies.cors;
@@ -834,9 +858,15 @@ async function generateElysiaProject(options: ProjectOptions) {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget).then((pkg) => {
       // Override for Elysia
       pkg.dependencies.elysia = "^1.0.0";
       if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
