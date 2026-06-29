@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
@@ -7,6 +7,31 @@ import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
 import console from "node:console";
 import { inherits } from "node:util";
 import { cwd, env } from "node:process";
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+async function copyDirectoryRecursive(srcDir: string, destDir: string, replacements: Record<string, string>) {
+  await mkdir(destDir, { recursive: true });
+  const entries = await readdir(srcDir);
+
+  for (const entry of entries) {
+    const srcPath = join(srcDir, entry);
+    const destPath = join(destDir, entry);
+    const fileStat = await stat(srcPath);
+
+    if (fileStat.isDirectory()) {
+      await copyDirectoryRecursive(srcPath, destPath, replacements);
+    } else {
+      let content = await Bun.file(srcPath).text();
+      for (const [key, value] of Object.entries(replacements)) {
+        content = content.split(key).join(value);
+      }
+      await Bun.write(destPath, content);
+    }
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Cryptographic secret helpers
@@ -38,6 +63,10 @@ async function writeJson(path: string, value: unknown) {
 // ---------------------------------------------------------------------------
 // Template resolvers — pick the right variant and inject variables
 // ---------------------------------------------------------------------------
+
+function resolveTemplateDir(folder: string): string {
+  return join(import.meta.dir, "..", "templates", folder);
+}
 
 async function resolveEnvFile(
   dbTarget: DbTarget,
@@ -594,60 +623,50 @@ async function generateVueProject(options: ProjectOptions) {
 
 async function generatePythonProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(join(targetDir, "app", "api", "routes"), { recursive: true });
   console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
   
-  const mainPy = await readTemplate("python/app/main.py");
-  const initPy = "";
-  const healthPy = await readTemplate("python/app/api/routes/health.py");
-  const requirementsTxt = await readTemplate("python/requirements.txt");
-  const dockerfile = await readTemplate("python/Dockerfile");
-
-  await Bun.write(join(targetDir, "app", "main.py"), mainPy);
-  await Bun.write(join(targetDir, "app", "__init__.py"), initPy);
-  await Bun.write(join(targetDir, "app", "api", "__init__.py"), initPy);
-  await Bun.write(join(targetDir, "app", "api", "routes", "__init__.py"), initPy);
-  await Bun.write(join(targetDir, "app", "api", "routes", "health.py"), healthPy);
-  await Bun.write(join(targetDir, "requirements.txt"), requirementsTxt);
-  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+  await copyDirectoryRecursive(
+    resolveTemplateDir("python"),
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
+  
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  await Bun.write(join(targetDir, ".env"), envContent);
 }
 
 async function generateGoProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(join(targetDir, "cmd", "api"), { recursive: true });
-  await mkdir(join(targetDir, "internal", "handlers"), { recursive: true });
   console.log(`\n🚀 Scaffolding Go (Fiber)...`);
   
-  const mainGo = await readTemplate("go/cmd/api/main.go");
-  const healthGo = await readTemplate("go/internal/handlers/health.go");
-  const goMod = await readTemplate("go/go.mod");
-  const dockerfile = await readTemplate("go/Dockerfile");
+  await copyDirectoryRecursive(
+    resolveTemplateDir("go"),
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
 
-  await Bun.write(join(targetDir, "cmd", "api", "main.go"), mainGo.replace(/qwykz-app/g, options.projectName));
-  await Bun.write(join(targetDir, "internal", "handlers", "health.go"), healthGo);
-  // We use simple replace for the module name
-  await Bun.write(join(targetDir, "go.mod"), goMod.replace(/qwykz-app/g, options.projectName));
-  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  await Bun.write(join(targetDir, ".env"), envContent);
 }
 
 async function generateRustProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
-  await mkdir(join(targetDir, "src", "api", "handlers"), { recursive: true });
   console.log(`\n🚀 Scaffolding Rust (Axum)...`);
   
-  const mainRs = await readTemplate("rust/src/main.rs");
-  const apiModRs = await readTemplate("rust/src/api/mod.rs");
-  const handlersModRs = await readTemplate("rust/src/api/handlers/mod.rs");
-  const healthRs = await readTemplate("rust/src/api/handlers/health.rs");
-  const cargoToml = await readTemplate("rust/Cargo.toml");
-  const dockerfile = await readTemplate("rust/Dockerfile");
+  await copyDirectoryRecursive(
+    resolveTemplateDir("rust"),
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
 
-  await Bun.write(join(targetDir, "src", "main.rs"), mainRs);
-  await Bun.write(join(targetDir, "src", "api", "mod.rs"), apiModRs);
-  await Bun.write(join(targetDir, "src", "api", "handlers", "mod.rs"), handlersModRs);
-  await Bun.write(join(targetDir, "src", "api", "handlers", "health.rs"), healthRs);
-  await Bun.write(join(targetDir, "Cargo.toml"), cargoToml.replace(/qwykz-app/g, options.projectName));
-  await Bun.write(join(targetDir, "Dockerfile"), dockerfile);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  await Bun.write(join(targetDir, ".env"), envContent);
 }
 
 async function generateHonoProject(options: ProjectOptions) {
