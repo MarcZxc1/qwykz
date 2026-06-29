@@ -202,3 +202,37 @@ test("E2E: Rust Axum Scaffold Verification", async () => {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 });
+
+test("E2E: Hono Scaffold Verification", async () => {
+  const projectName = "e2e-hono";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework hono`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/index.ts")).exists();
+    const testStat = await Bun.file(join(cwd, "src/index.test.ts")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(testStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Elysia Scaffold Verification", async () => {
+  const projectName = "e2e-elysia";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework elysia`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/index.ts")).exists();
+    const testStat = await Bun.file(join(cwd, "src/index.test.ts")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(testStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});

@@ -62,8 +62,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     const dbRaw = getFlagValue("--db") ?? "local";
     const frameworkRaw = getFlagValue("--framework") ?? "express";
     const dbTarget: DbTarget = (
-      ["supabase", "local", "docker"].includes(dbRaw) ? dbRaw : "local"
+      ["supabase", "local", "docker", "neon"].includes(dbRaw) ? dbRaw : "local"
     ) as DbTarget;
+
+    const cachingRaw = getFlagValue("--caching") ?? "none";
+    const cachingTarget: CachingTarget = (
+      ["none", "upstash", "docker"].includes(cachingRaw) ? cachingRaw : "none"
+    ) as any;
 
     // In non-interactive mode, no extra packages unless explicitly requested
     const extraPackages: ExtraPackage[] = [];
@@ -77,6 +82,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
         : "express") as Framework,
       projectName: normalizePackageName(name),
       dbTarget,
+      cachingTarget,
       extraPackages,
     };
   }
@@ -131,7 +137,6 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       message: "Select your PostgreSQL environment target:",
       options: [
         { value: "supabase", label: "Supabase (remote cloud database)" },
-        { value: "neon", label: "Neon Serverless Postgres (remote cloud)" },
         { value: "local", label: "Local PostgreSQL (installed on host)" },
         { value: "docker", label: "Dockerized PostgreSQL (self-contained)" },
       ],
@@ -147,6 +152,19 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       ],
     });
     stopOnCancel(dbTarget);
+  }
+
+  let cachingTarget: string | symbol = "none";
+  if (["express", "laravel", "nextjs", "hono", "elysia", "python", "go", "rust"].includes(framework as string)) {
+    cachingTarget = await select({
+      message: "Do you want to add a Redis caching layer?",
+      options: [
+        { value: "none", label: "None" },
+        { value: "upstash", label: "Upstash Serverless Redis (Cloud)" },
+        { value: "docker", label: "Local Redis (Dockerized)" },
+      ],
+    });
+    stopOnCancel(cachingTarget);
   }
 
   const extraPackages: ExtraPackage[] = [];
@@ -180,6 +198,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     framework: framework as Framework,
     projectName: normalizePackageName(String(projectName)),
     dbTarget: dbTarget as DbTarget,
+    cachingTarget: cachingTarget as any,
     extraPackages,
   };
 }

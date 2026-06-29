@@ -2,6 +2,8 @@ export type Framework = "express" | "laravel" | "nextjs" | "react" | "vue" | "ho
 
 export type DbTarget = "supabase" | "local" | "docker" | "neon" | "clerk";
 
+export type CachingTarget = "none" | "upstash" | "docker";
+
 export type ExtraPackage = "cors" | "helmet" | "zod";
 
 export type PackageMap = Record<string, string>;
@@ -10,6 +12,7 @@ export interface ProjectOptions {
   framework: Framework;
   projectName: string;
   dbTarget: DbTarget;
+  cachingTarget: CachingTarget;
   extraPackages: ExtraPackage[];
   supabaseDbUrl?: string;
 }
