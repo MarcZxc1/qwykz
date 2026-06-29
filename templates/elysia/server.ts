@@ -7,8 +7,7 @@ import { authRouter } from "./routes/auth.routes";
 
 const port = Number(process.env.PORT ?? 3000);
 
-const app = new Elysia()
-  {{EXTRA_MIDDLEWARE}}
+const app = new Elysia(){{EXTRA_MIDDLEWARE}}
   .use(healthRouter)
   .use(userRouter)
   .use(authRouter)
