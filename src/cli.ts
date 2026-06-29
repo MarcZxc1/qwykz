@@ -73,7 +73,7 @@ async function runSetupCommands(
 ) {
   const targetDir = join(process.cwd(), options.projectName);
 
-  if (options.framework === "express" || options.framework === "nextjs") {
+  if (options.framework === "express" || options.framework === "nextjs" || options.framework === "hono" || options.framework === "elysia") {
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
 
@@ -116,6 +116,15 @@ async function runSetupCommands(
   } else if (options.framework === "react" || options.framework === "vue") {
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
+  } else if (options.framework === "python") {
+    s.message("📦 Installing Python dependencies...");
+    await runCommand(["pip", "install", "-r", "requirements.txt"], targetDir);
+  } else if (options.framework === "go") {
+    s.message("📦 Installing Go modules...");
+    await runCommand(["go", "mod", "tidy"], targetDir);
+  } else if (options.framework === "rust") {
+    s.message("📦 Building Rust application...");
+    // Cargo builds dependencies on first run/build
   }
 }
 
@@ -138,8 +147,11 @@ export async function runCli() {
       console.log(pc.yellow("\n⭐ Please leave a star if you like this package: https://github.com/MarcZxc1/qwykz\n"));
       console.log(pc.green("\n🚀 Starting development server..."));
 
-      const devCmd =
-        options.framework === "laravel" ? "php artisan serve" : "bun dev";
+      let devCmd = "bun dev";
+      if (options.framework === "laravel") devCmd = "php artisan serve";
+      if (options.framework === "python") devCmd = "fastapi dev app/main.py";
+      if (options.framework === "go") devCmd = "go run cmd/api/main.go";
+      if (options.framework === "rust") devCmd = "cargo run";
 
       const proc = Bun.spawn(["bash", "-c", devCmd], {
         cwd: join(process.cwd(), options.projectName),
