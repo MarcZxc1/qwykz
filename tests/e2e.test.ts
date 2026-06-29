@@ -145,3 +145,60 @@ test("E2E: Vue with Vite Build", async () => {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 }, 180000);
+
+test("E2E: Python FastAPI Scaffold Verification", async () => {
+  const projectName = "e2e-python";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework python`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "app/main.py")).exists();
+    const reqStat = await Bun.file(join(cwd, "requirements.txt")).exists();
+    const dbStat = await Bun.file(join(cwd, "app/core/db.py")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(reqStat).toBe(true);
+    expect(dbStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Go Fiber Scaffold Verification", async () => {
+  const projectName = "e2e-go";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework go`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "cmd/api/main.go")).exists();
+    const goModStat = await Bun.file(join(cwd, "go.mod")).exists();
+    const authStat = await Bun.file(join(cwd, "internal/handlers/auth.go")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(goModStat).toBe(true);
+    expect(authStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Rust Axum Scaffold Verification", async () => {
+  const projectName = "e2e-rust";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework rust`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/main.rs")).exists();
+    const cargoStat = await Bun.file(join(cwd, "Cargo.toml")).exists();
+    const dbStat = await Bun.file(join(cwd, "src/db/models.rs")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(cargoStat).toBe(true);
+    expect(dbStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
