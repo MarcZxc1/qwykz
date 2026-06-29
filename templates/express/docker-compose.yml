@@ -18,20 +18,6 @@ services:
     volumes:
       - qwykz_data:/var/lib/postgresql/data
 
-  qwykz-redis:
-    image: redis:7-alpine
-    container_name: {{PROJECT_NAME}}-redis
-    command: redis-server --appendonly yes
-    ports:
-      - "127.0.0.1:63790:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    volumes:
-      - qwykz_redis_data:/data
-
+{{REDIS_BLOCK}}
 volumes:
-  qwykz_data:
-  qwykz_redis_data:
+  qwykz_data:{{REDIS_VOLUME}}

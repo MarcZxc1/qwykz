@@ -11,7 +11,7 @@ import {
 /** Check if --verbose flag is present in process.argv */
 const isVerbose = process.argv.includes("--verbose");
 
-async function runCommand(command: string[], cwd: string) {
+async function runCommand(command: string[], cwd: string, ignoreFailure = false) {
   try {
     const proc = Bun.spawn({
       cmd: ["bash", "-c", command.join(" ")],
@@ -62,9 +62,15 @@ async function runCommand(command: string[], cwd: string) {
 
     console.error(pc.dim("    • Re-run with --verbose for full output"));
     console.error("");
+    if (ignoreFailure) {
+      console.error(pc.yellow(`  ⚠️  Warning: Could not execute "${command[0]}". Skipping...`));
+      console.error("");
+      return false;
+    }
 
     process.exit(1);
   }
+  return true;
 }
 
 async function runSetupCommands(
@@ -110,18 +116,18 @@ async function runSetupCommands(
     }
 
     s.message("🔑 Generating Laravel app key...");
-    await runCommand(["php", "artisan", "key:generate", "--force", "-n"], targetDir);
+    await runCommand(["php", "artisan", "key:generate", "--force", "-n"], targetDir, true);
     s.message("🚀 Running database migrations...");
-    await runCommand(["php", "artisan", "migrate", "--force", "-n"], targetDir);
+    await runCommand(["php", "artisan", "migrate", "--force", "-n"], targetDir, true);
   } else if (options.framework === "react" || options.framework === "vue") {
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
   } else if (options.framework === "python") {
     s.message("📦 Installing Python dependencies...");
-    await runCommand(["pip", "install", "-r", "requirements.txt"], targetDir);
+    await runCommand(["pip", "install", "-r", "requirements.txt"], targetDir, true);
   } else if (options.framework === "go") {
     s.message("📦 Installing Go modules...");
-    await runCommand(["go", "mod", "tidy"], targetDir);
+    await runCommand(["go", "mod", "tidy"], targetDir, true);
   } else if (options.framework === "rust") {
     s.message("📦 Building Rust application...");
     // Cargo builds dependencies on first run/build

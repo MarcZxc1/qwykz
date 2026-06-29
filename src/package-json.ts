@@ -2,6 +2,7 @@ import { packageVersions } from "./package-versions";
 import { resolveLatestVersions } from "./npm-registry";
 import type {
   DbTarget,
+  CachingTarget,
   ExtraPackage,
   PackageMap,
   ProjectPackageJson,
@@ -94,6 +95,7 @@ export async function createPackageJson(
   projectName: string,
   dbTarget: DbTarget,
   extraPackages: ExtraPackage[],
+  cachingTarget: CachingTarget = "none",
 ): Promise<ProjectPackageJson> {
   const versions = await resolveVersionMap(extraPackages);
 
@@ -114,6 +116,12 @@ export async function createPackageJson(
     for (const dep of OPTIONAL_PACKAGES[pkg].devDependencies ?? []) {
       devDependencies[dep] = versions[dep]!;
     }
+  }
+
+  if (cachingTarget === "docker") {
+    dependencies["ioredis"] = "^5.4.1";
+  } else if (cachingTarget === "upstash") {
+    dependencies["@upstash/redis"] = "^1.31.5";
   }
 
   return {
