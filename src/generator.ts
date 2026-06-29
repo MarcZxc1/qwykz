@@ -147,19 +147,32 @@ async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
 
 async function resolveServerSource(
   extraPackages: ExtraPackage[],
+  framework: "express" | "hono" | "elysia" = "express"
 ): Promise<string> {
   const hasCors = extraPackages.includes("cors");
   const hasHelmet = extraPackages.includes("helmet");
 
   let extraImports = "";
-  if (hasCors) extraImports += 'import cors from "cors";\n';
-  if (hasHelmet) extraImports += 'import helmet from "helmet";\n';
-
   let extraMiddleware = "";
-  if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
-  if (hasCors) extraMiddleware += "app.use(cors());\n";
 
-  const raw = await readTemplate("express/server.ts");
+  if (framework === "express") {
+    if (hasCors) extraImports += 'import cors from "cors";\n';
+    if (hasHelmet) extraImports += 'import helmet from "helmet";\n';
+    if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
+    if (hasCors) extraMiddleware += "app.use(cors());\n";
+  } else if (framework === "hono") {
+    if (hasCors) extraImports += 'import { cors } from "hono/cors";\n';
+    if (hasHelmet) extraImports += 'import { secureHeaders } from "hono/secure-headers";\n';
+    if (hasHelmet) extraMiddleware += "app.use('*', secureHeaders());\n";
+    if (hasCors) extraMiddleware += "app.use('*', cors());\n";
+  } else if (framework === "elysia") {
+    if (hasCors) extraImports += 'import { cors } from "@elysiajs/cors";\n';
+    if (hasHelmet) extraImports += 'import { helmet } from "elysia-helmet";\n';
+    if (hasHelmet) extraMiddleware += ".use(helmet())\n  ";
+    if (hasCors) extraMiddleware += ".use(cors())\n  ";
+  }
+
+  const raw = await readTemplate(`${framework}/server.ts`);
   return injectVariables(raw, {
     EXTRA_IMPORTS: extraImports,
     EXTRA_MIDDLEWARE: extraMiddleware,
@@ -713,7 +726,7 @@ async function generateHonoProject(options: ProjectOptions) {
     readTemplate("express/tsconfig.json"),
     resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
     resolvePrismaClient(options.dbTarget),
-    readTemplate("hono/server.ts"),
+    resolveServerSource(options.extraPackages, "hono"),
     readTemplate("hono/error.middleware.ts"),
     readTemplate("hono/health.routes.ts"),
     readTemplate("hono/user.routes.ts"),
@@ -755,6 +768,9 @@ async function generateHonoProject(options: ProjectOptions) {
     createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
       // Override for Hono
       pkg.dependencies.hono = "^4.0.0";
+      delete pkg.dependencies.cors;
+      delete pkg.dependencies.helmet;
+      delete pkg.devDependencies["@types/cors"];
       delete pkg.dependencies.express;
       delete pkg.devDependencies["@types/express"];
       return writeJson(join(targetDir, "package.json"), pkg);
@@ -781,7 +797,7 @@ async function generateElysiaProject(options: ProjectOptions) {
     readTemplate("express/tsconfig.json"),
     resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
     resolvePrismaClient(options.dbTarget),
-    readTemplate("elysia/server.ts"),
+    resolveServerSource(options.extraPackages, "elysia"),
     readTemplate("elysia/error.middleware.ts"),
     readTemplate("elysia/health.routes.ts"),
     readTemplate("elysia/user.routes.ts"),
@@ -823,6 +839,11 @@ async function generateElysiaProject(options: ProjectOptions) {
     createPackageJson(options.projectName, options.dbTarget, options.extraPackages).then((pkg) => {
       // Override for Elysia
       pkg.dependencies.elysia = "^1.0.0";
+      if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
+      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "^1.2.0";
+      delete pkg.dependencies.cors;
+      delete pkg.dependencies.helmet;
+      delete pkg.devDependencies["@types/cors"];
       delete pkg.dependencies.express;
       delete pkg.devDependencies["@types/express"];
       return writeJson(join(targetDir, "package.json"), pkg);
