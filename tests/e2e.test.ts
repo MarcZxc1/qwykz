@@ -126,7 +126,7 @@ test("E2E: React with Vite Build", async () => {
   try {
     await run(`bun run src/index.ts -y --name ${projectName} --framework react`, process.cwd());
     await run("bun install", cwd);
-    await run("tsc -b && vite build", cwd);
+    await run("bun run build", cwd);
   } finally {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
@@ -140,7 +140,7 @@ test("E2E: Vue with Vite Build", async () => {
   try {
     await run(`bun run src/index.ts -y --name ${projectName} --framework vue`, process.cwd());
     await run("bun install", cwd);
-    await run("vue-tsc -b && vite build", cwd);
+    await run("bun run build", cwd);
   } finally {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
