@@ -68,7 +68,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
-        {isLogin ? <SignIn routing="hash" /> : <SignUp routing="hash" />}
+        {isLogin ? <SignIn /> : <SignUp />}
         <button 
           onClick={() => setIsLogin(!isLogin)}
           className="mt-4 text-blue-600 hover:underline"
