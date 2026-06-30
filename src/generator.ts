@@ -672,7 +672,7 @@ async function generateNextJsProject(options: ProjectOptions) {
   }
   
   if (options.authTarget === "clerk") {
-    pkgJson.dependencies["@clerk/nextjs"] = "^5.0.0";
+    pkgJson.dependencies["@clerk/nextjs"] = "^7.0.0";
   } else if (options.authTarget === "supabase") {
     pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
     pkgJson.dependencies["zod"] = "^3.23.0";
