@@ -762,6 +762,14 @@ async function generateVueProject(options: ProjectOptions) {
     const appVue = await readTemplate("vue/App.clerk.vue.stub");
     await Bun.write(join(targetDir, "src", "lib", "clerk.ts"), clerkPlugin);
     await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+    await Bun.write(join(targetDir, "src", "main.ts"), `import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import { setupClerk } from './lib/clerk'
+
+const app = createApp(App)
+setupClerk(app)
+app.mount('#app')`);
   } else if (options.authTarget === "supabase") {
     const supabaseTs = await readTemplate("vue/supabase.ts.stub");
     const authTs = await readTemplate("vue/auth.ts.stub");
