@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "test-vue-clerk",
+      "name": "vuetest",
       "dependencies": {
         "@clerk/vue": "^2.0.0",
         "tailwindcss": "^4.0.0",
