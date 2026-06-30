@@ -1,0 +1,48 @@
+#!/usr/bin/expect -f
+set timeout -1
+spawn bun run src/index.ts
+
+expect "What is the name of your project?"
+send "monorepo-test\r"
+
+expect "What type of project do you want to generate?"
+# fullstack is the 3rd option, down arrow twice
+send "\033\[B\033\[B\r"
+
+expect "Choose your fullstack architecture:"
+# Custom Monorepo is 2nd option, down arrow once
+send "\033\[B\r"
+
+expect "Select your Frontend Framework:"
+# React + Vite is 1st option
+send "\r"
+
+expect "Select your Backend Framework:"
+# Express is 1st option
+send "\r"
+
+expect "Select your PostgreSQL environment target:"
+# Supabase is 1st option
+send "\r"
+
+expect "Select your Authentication Provider:"
+# Supabase is 2nd option, down arrow once
+send "\033\[B\r"
+
+expect "Do you want to add a Redis caching layer?"
+# None is 1st option
+send "\r"
+
+expect "Install Zod for request validation?"
+send "y\r"
+
+expect "Install Helmet for security headers?"
+send "y\r"
+
+expect "Install CORS for cross-origin requests?"
+send "y\r"
+
+expect "Run the setup commands now?"
+send "n\r"
+
+expect eof

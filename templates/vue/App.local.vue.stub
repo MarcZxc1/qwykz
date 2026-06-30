@@ -1,0 +1,139 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const token = ref<string | null>(localStorage.getItem('token'))
+const isLogin = ref(true)
+const email = ref('')
+const password = ref('')
+const name = ref('')
+const errorMsg = ref('')
+
+const backendStatus = ref('Checking backend connection...')
+const users = ref<any[]>([])
+
+const testBackend = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}api/health`)
+    if (res.ok) {
+      if (!token.value) return
+      
+      const authRes = await fetch(`${import.meta.env.VITE_API_URL}api/users`, {
+        headers: { Authorization: `Bearer ${token.value}` }
+      })
+      if (authRes.status === 403) {
+        backendStatus.value = 'Connected to backend (Users API blocked: Requires ADMIN role)'
+      } else if (authRes.ok) {
+        backendStatus.value = 'Connected to backend! (Users API authenticated)'
+        users.value = await authRes.json()
+      } else {
+        backendStatus.value = `Connected to backend (Users API Error: ${authRes.status})`
+      }
+    } else {
+      backendStatus.value = 'Backend health check failed.'
+    }
+  } catch (e) {
+    backendStatus.value = 'Cannot connect to backend. Is it running?'
+  }
+}
+
+onMounted(() => {
+  if (token.value) testBackend()
+})
+
+const handleAuth = async () => {
+  errorMsg.value = ''
+  const endpoint = isLogin.value ? 'login' : 'register'
+  const body = isLogin.value ? { email: email.value, password: password.value } : { email: email.value, password: password.value, name: name.value }
+  
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}api/auth/${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || data.error || 'Authentication failed')
+    
+    token.value = data.token
+    localStorage.setItem('token', data.token)
+    testBackend()
+  } catch (err: any) {
+    errorMsg.value = err.message
+  }
+}
+
+const handleLogout = () => {
+  token.value = null
+  localStorage.removeItem('token')
+  users.value = []
+  backendStatus.value = 'Checking backend connection...'
+}
+</script>
+
+<template>
+  <div v-if="!token" class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full">
+      <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">
+        {{ isLogin ? "Welcome Back" : "Create Account" }}
+      </h1>
+      
+      <div v-if="errorMsg" class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+        {{ errorMsg }}
+      </div>
+      
+      <form @submit.prevent="handleAuth" class="space-y-4">
+        <div v-if="!isLogin">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <input required type="text" v-model="name" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input required type="email" v-model="email" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input required type="password" v-model="password" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+          {{ isLogin ? "Sign In" : "Sign Up" }}
+        </button>
+      </form>
+      
+      <p class="mt-6 text-center text-sm text-gray-600">
+        {{ isLogin ? "Don't have an account? " : "Already have an account? " }}
+        <button @click="isLogin = !isLogin" class="text-blue-600 hover:underline font-medium">
+          {{ isLogin ? "Sign Up" : "Sign In" }}
+        </button>
+      </p>
+    </div>
+  </div>
+
+  <div v-else class="min-h-screen bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+      <div class="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+          <p class="text-gray-500">Welcome to your local custom auth boilerplate.</p>
+        </div>
+        <button @click="handleLogout" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition">
+          Sign Out
+        </button>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Backend Connection Status</h2>
+        <div :class="`p-4 rounded-xl border ${backendStatus.includes('!') ? 'bg-green-50 border-green-200 text-green-700' : backendStatus.includes('failed') || backendStatus.includes('Cannot') ? 'bg-red-50 border-red-200 text-red-700' : 'bg-blue-50 border-blue-200 text-blue-700'}`">
+          <div class="flex items-center gap-3">
+            <div :class="`w-2 h-2 rounded-full ${backendStatus.includes('!') ? 'bg-green-500' : backendStatus.includes('failed') || backendStatus.includes('Cannot') ? 'bg-red-500' : 'bg-blue-500'} animate-pulse`"></div>
+            <p class="font-medium">{{ backendStatus }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="users.length > 0" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Users API Response</h2>
+        <pre class="bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto text-sm">{{ JSON.stringify(users, null, 2) }}</pre>
+      </div>
+    </div>
+  </div>
+</template>

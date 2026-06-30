@@ -73,6 +73,8 @@ async function resolveEnvFile(
   projectName: string,
   jwtSecret: string,
   dbPassword: string,
+  authTarget: AuthTarget = "local",
+  cachingTarget: CachingTarget = "none"
 ): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
     supabase: "express/env.supabase.txt",
@@ -83,39 +85,77 @@ async function resolveEnvFile(
 
   const raw = await readTemplate(variantMap[dbTarget]);
 
-  if (dbTarget === "supabase" || dbTarget === "neon") {
-    return injectVariables(raw, { JWT_SECRET: jwtSecret });
+  let authVars = "";
+  if (authTarget === "clerk") {
+    authVars = `\n# Clerk Auth\nCLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\nCLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"\n`;
+  } else if (authTarget === "supabase") {
+    authVars = `\n# Supabase Auth\nSUPABASE_URL="https://your-project.supabase.co"\nSUPABASE_ANON_KEY="your-anon-key"\n`;
   }
+
+  let cachingVars = "";
+  if (cachingTarget === "docker") {
+    cachingVars = `\n# Redis Caching (Docker)\nREDIS_URL="redis://127.0.0.1:63790"\n`;
+  } else if (cachingTarget === "upstash") {
+    cachingVars = `\n# Upstash Redis\nUPSTASH_REDIS_REST_URL="https://your-endpoint.upstash.io"\nUPSTASH_REDIS_REST_TOKEN="your-token"\n`;
+  }
+
+  if (dbTarget === "supabase" || dbTarget === "neon") {
+    return injectVariables(raw, { JWT_SECRET: jwtSecret }) + authVars + cachingVars;
+  }
+
+  const dbName = projectName.replace(/\//g, "-");
 
   if (dbTarget === "docker") {
     return injectVariables(raw, {
-      PROJECT_NAME: projectName,
+      PROJECT_NAME: dbName,
       JWT_SECRET: jwtSecret,
       DB_PASSWORD: dbPassword,
-    });
+    }) + authVars + cachingVars;
   }
 
   // local
   return injectVariables(raw, {
-    PROJECT_NAME: projectName,
+    PROJECT_NAME: dbName,
     JWT_SECRET: jwtSecret,
-  });
+  }) + authVars + cachingVars;
 }
 
 async function resolveDockerCompose(
   projectName: string,
   dbPassword: string,
+  dbTarget: string,
   cachingTarget: string,
 ): Promise<string> {
-  const raw = await readTemplate("express/docker-compose.yml");
-  
-  let redisBlock = "";
-  let redisVolume = "";
-  
+  let compose = `services:\n`;
+  let volumes = `volumes:\n`;
+  const containerPrefix = projectName.replace(/\//g, "-");
+
+  if (dbTarget === "docker") {
+    compose += `  qwykz-db:
+    image: postgres:17-alpine
+    container_name: ${containerPrefix}-postgres
+    command: postgres -c synchronous_commit=off
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_DB: ${containerPrefix}
+    ports:
+      - "127.0.0.1:54320:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${containerPrefix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - qwykz_data:/var/lib/postgresql/data\n\n`;
+    volumes += `  qwykz_data:\n`;
+  }
+
   if (cachingTarget === "docker") {
-    redisBlock = `  qwykz-redis:
+    compose += `  qwykz-redis:
     image: redis:7-alpine
-    container_name: {{PROJECT_NAME}}-redis
+    container_name: ${containerPrefix}-redis
     command: redis-server --appendonly yes
     ports:
       - "127.0.0.1:63790:6379"
@@ -125,16 +165,11 @@ async function resolveDockerCompose(
       timeout: 5s
       retries: 10
     volumes:
-      - qwykz_redis_data:/data\n`;
-    redisVolume = "\n  qwykz_redis_data:";
+      - qwykz_redis_data:/data\n\n`;
+    volumes += `  qwykz_redis_data:\n`;
   }
-  
-  return injectVariables(raw, {
-    PROJECT_NAME: projectName,
-    DB_PASSWORD: dbPassword,
-    REDIS_BLOCK: redisBlock,
-    REDIS_VOLUME: redisVolume,
-  });
+
+  return compose + volumes;
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
@@ -147,7 +182,8 @@ async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
 
 async function resolveServerSource(
   extraPackages: ExtraPackage[],
-  framework: "express" | "hono" | "elysia" = "express"
+  framework: "express" | "hono" | "elysia" = "express",
+  authTarget: AuthTarget = "local"
 ): Promise<string> {
   const hasCors = extraPackages.includes("cors");
   const hasHelmet = extraPackages.includes("helmet");
@@ -159,23 +195,31 @@ async function resolveServerSource(
     if (hasCors) extraImports += 'import cors from "cors";\n';
     if (hasHelmet) extraImports += 'import helmet from "helmet";\n';
     if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
-    if (hasCors) extraMiddleware += "app.use(cors());\n";
+    if (hasCors) extraMiddleware += "app.use(cors({ origin: 'http://localhost:5173', credentials: true }));\n";
   } else if (framework === "hono") {
     if (hasCors) extraImports += 'import { cors } from "hono/cors";\n';
     if (hasHelmet) extraImports += 'import { secureHeaders } from "hono/secure-headers";\n';
     if (hasHelmet) extraMiddleware += "app.use('*', secureHeaders());\n";
-    if (hasCors) extraMiddleware += "app.use('*', cors());\n";
+    if (hasCors) extraMiddleware += "app.use('*', cors({ origin: 'http://localhost:5173', credentials: true }));\n";
   } else if (framework === "elysia") {
     if (hasCors) extraImports += 'import { cors } from "@elysiajs/cors";\n';
     if (hasHelmet) extraImports += 'import { helmet } from "elysia-helmet";\n';
     if (hasHelmet) extraMiddleware += "\n  .use(helmet())";
-    if (hasCors) extraMiddleware += "\n  .use(cors())";
+    if (hasCors) extraMiddleware += "\n  .use(cors({ origin: 'http://localhost:5173', credentials: true }))";
   }
+
+  let authImport = 'import { authRouter } from "./routes/auth.routes";\n';
+  let authRoute = "";
+  if (framework === "express") authRoute = 'app.use("/api/auth", authRouter);\n';
+  else if (framework === "hono") authRoute = 'app.route("/api/auth", authRouter);\n';
+  else if (framework === "elysia") authRoute = '  .use(authRouter)\n';
 
   const raw = await readTemplate(`${framework}/server.ts`);
   return injectVariables(raw, {
     EXTRA_IMPORTS: extraImports,
     EXTRA_MIDDLEWARE: extraMiddleware,
+    AUTH_IMPORT: authImport,
+    AUTH_ROUTE: authRoute,
   });
 }
 
@@ -186,6 +230,34 @@ async function resolveUserController(
     ? "express/user.controller.zod.ts"
     : "express/user.controller.default.ts";
   return readTemplate(variant);
+}
+
+async function resolveUserService(cachingTarget: CachingTarget): Promise<string> {
+  let redisImport = "";
+  let redisCacheCheck = "";
+  let redisCacheSet = "";
+  let redisCacheInvalidate = "";
+
+  if (cachingTarget !== "none") {
+    redisImport = 'import { redis } from "../lib/redis";\n';
+    redisCacheCheck = `    const cached = await redis.get("users:list");\n    if (cached) return typeof cached === "string" ? JSON.parse(cached) : cached;\n`;
+    
+    if (cachingTarget === "upstash") {
+      redisCacheSet = `    await redis.set("users:list", JSON.stringify(users), { ex: 60 });\n`;
+    } else {
+      redisCacheSet = `    await redis.set("users:list", JSON.stringify(users), "EX", 60);\n`;
+    }
+    
+    redisCacheInvalidate = `    await redis.del("users:list");\n`;
+  }
+
+  const raw = await readTemplate("express/user.service.ts");
+  return injectVariables(raw, {
+    REDIS_IMPORT: redisImport,
+    REDIS_CACHE_CHECK: redisCacheCheck,
+    REDIS_CACHE_SET: redisCacheSet,
+    REDIS_CACHE_INVALIDATE: redisCacheInvalidate,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -235,22 +307,22 @@ export async function generateExpressProject(options: ProjectOptions) {
       options.projectName,
       jwtSecret,
       dbPassword,
+      options.authTarget,
+      options.cachingTarget
     ),
     resolvePrismaClient(options.dbTarget),
-    resolveServerSource(options.extraPackages),
+    resolveServerSource(options.extraPackages, "express", options.authTarget),
     readTemplate("express/error.middleware.ts"),
     readTemplate("express/health.routes.ts"),
     readTemplate("express/user.routes.ts"),
     resolveUserController(options.extraPackages),
-    readTemplate("express/user.service.ts"),
-    readTemplate("express/auth.controller.ts"),
-    readTemplate("express/auth.middleware.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`express/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`express/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("express/auth.routes.ts"),
-    options.dbTarget === "docker"
-      ? readTemplate("express/wait-for-postgres.ts")
-      : Promise.resolve(null),
-    options.dbTarget === "docker"
-      ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget)
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker"
+      ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget)
       : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
@@ -268,14 +340,17 @@ export async function generateExpressProject(options: ProjectOptions) {
     ["src/middlewares/auth.middleware.ts", authMiddleware],
     ["src/routes/health.routes.ts", healthRoutes],
     ["src/routes/user.routes.ts", userRoutes],
-    ["src/routes/auth.routes.ts", authRoutes],
-    ["src/controllers/user.controller.ts", userController],
-    ["src/controllers/auth.controller.ts", authController],
-    ["src/services/user.service.ts", userService],
+    ["src/routes/auth.routes.ts", authRoutes!],
+    ["src/controllers/user.controller.ts", userController!],
+    ["src/controllers/auth.controller.ts", authController!],
+    ["src/services/user.service.ts", userService!],
   ];
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" && waitForPostgres) {
     files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
@@ -295,6 +370,7 @@ export async function generateExpressProject(options: ProjectOptions) {
       options.dbTarget,
       options.extraPackages,
       options.cachingTarget,
+      options.authTarget,
     ).then((pkgJson) => writeJson(join(targetDir, "package.json"), pkgJson)),
   ]);
 }
@@ -364,6 +440,8 @@ async function generateLaravelProject(options: ProjectOptions) {
     "DB_CONNECTION=sqlite",
     "DB_CONNECTION=pgsql",
   );
+  
+  envContent += "\n# CORS / Frontend\nFRONTEND_URL=http://localhost:5173\nSANCTUM_STATEFUL_DOMAINS=localhost:5173,localhost:3000\n";
 
   if (options.dbTarget === "supabase") {
     const parsed = new URL(
@@ -396,9 +474,10 @@ async function generateLaravelProject(options: ProjectOptions) {
       "# DB_PORT=3306",
       `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`,
     );
+    const dbName = options.projectName.replace(/\//g, "-");
     envContent = envContent.replace(
       "# DB_DATABASE=laravel",
-      `DB_DATABASE=${options.projectName}`,
+      `DB_DATABASE=${dbName}`,
     );
     envContent = envContent.replace(
       "# DB_USERNAME=root",
@@ -412,7 +491,7 @@ async function generateLaravelProject(options: ProjectOptions) {
 
   await writeFile(envPath, envContent);
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     console.log(`\n🐳 Generating docker-compose.yml...
   `);
 
@@ -503,7 +582,13 @@ async function generateNextJsProject(options: ProjectOptions) {
   } else {
     const port = options.dbTarget === "docker" ? "54320" : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
-    envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${options.projectName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
+    const dbName = options.projectName.replace(/\//g, "-");
+    envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
+  }
+  if (options.authTarget === "clerk") {
+    envContent += `\n# Clerk Auth\nNEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\nCLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"\n`;
+  } else if (options.authTarget === "supabase") {
+    envContent += `\n# Supabase Auth\nNEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"\nNEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"\n`;
   }
   await Bun.write(envPath, envContent);
 
@@ -522,8 +607,12 @@ async function generateNextJsProject(options: ProjectOptions) {
     ["__tests__/example.test.ts", await readTemplate("nextjs/example.test.ts")],
   ];
 
-  if (options.dbTarget === "docker") {
-    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget)]);
+  if (options.authTarget === "clerk") {
+    files.push(["middleware.ts", await readTemplate("nextjs/clerk-middleware.ts.stub")]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget)]);
   }
 
   if (options.cachingTarget === "docker") {
@@ -556,6 +645,11 @@ async function generateNextJsProject(options: ProjectOptions) {
   } else if (options.cachingTarget === "upstash") {
     pkgJson.dependencies["@upstash/redis"] = "^1.31.5";
   }
+  
+  if (options.authTarget === "clerk") {
+    pkgJson.dependencies["@clerk/nextjs"] = "^5.0.0";
+  }
+  
   await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
 }
 
@@ -573,10 +667,10 @@ async function generateReactProject(options: ProjectOptions) {
   const viteConfig = await readTemplate("react/vite.config.ts.stub");
   const indexCss = await readTemplate("react/index.css.stub");
 
-  if (options.dbTarget === "clerk") {
+  if (options.authTarget === "clerk") {
     const clerkProvider = await readTemplate("react/clerk-provider.tsx.stub");
     await Bun.write(join(targetDir, "src", "App.tsx"), clerkProvider);
-  } else if (options.dbTarget === "supabase") {
+  } else if (options.authTarget === "supabase") {
     const supabaseTs = await readTemplate("react/supabase.ts.stub");
     const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
     const appTsx = await readTemplate("react/App.tsx.stub");
@@ -584,8 +678,9 @@ async function generateReactProject(options: ProjectOptions) {
     await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
     await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
   } else {
-    // Basic App.tsx
-    await Bun.write(join(targetDir, "src", "App.tsx"), `export default function App() { return <h1>Ready</h1>; }`);
+    // Local Auth App.tsx
+    const localAppTsx = await readTemplate("react/App.local.tsx.stub");
+    await Bun.write(join(targetDir, "src", "App.tsx"), localAppTsx);
   }
 
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
@@ -600,21 +695,21 @@ async function generateReactProject(options: ProjectOptions) {
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  if (options.dbTarget === "clerk") {
+  if (options.authTarget === "clerk") {
     pkgJson.dependencies["@clerk/clerk-react"] = "^5.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_CLERK_PUBLISHABLE_KEY="pk_test_YOUR_KEY"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
-  } else if (options.dbTarget === "supabase") {
+  } else if (options.authTarget === "supabase") {
     pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    await Bun.write(join(targetDir, ".env"), "");
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="http://localhost:3000/"\n`);
   }
 }
 
@@ -632,11 +727,12 @@ async function generateVueProject(options: ProjectOptions) {
   const viteConfig = await readTemplate("vue/vite.config.ts.stub");
   const styleCss = await readTemplate("vue/style.css.stub");
 
-  if (options.dbTarget === "clerk") {
+  if (options.authTarget === "clerk") {
     const clerkPlugin = await readTemplate("vue/clerk-plugin.ts.stub");
+    const appVue = await readTemplate("vue/App.clerk.vue.stub");
     await Bun.write(join(targetDir, "src", "lib", "clerk.ts"), clerkPlugin);
-    await Bun.write(join(targetDir, "src", "App.vue"), `<template><div>Clerk Ready</div></template>`);
-  } else if (options.dbTarget === "supabase") {
+    await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+  } else if (options.authTarget === "supabase") {
     const supabaseTs = await readTemplate("vue/supabase.ts.stub");
     const authTs = await readTemplate("vue/auth.ts.stub");
     const appVue = await readTemplate("vue/App.vue.stub");
@@ -659,21 +755,21 @@ async function generateVueProject(options: ProjectOptions) {
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  if (options.dbTarget === "clerk") {
-    pkgJson.dependencies["vue-clerk"] = "^0.4.0";
+  if (options.authTarget === "clerk") {
+    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_CLERK_PUBLISHABLE_KEY="pk_test_YOUR_KEY"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
-  } else if (options.dbTarget === "supabase") {
+  } else if (options.authTarget === "supabase") {
     pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    await Bun.write(join(targetDir, ".env"), "");
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="http://localhost:3000/"\n`);
   }
 }
 
@@ -689,7 +785,21 @@ async function generatePythonProject(options: ProjectOptions) {
   
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+  
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("python/redis.py.stub");
+    await Bun.write(join(targetDir, "app/core/redis.py"), redisStub);
+    const reqPath = join(targetDir, "requirements.txt");
+    const reqText = await Bun.file(reqPath).text();
+    await Bun.write(reqPath, reqText + "redis>=5.0.1\n");
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
   await Bun.write(join(targetDir, ".env"), envContent);
 }
 
@@ -705,7 +815,22 @@ async function generateGoProject(options: ProjectOptions) {
 
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("go/redis.go.stub");
+    await Bun.spawn(["mkdir", "-p", join(targetDir, "internal/cache")]).exited;
+    await Bun.write(join(targetDir, "internal/cache/redis.go"), redisStub);
+    const modPath = join(targetDir, "go.mod");
+    const modText = await Bun.file(modPath).text();
+    await Bun.write(modPath, modText + "\nrequire github.com/redis/go-redis/v9 v9.5.1\n");
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
   await Bun.write(join(targetDir, ".env"), envContent);
 }
 
@@ -721,7 +846,23 @@ async function generateRustProject(options: ProjectOptions) {
 
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  const envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("rust/redis.rs.stub");
+    await Bun.spawn(["mkdir", "-p", join(targetDir, "src/cache")]).exited;
+    await Bun.write(join(targetDir, "src/cache/mod.rs"), "pub mod redis;\n");
+    await Bun.write(join(targetDir, "src/cache/redis.rs"), redisStub);
+    const cargoPath = join(targetDir, "Cargo.toml");
+    const cargoText = await Bun.file(cargoPath).text();
+    await Bun.write(cargoPath, cargoText + "redis = \"0.25.3\"\n");
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
   await Bun.write(join(targetDir, ".env"), envContent);
 }
 
@@ -742,19 +883,19 @@ async function generateHonoProject(options: ProjectOptions) {
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
     readTemplate("express/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget),
     resolvePrismaClient(options.dbTarget),
-    resolveServerSource(options.extraPackages, "hono"),
+    resolveServerSource(options.extraPackages, "hono", options.authTarget),
     readTemplate("hono/error.middleware.ts"),
     readTemplate("hono/health.routes.ts"),
     readTemplate("hono/user.routes.ts"),
     options.extraPackages.includes("zod") ? readTemplate("hono/user.controller.zod.ts") : readTemplate("hono/user.controller.default.ts"),
-    readTemplate("express/user.service.ts"),
-    readTemplate("hono/auth.controller.ts"),
-    readTemplate("hono/auth.middleware.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`hono/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`hono/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("hono/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget) : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget) : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
 
@@ -769,15 +910,18 @@ async function generateHonoProject(options: ProjectOptions) {
     ["src/middlewares/auth.middleware.ts", authMiddleware],
     ["src/routes/health.routes.ts", healthRoutes],
     ["src/routes/user.routes.ts", userRoutes],
-    ["src/routes/auth.routes.ts", authRoutes],
+    ["src/routes/auth.routes.ts", authRoutes!],
     ["src/controllers/user.controller.ts", userController],
-    ["src/controllers/auth.controller.ts", authController],
+    ["src/controllers/auth.controller.ts", authController!],
     ["src/services/user.service.ts", userService],
     ["src/index.test.ts", exampleTest],
   ];
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" && waitForPostgres) {
     files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
@@ -789,9 +933,10 @@ async function generateHonoProject(options: ProjectOptions) {
 
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
       // Override for Hono
       pkg.dependencies.hono = "^4.0.0";
+      pkg.dependencies["@hono/node-server"] = "^1.11.0";
       delete pkg.dependencies.cors;
       delete pkg.dependencies.helmet;
       delete pkg.devDependencies["@types/cors"];
@@ -819,19 +964,19 @@ async function generateElysiaProject(options: ProjectOptions) {
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
     readTemplate("express/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget),
     resolvePrismaClient(options.dbTarget),
-    resolveServerSource(options.extraPackages, "elysia"),
+    resolveServerSource(options.extraPackages, "elysia", options.authTarget),
     readTemplate("elysia/error.middleware.ts"),
     readTemplate("elysia/health.routes.ts"),
     readTemplate("elysia/user.routes.ts"),
     options.extraPackages.includes("zod") ? readTemplate("elysia/user.controller.zod.ts") : readTemplate("elysia/user.controller.default.ts"),
-    readTemplate("express/user.service.ts"),
-    readTemplate("elysia/auth.controller.ts"),
-    readTemplate("elysia/auth.middleware.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`elysia/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`elysia/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("elysia/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.cachingTarget) : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget) : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
 
@@ -846,15 +991,18 @@ async function generateElysiaProject(options: ProjectOptions) {
     ["src/middlewares/auth.middleware.ts", authMiddleware],
     ["src/routes/health.routes.ts", healthRoutes],
     ["src/routes/user.routes.ts", userRoutes],
-    ["src/routes/auth.routes.ts", authRoutes],
+    ["src/routes/auth.routes.ts", authRoutes!],
     ["src/controllers/user.controller.ts", userController],
-    ["src/controllers/auth.controller.ts", authController],
+    ["src/controllers/auth.controller.ts", authController!],
     ["src/services/user.service.ts", userService],
     ["src/index.test.ts", exampleTest],
   ];
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" && waitForPostgres) {
     files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     files.push(["docker-compose.yml", dockerCompose!]);
   }
 
@@ -866,11 +1014,11 @@ async function generateElysiaProject(options: ProjectOptions) {
 
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
       // Override for Elysia
       pkg.dependencies.elysia = "^1.0.0";
       if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
-      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "^1.2.0";
+      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "^3.1.0";
       delete pkg.dependencies.cors;
       delete pkg.dependencies.helmet;
       delete pkg.devDependencies["@types/cors"];
@@ -902,6 +1050,36 @@ export async function generateProject(options: ProjectOptions) {
     await generateHonoProject(options);
   } else if (options.framework === "elysia") {
     await generateElysiaProject(options);
+  } else if (options.framework === "monorepo") {
+    const rootName = options.projectName;
+    const targetDir = join(process.cwd(), rootName);
+    
+    // Generate backend
+    options.framework = options.backendFramework!;
+    options.projectName = `${rootName}/backend`;
+    await generateProject(options);
+    
+    // Generate frontend
+    options.framework = options.frontendFramework!;
+    options.projectName = `${rootName}/frontend`;
+    await generateProject(options);
+    
+    // Generate root orchestration
+    const rootPkg = {
+      name: rootName,
+      private: true,
+      workspaces: ["backend", "frontend"],
+      scripts: {
+        dev: "bunx concurrently \"cd backend && bun dev\" \"cd frontend && bun dev\"",
+        "db:generate": "cd backend && bun run db:generate",
+        "db:push": "cd backend && bun run db:push",
+        "db:studio": "cd backend && bun run db:studio"
+      }
+    };
+    await Bun.write(join(targetDir, "package.json"), JSON.stringify(rootPkg, null, 2));
+    
+    // Restore project name and framework
+    options.projectName = rootName;
+    options.framework = "monorepo";
   }
 }
-

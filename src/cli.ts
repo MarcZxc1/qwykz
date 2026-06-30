@@ -83,12 +83,12 @@ async function runSetupCommands(
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
 
-    if (options.dbTarget === "docker") {
+    if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Cleaning stale Docker volumes...");
       try {
         await runCommand(["docker", "compose", "down", "-v", "--remove-orphans"], targetDir);
       } catch (e) {}
-      s.message("🐳 Booting up PostgreSQL container...");
+      s.message("🐳 Booting up Docker containers...");
       await runCommand(
         ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
         targetDir,
@@ -102,17 +102,41 @@ async function runSetupCommands(
     
     s.message("🧪 Running automated test suite...");
     await runCommand(["bun", "test"], targetDir);
+  } else if (options.framework === "monorepo") {
+    s.message("📦 Installing Monorepo NPM dependencies...");
+    await runCommand(["bun", "install"], targetDir);
+    const backendDir = join(targetDir, "backend");
+    
+    if (["express", "hono", "elysia"].includes(options.backendFramework as string)) {
+      if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+        s.message("🐳 Booting up Backend Docker containers...");
+        try {
+          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
+        } catch (e) {}
+      }
+      s.message("◓ Generating Prisma Client...");
+      await runCommand(["bun", "run", "db:generate"], backendDir);
+      s.message("🚀 Pushing database schema...");
+      await runCommand(["bun", "run", "db:push"], backendDir);
+    }
   } else if (options.framework === "laravel") {
-    if (options.dbTarget === "docker") {
+    if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Cleaning stale Docker volumes...");
       try {
         await runCommand(["docker", "compose", "down", "-v", "--remove-orphans"], targetDir);
       } catch (e) {}
-      s.message("🐳 Booting up PostgreSQL container...");
-      await runCommand(
-        ["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"],
-        targetDir,
-      );
+      s.message("🐳 Booting up Docker containers...");
+      try {
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
+      } catch (error) {
+        throw new Error(
+          `Command "docker compose up -d --wait" exited with code 1\n\n` +
+          `  Suggestions:\n` +
+          `    • Ensure Docker Desktop is running\n` +
+          `    • Check if ports 54320 or 63790 are already occupied by previous boilerplate containers!\n` +
+          `    • Re-run with --verbose for full output`
+        );
+      }
     }
 
     s.message("🔑 Generating Laravel app key...");
@@ -123,12 +147,30 @@ async function runSetupCommands(
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
   } else if (options.framework === "python") {
+    if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+      s.message("🐳 Booting up Docker containers...");
+      try {
+        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
+      } catch (e) {}
+    }
     s.message("📦 Installing Python dependencies...");
     await runCommand(["pip", "install", "-r", "requirements.txt"], targetDir, true);
   } else if (options.framework === "go") {
+    if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+      s.message("🐳 Booting up Docker containers...");
+      try {
+        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
+      } catch (e) {}
+    }
     s.message("📦 Installing Go modules...");
     await runCommand(["go", "mod", "tidy"], targetDir, true);
   } else if (options.framework === "rust") {
+    if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+      s.message("🐳 Booting up Docker containers...");
+      try {
+        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
+      } catch (e) {}
+    }
     s.message("📦 Building Rust application...");
     // Cargo builds dependencies on first run/build
   }
@@ -158,6 +200,7 @@ export async function runCli() {
       if (options.framework === "python") devCmd = "fastapi dev app/main.py";
       if (options.framework === "go") devCmd = "go run cmd/api/main.go";
       if (options.framework === "rust") devCmd = "cargo run";
+      if (options.framework === "monorepo") devCmd = "bun run dev";
 
       const proc = Bun.spawn(["bash", "-c", devCmd], {
         cwd: join(process.cwd(), options.projectName),
