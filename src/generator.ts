@@ -87,7 +87,7 @@ async function resolveEnvFile(
 
   let authVars = "";
   if (authTarget === "clerk") {
-    authVars = `\n# Clerk Auth\nCLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\nCLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"\n`;
+    authVars = `\n# Clerk Auth\nCLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\nCLERK_SECRET_KEY="YOUR_CLERK_SECRET_KEY"\n`;
   } else if (authTarget === "supabase") {
     authVars = `\n# Supabase Auth\nSUPABASE_URL="https://your-project.supabase.co"\nSUPABASE_ANON_KEY="your-anon-key"\n`;
   }
@@ -586,7 +586,7 @@ async function generateNextJsProject(options: ProjectOptions) {
     envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   }
   if (options.authTarget === "clerk") {
-    envContent += `\n# Clerk Auth\nNEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\nCLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"\n`;
+    envContent += `\n# Clerk Auth\nNEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\nCLERK_SECRET_KEY="YOUR_CLERK_SECRET_KEY"\n`;
   } else if (options.authTarget === "supabase") {
     envContent += `\n# Supabase Auth\nNEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"\nNEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"\n`;
   }
@@ -698,7 +698,7 @@ async function generateReactProject(options: ProjectOptions) {
   if (options.authTarget === "clerk") {
     pkgJson.dependencies["@clerk/clerk-react"] = "^5.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
@@ -758,7 +758,7 @@ async function generateVueProject(options: ProjectOptions) {
   if (options.authTarget === "clerk") {
     pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"\n`;
+    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
