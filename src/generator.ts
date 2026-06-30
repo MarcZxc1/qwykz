@@ -609,6 +609,13 @@ async function generateNextJsProject(options: ProjectOptions) {
 
   if (options.authTarget === "clerk") {
     files.push(["middleware.ts", await readTemplate("nextjs/clerk-middleware.ts.stub")]);
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.clerk.tsx.stub")]);
+  } else if (options.authTarget === "supabase") {
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.supabase.tsx.stub")]);
+    files.push(["lib/supabase.ts", await readTemplate("react/supabase.ts.stub")]);
+    files.push(["lib/AuthContext.tsx", await readTemplate("react/AuthContext.tsx.stub")]);
+  } else {
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.local.tsx.stub")]);
   }
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
@@ -629,6 +636,24 @@ async function generateNextJsProject(options: ProjectOptions) {
     })
   );
 
+  if (options.authTarget === "clerk") {
+    const layoutPath = join(targetDir, "app", "layout.tsx");
+    let layoutContent = await Bun.file(layoutPath).text();
+    layoutContent = layoutContent.replace(
+      "import \"./globals.css\";",
+      "import \"./globals.css\";\nimport { ClerkProvider } from \"@clerk/nextjs\";"
+    );
+    layoutContent = layoutContent.replace(
+      "<html",
+      "<ClerkProvider>\n    <html"
+    );
+    layoutContent = layoutContent.replace(
+      "</html>",
+      "</html>\n    </ClerkProvider>"
+    );
+    await Bun.write(layoutPath, layoutContent);
+  }
+
   // Inject Prisma and Test scripts into Next.js package.json
   const pkgPath = join(targetDir, "package.json");
   const pkgContent = await Bun.file(pkgPath).text();
@@ -648,6 +673,11 @@ async function generateNextJsProject(options: ProjectOptions) {
   
   if (options.authTarget === "clerk") {
     pkgJson.dependencies["@clerk/nextjs"] = "^5.0.0";
+  } else if (options.authTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    pkgJson.dependencies["zod"] = "^3.23.0";
+  } else {
+    pkgJson.dependencies["zod"] = "^3.23.0";
   }
   
   await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
