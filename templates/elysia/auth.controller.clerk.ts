@@ -1,4 +1,9 @@
-import { clerkClient } from "@clerk/backend";
+import { createClerkClient } from "@clerk/backend";
+
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+});
 import { HttpError } from "../middlewares/error.middleware";
 
 export const authController = {

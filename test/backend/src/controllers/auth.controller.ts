@@ -1,10 +1,5 @@
 import type { Context } from "hono";
-import { createClerkClient } from "@clerk/backend";
-
-const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-});
+import { clerkClient } from "@clerk/backend";
 import { HttpError } from "../middlewares/error.middleware";
 
 export async function register(c: Context) {
