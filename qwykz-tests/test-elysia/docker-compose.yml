@@ -1,0 +1,22 @@
+services:
+  qwykz-db:
+    image: postgres:17-alpine
+    container_name: test-elysia-postgres
+    command: postgres -c synchronous_commit=off
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwykz_local_password
+      POSTGRES_DB: test-elysia
+    ports:
+      - "127.0.0.1:54320:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d test-elysia"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - qwykz_data:/var/lib/postgresql/data
+
+volumes:
+  qwykz_data:

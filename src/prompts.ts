@@ -60,10 +60,14 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
+    const authRaw = getFlagValue("--auth") ?? "local";
     const frameworkRaw = getFlagValue("--framework") ?? "express";
     const dbTarget: DbTarget = (
       ["supabase", "local", "docker", "neon"].includes(dbRaw) ? dbRaw : "local"
     ) as DbTarget;
+    const authTarget: AuthTarget = (
+      ["supabase", "clerk", "local"].includes(authRaw) ? authRaw : "local"
+    ) as AuthTarget;
 
     const cachingRaw = getFlagValue("--caching") ?? "none";
     const cachingTarget: CachingTarget = (
@@ -74,16 +78,22 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     const extraPackages: ExtraPackage[] = [];
     if (hasFlag("--zod")) extraPackages.push("zod");
     if (hasFlag("--helmet")) extraPackages.push("helmet");
-    if (hasFlag("--cors")) extraPackages.push("cors");
+    if (hasFlag("--cors") || frameworkRaw === "monorepo") extraPackages.push("cors");
+
+    const frontendFramework = getFlagValue("--frontend") as Framework;
+    const backendFramework = getFlagValue("--backend") as Framework;
 
     return {
-      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia", "python", "go", "rust"].includes(frameworkRaw)
+      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia", "python", "go", "rust", "monorepo"].includes(frameworkRaw)
         ? frameworkRaw
         : "express") as Framework,
       projectName: normalizePackageName(name),
       dbTarget,
+      authTarget,
       cachingTarget,
       extraPackages,
+      frontendFramework,
+      backendFramework
     };
   }
 
@@ -114,25 +124,83 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   });
   stopOnCancel(projectName);
 
-  const framework = await select({
-    message: "What stack do you want to generate?",
+  const projectType = await select({
+    message: "What type of project do you want to generate?",
     options: [
-      { value: "express", label: "Express.js + Typescript (Backend)" },
-      { value: "hono", label: "Hono - Edge Optimized (Backend)" },
-      { value: "elysia", label: "Elysia - Bun Native (Backend)" },
-      { value: "laravel", label: "Vanilla Laravel (Backend)" },
-      { value: "python", label: "Python FastAPI (Backend)" },
-      { value: "go", label: "Go Fiber (Backend)" },
-      { value: "rust", label: "Rust Axum (Backend)" },
-      { value: "nextjs", label: "Next.js (Fullstack)" },
-      { value: "react", label: "React + Vite (Frontend)" },
-      { value: "vue", label: "Vue + Vite (Frontend)" },
+      { value: "backend", label: "Backend API" },
+      { value: "frontend", label: "Frontend SPA" },
+      { value: "fullstack", label: "Fullstack Application" },
     ],
   });
-  stopOnCancel(framework);
+  stopOnCancel(projectType);
 
-  let dbTarget: string | symbol = "local";
-  if (["express", "laravel", "nextjs", "hono", "elysia"].includes(framework as string)) {
+  let framework = "express";
+  let frontendFramework: Framework | undefined;
+  let backendFramework: Framework | undefined;
+
+  if (projectType === "backend") {
+    framework = await select({
+      message: "What stack do you want to generate?",
+      options: [
+        { value: "express", label: "Express.js + Typescript" },
+        { value: "hono", label: "Hono - Edge Optimized" },
+        { value: "elysia", label: "Elysia - Bun Native" },
+        { value: "laravel", label: "Vanilla Laravel" },
+        { value: "python", label: "Python FastAPI" },
+        { value: "go", label: "Go Fiber" },
+        { value: "rust", label: "Rust Axum" },
+      ],
+    }) as string;
+    stopOnCancel(framework);
+  } else if (projectType === "frontend") {
+    framework = await select({
+      message: "What frontend framework do you want to generate?",
+      options: [
+        { value: "react", label: "React + Vite" },
+        { value: "vue", label: "Vue + Vite" },
+      ],
+    }) as string;
+    stopOnCancel(framework);
+  } else if (projectType === "fullstack") {
+    const fullstackType = await select({
+      message: "Choose your fullstack architecture:",
+      options: [
+        { value: "nextjs", label: "Next.js (App Router)" },
+        { value: "monorepo", label: "Custom Monorepo (Frontend + Backend)" },
+      ],
+    });
+    stopOnCancel(fullstackType);
+
+    if (fullstackType === "nextjs") {
+      framework = "nextjs";
+    } else {
+      framework = "monorepo";
+      frontendFramework = await select({
+        message: "Select your Frontend Framework:",
+        options: [
+          { value: "react", label: "React + Vite" },
+          { value: "vue", label: "Vue + Vite" },
+        ],
+      }) as Framework;
+      stopOnCancel(frontendFramework);
+
+      backendFramework = await select({
+        message: "Select your Backend Framework:",
+        options: [
+          { value: "express", label: "Express.js + Typescript" },
+          { value: "hono", label: "Hono - Edge Optimized" },
+          { value: "elysia", label: "Elysia - Bun Native" },
+          { value: "python", label: "Python FastAPI" },
+          { value: "go", label: "Go Fiber" },
+          { value: "rust", label: "Rust Axum" },
+        ],
+      }) as Framework;
+      stopOnCancel(backendFramework);
+    }
+  }
+
+  let dbTarget = "local";
+  if (framework !== "react" && framework !== "vue") {
     dbTarget = await select({
       message: "Select your PostgreSQL environment target:",
       options: [
@@ -140,22 +208,25 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
         { value: "local", label: "Local PostgreSQL (installed on host)" },
         { value: "docker", label: "Dockerized PostgreSQL (self-contained)" },
       ],
-    });
-    stopOnCancel(dbTarget);
-  } else if (["react", "vue"].includes(framework as string)) {
-    dbTarget = await select({
-      message: "Select your Authentication Provider:",
-      options: [
-        { value: "supabase", label: "Supabase Auth (UI Components)" },
-        { value: "clerk", label: "Clerk Auth (React/Vue Integrations)" },
-        { value: "local", label: "None / Custom" },
-      ],
-    });
+    }) as string;
     stopOnCancel(dbTarget);
   }
 
+  let authTarget: string | symbol = "local";
+  if (["express", "nextjs", "react", "vue", "hono", "elysia", "monorepo"].includes(framework as string)) {
+    authTarget = await select({
+      message: "Select your Authentication Provider:",
+      options: [
+        { value: "local", label: "Classic / Codebase Built-in Auth" },
+        { value: "supabase", label: "Supabase Auth" },
+        { value: "clerk", label: "Clerk Auth" },
+      ],
+    });
+    stopOnCancel(authTarget);
+  }
+
   let cachingTarget: string | symbol = "none";
-  if (["express", "laravel", "nextjs", "hono", "elysia", "python", "go", "rust"].includes(framework as string)) {
+  if (["express", "laravel", "nextjs", "hono", "elysia", "python", "go", "rust", "monorepo"].includes(framework as string)) {
     cachingTarget = await select({
       message: "Do you want to add a Redis caching layer?",
       options: [
@@ -169,7 +240,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const extraPackages: ExtraPackage[] = [];
 
-  if (["express", "hono", "elysia"].includes(framework as string)) {
+  const targetBackend = framework === "monorepo" ? backendFramework : framework;
+
+  if (["express", "hono", "elysia"].includes(targetBackend as string)) {
     const shouldInstallZod = await confirm({
       message: "Install Zod for request validation?",
       initialValue: false,
@@ -177,14 +250,17 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     stopOnCancel(shouldInstallZod);
     if (shouldInstallZod) extraPackages.push("zod");
 
-    if (framework === "express") {
-      const shouldInstallHelmet = await confirm({
-        message: "Install Helmet for security headers?",
-        initialValue: false,
-      });
-      stopOnCancel(shouldInstallHelmet);
-      if (shouldInstallHelmet) extraPackages.push("helmet");
+    const shouldInstallHelmet = await confirm({
+      message: "Install Helmet for security headers?",
+      initialValue: false,
+    });
+    stopOnCancel(shouldInstallHelmet);
+    if (shouldInstallHelmet) extraPackages.push("helmet");
 
+    if (framework === "monorepo") {
+      // Monorepos ALWAYS need CORS to connect frontend (5173) to backend (3000)
+      extraPackages.push("cors");
+    } else {
       const shouldInstallCors = await confirm({
         message: "Install CORS for cross-origin requests?",
         initialValue: false,
@@ -198,8 +274,11 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     framework: framework as Framework,
     projectName: normalizePackageName(String(projectName)),
     dbTarget: dbTarget as DbTarget,
+    authTarget: authTarget as AuthTarget,
     cachingTarget: cachingTarget as any,
     extraPackages,
+    frontendFramework,
+    backendFramework
   };
 }
 
@@ -224,6 +303,37 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
     options.framework === "laravel" ? "php artisan serve" : "bun dev";
 
   const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
+  
+  if (options.framework === "monorepo") {
+    let envInstructions = "";
+    if (options.dbTarget === "supabase" || options.authTarget !== "local") {
+      envInstructions = `⚠️  ACTION REQUIRED:
+1. Open "${options.projectName}/backend/.env"
+2. Replace the placeholders with your database/auth credentials.
+3. Open "${options.projectName}/frontend/.env" (if applicable) and add client keys.
+4. Run the following commands to finish setup:
+`;
+    } else {
+      envInstructions = `Next commands:\n`;
+    }
+
+    const hasDocker = options.dbTarget === "docker" || options.cachingTarget === "docker";
+    const dockerCmd = hasDocker ? "  cd backend && docker compose up -d\n  cd ..\n" : "";
+    const dockerOneLiner = hasDocker ? "cd backend && docker compose up -d && cd .. && " : "";
+    
+    outro(`Your boilerplate "${options.projectName}" is ready.
+
+${envInstructions}
+Manual Execution:
+  cd ${options.projectName}
+${dockerCmd}${installCmd}  bun run db:generate
+  bun run db:push
+  bun run dev
+
+Automated One-liner:
+  cd ${options.projectName} && ${dockerOneLiner}${installCmd.trim()} && bun run db:generate && bun run db:push && bun run dev`);
+    return;
+  }
 
   if (["python", "go", "rust"].includes(options.framework)) {
     let langCmds = "";
@@ -292,6 +402,10 @@ Automated One-liner:
     return;
   }
 
+  const hasDocker = options.dbTarget === "docker" || options.cachingTarget === "docker";
+  const dockerCmd = hasDocker ? "  docker compose up -d\n" : "";
+  const dockerOneLiner = hasDocker ? "docker compose up -d && " : "";
+
   if (options.dbTarget === "supabase" || options.dbTarget === "neon") {
     const providerName = options.dbTarget === "supabase" ? "Supabase" : "Neon Serverless Postgres";
     outro(`Your boilerplate "${options.projectName}" is ready.
@@ -303,12 +417,12 @@ Automated One-liner:
 
 Manual Execution:
   cd ${options.projectName}
-${installCmd}  ${generateCmd}
+${dockerCmd}${installCmd}  ${generateCmd}
   ${pushCmd}
   ${devCommand}
   
 Automated One-liner:
-  cd ${options.projectName}${installCmd ? " && " + installCmd.trim() : ""} && ${generateCmd} && ${pushCmd} && ${devCommand}`);
+  cd ${options.projectName} && ${dockerOneLiner}${installCmd ? installCmd.trim() + " && " : ""}${generateCmd} && ${pushCmd} && ${devCommand}`);
     return;
   }
 
@@ -317,10 +431,10 @@ Automated One-liner:
 Next commands:
 Manual Execution:
   cd ${options.projectName}
-${installCmd}  ${options.dbTarget === "docker" ? "docker compose up -d\n  " : ""}${generateCmd}
+${dockerCmd}${installCmd}  ${generateCmd}
   ${pushCmd}
   ${devCommand}
   
 Automated One-liner:
-  cd ${options.projectName}${installCmd ? " && " + installCmd.trim() : ""}${options.dbTarget === "docker" ? " && docker compose up -d" : ""} && ${generateCmd} && ${pushCmd} && ${devCommand}`);
+  cd ${options.projectName} && ${dockerOneLiner}${installCmd ? installCmd.trim() + " && " : ""}${generateCmd} && ${pushCmd} && ${devCommand}`);
 }

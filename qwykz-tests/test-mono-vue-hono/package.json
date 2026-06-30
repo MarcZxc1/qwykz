@@ -1,0 +1,14 @@
+{
+  "name": "test-mono-vue-hono",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "bunx concurrently \"cd backend && bun dev\" \"cd frontend && bun dev\"",
+    "db:generate": "cd backend && bun run db:generate",
+    "db:push": "cd backend && bun run db:push",
+    "db:studio": "cd backend && bun run db:studio"
+  }
+}

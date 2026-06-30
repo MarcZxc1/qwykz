@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
     "@types/node": "^25.9.3"
   },
   "peerDependencies": {
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^1.5.1",
+    "cors": "^2.8.6",
     "picocolors": "^1.1.1"
   }
 }

@@ -1,0 +1,37 @@
+services:
+  qwykz-db:
+    image: postgres:17-alpine
+    container_name: test-mono-react-elysia-backend-postgres
+    command: postgres -c synchronous_commit=off
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwykz_local_password
+      POSTGRES_DB: test-mono-react-elysia-backend
+    ports:
+      - "127.0.0.1:54320:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d test-mono-react-elysia-backend"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - qwykz_data:/var/lib/postgresql/data
+
+  qwykz-redis:
+    image: redis:7-alpine
+    container_name: test-mono-react-elysia-backend-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "127.0.0.1:63790:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - qwykz_redis_data:/data
+
+volumes:
+  qwykz_data:
+  qwykz_redis_data:

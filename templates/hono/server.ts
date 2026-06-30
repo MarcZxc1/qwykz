@@ -4,7 +4,7 @@ import { serve } from "@hono/node-server";
 import { prisma } from "./lib/prisma";
 import { healthRouter } from "./routes/health.routes";
 import { userRouter } from "./routes/user.routes";
-import { authRouter } from "./routes/auth.routes";
+{{AUTH_IMPORT}}
 
 const app = new Hono();
 const port = Number(process.env.PORT ?? 3000);
@@ -13,7 +13,7 @@ const port = Number(process.env.PORT ?? 3000);
 
 app.route("/api/health", healthRouter);
 app.route("/api/users", userRouter);
-app.route("/api/auth", authRouter);
+{{AUTH_ROUTE}}
 
 app.notFound(notFoundHandler);
 app.onError(errorHandler);

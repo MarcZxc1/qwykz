@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlmodel
+asyncpg
+passlib[bcrypt]
+PyJWT
+pydantic-settings
+redis>=5.0.1

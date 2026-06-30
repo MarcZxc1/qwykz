@@ -18,11 +18,19 @@ export const authMiddleware = new Elysia()
     const token = authHeader.slice(7);
 
     try {
-      const payload = verify(token, JWT_SECRET!) as { sub: string };
+      const payload = verify(token, JWT_SECRET!) as { sub: string; role: string };
       return {
-        user: { id: payload.sub }
+        user: { id: payload.sub, role: payload.role }
       };
     } catch {
       throw new HttpError(401, "Invalid or expired token");
+    }
+  });
+
+export const requireRole = (roles: string[]) => new Elysia()
+  .use(authMiddleware)
+  .onBeforeHandle(({ user }) => {
+    if (!roles.includes(user.role)) {
+      throw new HttpError(403, "Forbidden: Insufficient role permissions");
     }
   });
