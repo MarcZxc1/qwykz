@@ -385,12 +385,10 @@ async function generateLaravelProject(options: ProjectOptions) {
       "laravel/laravel",
       options.projectName,
       "--no-scripts",
-      "--no-cache",
     ],
     cwd: process.cwd(),
     stdout: "ignore",
     stderr: "ignore",
-    env: { ...process.env, COMPOSER_HOME: join(process.cwd(), options.projectName, ".composer") },
   });
 
   const exitCode = await proc.exited;
@@ -403,11 +401,10 @@ async function generateLaravelProject(options: ProjectOptions) {
   if (options.cachingTarget === "upstash" || options.cachingTarget === "docker") {
     console.log(`\n📦 Installing predis for Redis caching...`);
     const procRedis = Bun.spawn({
-      cmd: ["composer", "require", "predis/predis", "--no-cache"],
+      cmd: ["composer", "require", "predis/predis"],
       cwd: targetDir,
       stdout: "ignore",
       stderr: "ignore",
-      env: { ...process.env, COMPOSER_HOME: join(targetDir, ".composer") },
     });
     await procRedis.exited;
   }
