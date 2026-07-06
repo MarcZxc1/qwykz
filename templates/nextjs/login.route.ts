@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { verify } from "argon2";
+import bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
-    const isValidPassword = await verify(user.password, parsed.data.password);
+    const isValidPassword = await bcrypt.compare(parsed.data.password, user.password);
 
     if (!isValidPassword) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
