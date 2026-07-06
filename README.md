@@ -75,14 +75,15 @@ You will be prompted to:
 
 ### Non-Interactive Mode (Automated)
 Perfect for scripts or CI/CD pipelines! Use the `--yes` or `-y` flag combined with options:
+
 ```bash
 qwykz --yes \
   --name my-awesome-api \
   --framework laravel \
   --db docker
 ```
-
 Available flags:
+
 * `--yes` or `-y`: Skip all prompts and use defaults/flags
 * `--name <string>`: Name of your project directory
 * `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
