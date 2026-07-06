@@ -597,8 +597,8 @@ async function generateNextJsProject(options: ProjectOptions) {
   }
 
   console.log(`\n📦 Installing Dependencies (Prisma, Zod, Argon2, pg)...`);
-  await Bun.spawn(["bun", "add", "@prisma/client", "zod", "argon2", "pg", "@prisma/adapter-pg", "jsonwebtoken"], { cwd: targetDir }).exited;
-  await Bun.spawn(["bun", "add", "-d", "prisma", "@types/node", "@types/pg", "@types/jsonwebtoken"], { cwd: targetDir }).exited;
+  await Bun.spawn(["bun", "add", "@prisma/client", "zod", "bcryptjs", "pg", "@prisma/adapter-pg", "jsonwebtoken"], { cwd: targetDir }).exited;
+  await Bun.spawn(["bun", "add", "-d", "prisma", "@types/node", "@types/pg", "@types/jsonwebtoken", "@types/bcryptjs"], { cwd: targetDir }).exited;
 
   console.log(
     `\n🔒 Configuring Security Headers (Helmet & CORS) & Database...`,
@@ -719,14 +719,18 @@ async function generateNextJsProject(options: ProjectOptions) {
 
 function stripBackendStatus(content: string): string {
   return content
+    .replace(/import\s*\{\s*useState,\s*useEffect\s*\}\s*from\s*["']react["'];/g, 'import { useState } from "react";')
     .replace(/\s*const \[backendStatus.*?\] = useState.*?;/g, "")
     .replace(/\s*const backendStatus = ref.*?;/g, "")
-    .replace(/\s*useEffect\(\(\) => \{[\s\S]*?testBackend\(\)\s*\}, \[.*?\]\)/g, "")
+    .replace(/\s*const \[users, setUsers\] = useState<any\[\]>\(\[\]\);/g, "")
+    .replace(/\s*const testBackend = async \(\) => \{[\s\S]*?\}\s*\};\s*/g, "")
+    .replace(/\s*const testBackend = async \(\) => \{[\s\S]*?catch \(e\) \{[\s\S]*?\}\s*\};/g, "")
+    .replace(/\s*useEffect\(\(\) => \{[\s\S]*?testBackend\(\)[\s\S]*?\}, \[.*?\]\);?/g, "")
     .replace(/\s*onMounted\(async \(\) => \{[\s\S]*?catch \(err\) \{[\s\S]*?\}\s*\}\)/g, "")
     .replace(/\s*<div className="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
     .replace(/\s*<div class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
-    .replace(/\s*<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
-    .replace(/\s*<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">\s*<h2[^>]*>Backend Connection Status[\s\S]*?<\/p>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
+    .replace(/\s*<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">\s*<h2[^>]*>Backend Connection Status[\s\S]*?<\/p>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
     .replace(/\s*\{users\.length > 0 && \([\s\S]*?<\/div>\s*\)\}/g, "")
     .replace(/\s*<div v-if="users\.length > 0"[\s\S]*?Users API Response[\s\S]*?<\/div>/g, "");
 }
@@ -842,6 +846,7 @@ app.mount('#app')`);
 
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "style.css"), styleCss);
+  await Bun.write(join(targetDir, "src", "vite-env.d.ts"), `/// <reference types="vite/client" />\n\ndeclare module '*.vue' {\n  import type { DefineComponent } from 'vue'\n  const component: DefineComponent<{}, {}, any>\n  export default component\n}`);
 
   const pkgPath = join(targetDir, "package.json");
   const pkgJson = await Bun.file(pkgPath).json();

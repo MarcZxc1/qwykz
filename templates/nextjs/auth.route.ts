@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sign } from "jsonwebtoken";
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email already registered" }, { status: 400 });
     }
 
-    const hashedPassword = await argon2.hash(parsed.data.password);
+    const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
     const user = await prisma.user.create({
       data: {

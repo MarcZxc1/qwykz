@@ -99,7 +99,8 @@ test("E2E: Next.js with Docker Postgres", async () => {
     await run("bun run db:generate", cwd);
     await run("bun run db:push", cwd);
 
-    const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
+    await run("bun run build", cwd);
+    const server = spawn("bun", ["start"], { cwd, stdio: "ignore" });
 
     await waitForServer("http://127.0.0.1:3000/api/health");
     const res = await fetch("http://127.0.0.1:3000/api/health");
@@ -110,6 +111,7 @@ test("E2E: Next.js with Docker Postgres", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test Next", email: "next@example.com", password: "password123" })
     });
+    if (!authRes.ok) console.log(await authRes.text());
     expect(authRes.status).toBe(201);
     server.kill();
   } finally {
