@@ -20,6 +20,8 @@ export interface ProjectOptions {
   frontendFramework?: Framework;
   backendFramework?: Framework;
   supabaseDbUrl?: string;
+  dbPort?: number;
+  redisPort?: number;
 }
 
 export interface ProjectPackageJson {

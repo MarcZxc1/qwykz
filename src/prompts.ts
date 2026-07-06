@@ -93,7 +93,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       cachingTarget,
       extraPackages,
       frontendFramework,
-      backendFramework
+      backendFramework,
+      dbPort: Math.floor(Math.random() * 1000) + 54000,
+      redisPort: Math.floor(Math.random() * 1000) + 63000
     };
   }
 
@@ -128,7 +130,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     message: "What type of project do you want to generate?",
     options: [
       { value: "backend", label: "Backend API" },
-      { value: "frontend", label: "Frontend SPA" },
+      { value: "frontend", label: "Frontend SPA (Serverless Architecture)" },
       { value: "fullstack", label: "Fullstack Application" },
     ],
   });
@@ -156,26 +158,15 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     framework = await select({
       message: "What frontend framework do you want to generate?",
       options: [
+        { value: "nextjs", label: "Next.js (App Router)" },
         { value: "react", label: "React + Vite" },
         { value: "vue", label: "Vue + Vite" },
       ],
     }) as string;
     stopOnCancel(framework);
   } else if (projectType === "fullstack") {
-    const fullstackType = await select({
-      message: "Choose your fullstack architecture:",
-      options: [
-        { value: "nextjs", label: "Next.js (App Router)" },
-        { value: "monorepo", label: "Custom Monorepo (Frontend + Backend)" },
-      ],
-    });
-    stopOnCancel(fullstackType);
-
-    if (fullstackType === "nextjs") {
-      framework = "nextjs";
-    } else {
-      framework = "monorepo";
-      frontendFramework = await select({
+    framework = "monorepo";
+    frontendFramework = await select({
         message: "Select your Frontend Framework:",
         options: [
           { value: "react", label: "React + Vite" },
@@ -190,13 +181,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
           { value: "express", label: "Express.js + Typescript" },
           { value: "hono", label: "Hono - Edge Optimized" },
           { value: "elysia", label: "Elysia - Bun Native" },
+          { value: "laravel", label: "Vanilla Laravel" },
           { value: "python", label: "Python FastAPI" },
           { value: "go", label: "Go Fiber" },
           { value: "rust", label: "Rust Axum" },
         ],
       }) as Framework;
       stopOnCancel(backendFramework);
-    }
   }
 
   let dbTarget = "local";
@@ -206,7 +197,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       options: [
         { value: "supabase", label: "Supabase (remote cloud database)" },
         { value: "local", label: "Local PostgreSQL (installed on host)" },
-        { value: "docker", label: "Dockerized PostgreSQL (self-contained)" },
+        { value: "docker", label: "Containerized PostgreSQL" },
       ],
     }) as string;
     stopOnCancel(dbTarget);
@@ -217,10 +208,11 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     authTarget = await select({
       message: "Select your Authentication Provider:",
       options: [
-        { value: "local", label: "Classic / Codebase Built-in Auth" },
+        { value: "local", label: "Classic / Codebase Auth" },
         { value: "supabase", label: "Supabase Auth" },
         { value: "clerk", label: "Clerk Auth" },
       ],
+      initialValue: projectType === "frontend" ? "supabase" : "local",
     });
     stopOnCancel(authTarget);
   }
@@ -232,7 +224,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       options: [
         { value: "none", label: "None" },
         { value: "upstash", label: "Upstash Serverless Redis (Cloud)" },
-        { value: "docker", label: "Local Redis (Dockerized)" },
+        { value: "docker", label: "Containerized Redis" },
       ],
     });
     stopOnCancel(cachingTarget);
@@ -278,7 +270,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     cachingTarget: cachingTarget as any,
     extraPackages,
     frontendFramework,
-    backendFramework
+    backendFramework,
+    dbPort: Math.floor(Math.random() * 1000) + 54000,
+    redisPort: Math.floor(Math.random() * 1000) + 63000
   };
 }
 
@@ -339,19 +333,31 @@ Automated One-liner:
     let langCmds = "";
     let langOneLiner = "";
     if (options.framework === "python") {
-      langCmds = "  pip install -r requirements.txt\n  uvicorn main:app --reload";
-      langOneLiner = "pip install -r requirements.txt && uvicorn main:app --reload";
+      const isWin = process.platform === "win32";
+      const activateCmd = isWin ? "venv\\\\Scripts\\\\activate" : "source venv/bin/activate";
+      langCmds = `  python -m venv venv\n  ${activateCmd}\n  pip install -r requirements.txt\n  fastapi dev app/main.py`;
+      langOneLiner = `python -m venv venv && ${activateCmd} && pip install -r requirements.txt && fastapi dev app/main.py`;
     } else if (options.framework === "go") {
-      langCmds = "  go mod tidy\n  go run main.go";
-      langOneLiner = "go mod tidy && go run main.go";
+      langCmds = "  go mod tidy\n  go run cmd/api/main.go";
+      langOneLiner = "go mod tidy && go run cmd/api/main.go";
     } else if (options.framework === "rust") {
-      langCmds = "  cargo build\n  cargo run";
-      langOneLiner = "cargo build && cargo run";
+      langCmds = "  cargo install sqlx-cli\n  sqlx database create\n  sqlx migrate run\n  cargo build\n  cargo run";
+      langOneLiner = "cargo install sqlx-cli && sqlx database create && sqlx migrate run && cargo build && cargo run";
     }
+    let providers: string[] = [];
+    if (options.dbTarget === "supabase") providers.push("Supabase");
+    if (options.dbTarget === "neon") providers.push("Neon Serverless Postgres");
+    if (options.cachingTarget === "upstash") providers.push("Upstash Redis");
     
+    let envInstructions = "Next commands:";
+    if (providers.length > 0) {
+      const providerString = providers.join(" and ");
+      envInstructions = `⚠️  ACTION REQUIRED:\n1. Open "${options.projectName}/.env"\n2. Replace the placeholders with your ${providerString} credentials\n3. Run the following commands to finish setup:`;
+    }
+
     outro(`Your boilerplate "${options.projectName}" is ready.
 
-Next commands:
+${envInstructions}
 Manual Execution:
   cd ${options.projectName}
 ${langCmds}
@@ -362,10 +368,10 @@ Automated One-liner:
   }
 
   if (options.framework === "react" || options.framework === "vue") {
-    const providerName = options.dbTarget === "clerk" ? "Clerk" : "Supabase";
+    const providerName = options.authTarget === "clerk" ? "Clerk" : "Supabase";
     let envInstructions = "";
     
-    if (options.dbTarget !== "local") {
+    if (options.authTarget !== "local") {
       envInstructions = `⚠️  ACTION REQUIRED:
 1. Open "${options.projectName}/.env"
 2. Replace the placeholders with your ${providerName} credentials
@@ -406,13 +412,18 @@ Automated One-liner:
   const dockerCmd = hasDocker ? "  docker compose up -d\n" : "";
   const dockerOneLiner = hasDocker ? "docker compose up -d && " : "";
 
-  if (options.dbTarget === "supabase" || options.dbTarget === "neon") {
-    const providerName = options.dbTarget === "supabase" ? "Supabase" : "Neon Serverless Postgres";
+  let nodeProviders: string[] = [];
+  if (options.dbTarget === "supabase") nodeProviders.push("Supabase");
+  if (options.dbTarget === "neon") nodeProviders.push("Neon Serverless Postgres");
+  if (options.cachingTarget === "upstash") nodeProviders.push("Upstash Redis");
+
+  if (nodeProviders.length > 0) {
+    const providerString = nodeProviders.join(" and ");
     outro(`Your boilerplate "${options.projectName}" is ready.
 
 ⚠️  ACTION REQUIRED:
 1. Open "${options.projectName}/.env"
-2. Replace the placeholders with your ${providerName} credentials
+2. Replace the placeholders with your ${providerString} credentials
 3. Run the following commands to finish setup:
 
 Manual Execution:

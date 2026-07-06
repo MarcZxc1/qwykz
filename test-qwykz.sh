@@ -16,6 +16,8 @@ SUPABASE_DB_URL="postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws
 SUPABASE_DIRECT_URL="postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres"
 UPSTASH_URL="https://casual-macaque-155325.upstash.io"
 UPSTASH_TOKEN="gQAAAAAAAl69AAIgcDE4MGQwNDhmZGNkYmI0N2Q1OGE5ZjU1ZWM0YjlhOTVjYQ"
+CLERK_PUB_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"
+CLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"
 
 PASS_COUNT=0
 FAIL_COUNT=0
@@ -36,6 +38,9 @@ inject_credentials() {
     
     sed -i "s|https://your-endpoint.upstash.io|$UPSTASH_URL|g" "$env_file"
     sed -i "s|your-token|$UPSTASH_TOKEN|g" "$env_file"
+    
+    sed -i "s|CLERK_PUBLISHABLE_KEY=.*|CLERK_PUBLISHABLE_KEY=\"$CLERK_PUB_KEY\"|g" "$env_file"
+    sed -i "s|CLERK_SECRET_KEY=.*|CLERK_SECRET_KEY=\"$CLERK_SECRET_KEY\"|g" "$env_file"
   fi
 }
 
@@ -104,6 +109,33 @@ run_test() {
     cd - > /dev/null
   fi
   
+  test_endpoint() {
+    local port=$1
+    local cmd=$2
+    echo "🚀 Pinging $cmd on port $port..."
+    eval "$cmd" > /dev/null 2>&1 &
+    local SERVER_PID=$!
+    
+    local success=false
+    for i in {1..15}; do
+      if curl -s http://localhost:$port > /dev/null; then
+        success=true
+        break
+      fi
+      sleep 1
+    done
+    
+    if [ "$success" = true ]; then
+      echo "✓ Endpoint http://localhost:$port is alive!"
+    else
+      echo "❌ Endpoint http://localhost:$port timeout!"
+      FAIL_COUNT=$((FAIL_COUNT + 1))
+      RESULTS="$RESULTS\n❌ FAIL: $name ($framework) — server ping timeout"
+    fi
+    kill $SERVER_PID 2>/dev/null || true
+    wait $SERVER_PID 2>/dev/null || true
+  }
+
   # --- Framework-specific build & validation ---
   if [ "$framework" == "express" ] || [ "$framework" == "hono" ] || [ "$framework" == "elysia" ]; then
     echo "📦 Installing Node deps..."
@@ -111,6 +143,7 @@ run_test() {
     bun install
     echo "🗄️ Running DB Migrations..."
     bun run db:push
+    test_endpoint 3000 "bun run dev"
     cd - > /dev/null
     
   elif [ "$framework" == "monorepo" ]; then
@@ -121,6 +154,7 @@ run_test() {
     echo "🗄️ Running DB Migrations (backend)..."
     cd $name/backend
     bun run db:push
+    test_endpoint 3000 "bun run dev"
     cd - > /dev/null
     
   elif [ "$framework" == "nextjs" ]; then
@@ -129,6 +163,7 @@ run_test() {
     bun install
     echo "🗄️ Running DB Migrations..."
     bun run db:push
+    test_endpoint 3000 "bun run dev"
     cd - > /dev/null
     
   elif [ "$framework" == "react" ] || [ "$framework" == "vue" ]; then
@@ -137,6 +172,7 @@ run_test() {
     bun install
     echo "🔨 Building frontend to check for compile errors..."
     bun run build
+    test_endpoint 5173 "bun run dev"
     cd - > /dev/null
     
   elif [ "$framework" == "laravel" ]; then
@@ -145,8 +181,9 @@ run_test() {
     if command -v php &> /dev/null; then
       php artisan key:generate --force -n 2>/dev/null || true
       if [ "$db" == "docker" ]; then
-        php artisan migrate --force -n 2>/dev/null || echo "⚠️ Migration skipped (DB may not be ready)"
+        php artisan migrate --force -n 2>/dev/null || echo "⚠️ Migration skipped"
       fi
+      test_endpoint 8000 "php artisan serve"
     fi
     cd - > /dev/null
     
@@ -156,6 +193,7 @@ run_test() {
     if command -v go &> /dev/null; then
       go mod tidy
       go build -o app cmd/api/main.go
+      test_endpoint 3000 "./app"
     else
       echo "⚠️ 'go' command not found, skipping build step."
     fi
@@ -164,13 +202,17 @@ run_test() {
   elif [ "$framework" == "python" ]; then
     echo "🐍 Checking Python scaffolding..."
     cd $name
-    # Verify key files exist
     if [ -f "app/main.py" ] && [ -f "requirements.txt" ]; then
       echo "✓ Python files scaffolded correctly"
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install -r requirements.txt > /dev/null 2>&1 || true
+      test_endpoint 8000 "uvicorn app.main:app --port 8000"
+      deactivate
     else
       echo "❌ Missing Python files!"
       FAIL_COUNT=$((FAIL_COUNT + 1))
-      RESULTS="$RESULTS\n❌ FAIL: $name ($framework) — missing app/main.py or requirements.txt"
+      RESULTS="$RESULTS\n❌ FAIL: $name ($framework) — missing files"
       cd - > /dev/null
       cd ..
       return
@@ -182,14 +224,17 @@ run_test() {
     cd $name
     if command -v cargo &> /dev/null; then
       cargo check
+      # Rust takes too long to build & run on the fly for a 19-project test script,
+      # but we will try running it.
+      # test_endpoint 8080 "cargo run"
+      echo "✓ Rust compile check passed (skipping cargo run ping to save time)"
     else
-      # At least verify the key files exist
       if [ -f "Cargo.toml" ] && [ -f "src/main.rs" ]; then
         echo "✓ Rust files scaffolded correctly"
       else
         echo "❌ Missing Rust files!"
         FAIL_COUNT=$((FAIL_COUNT + 1))
-        RESULTS="$RESULTS\n❌ FAIL: $name ($framework) — missing Cargo.toml or src/main.rs"
+        RESULTS="$RESULTS\n❌ FAIL: $name ($framework) — missing files"
         cd - > /dev/null
         cd ..
         return

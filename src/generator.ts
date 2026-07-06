@@ -1,8 +1,8 @@
 import { mkdir, writeFile, readdir, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
-import { readTemplate, injectVariables } from "./template-engine";
+import { readTemplate, injectVariables, getTemplatesInDirectory } from "./template-engine";
 import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
 import console from "node:console";
 import { inherits } from "node:util";
@@ -12,24 +12,18 @@ import { cwd, env } from "node:process";
 // Helpers
 // ---------------------------------------------------------------------------
 
-async function copyDirectoryRecursive(srcDir: string, destDir: string, replacements: Record<string, string>) {
-  await mkdir(destDir, { recursive: true });
-  const entries = await readdir(srcDir);
-
-  for (const entry of entries) {
-    const srcPath = join(srcDir, entry);
-    const destPath = join(destDir, entry);
-    const fileStat = await stat(srcPath);
-
-    if (fileStat.isDirectory()) {
-      await copyDirectoryRecursive(srcPath, destPath, replacements);
-    } else {
-      let content = await Bun.file(srcPath).text();
-      for (const [key, value] of Object.entries(replacements)) {
-        content = content.split(key).join(value);
-      }
-      await Bun.write(destPath, content);
+async function copyDirectoryRecursive(dirPrefix: string, destDir: string, replacements: Record<string, string>) {
+  const files = getTemplatesInDirectory(dirPrefix);
+  for (const file of files) {
+    if (file.endsWith(".stub")) continue;
+    let content = await readTemplate(file);
+    for (const [key, value] of Object.entries(replacements)) {
+      content = content.split(key).join(value);
     }
+    const relativeDest = file.slice(dirPrefix.length).replace(/^\//, "");
+    const destPath = join(destDir, relativeDest);
+    await mkdir(dirname(destPath), { recursive: true });
+    await Bun.write(destPath, content);
   }
 }
 
@@ -64,17 +58,15 @@ async function writeJson(path: string, value: unknown) {
 // Template resolvers — pick the right variant and inject variables
 // ---------------------------------------------------------------------------
 
-function resolveTemplateDir(folder: string): string {
-  return join(import.meta.dir, "..", "templates", folder);
-}
-
 async function resolveEnvFile(
   dbTarget: DbTarget,
   projectName: string,
   jwtSecret: string,
   dbPassword: string,
   authTarget: AuthTarget = "local",
-  cachingTarget: CachingTarget = "none"
+  cachingTarget: CachingTarget = "none",
+  dbPort: number = 54320,
+  redisPort: number = 63790
 ): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
     supabase: "express/env.supabase.txt",
@@ -94,7 +86,7 @@ async function resolveEnvFile(
 
   let cachingVars = "";
   if (cachingTarget === "docker") {
-    cachingVars = `\n# Redis Caching (Docker)\nREDIS_URL="redis://127.0.0.1:63790"\n`;
+    cachingVars = `\n# Redis Caching (Docker)\nREDIS_URL="redis://127.0.0.1:${redisPort}"\n`;
   } else if (cachingTarget === "upstash") {
     cachingVars = `\n# Upstash Redis\nUPSTASH_REDIS_REST_URL="https://your-endpoint.upstash.io"\nUPSTASH_REDIS_REST_TOKEN="your-token"\n`;
   }
@@ -110,6 +102,7 @@ async function resolveEnvFile(
       PROJECT_NAME: dbName,
       JWT_SECRET: jwtSecret,
       DB_PASSWORD: dbPassword,
+      DB_PORT: dbPort.toString()
     }) + authVars + cachingVars;
   }
 
@@ -125,6 +118,8 @@ async function resolveDockerCompose(
   dbPassword: string,
   dbTarget: string,
   cachingTarget: string,
+  dbPort: number = 54320,
+  redisPort: number = 63790
 ): Promise<string> {
   let compose = `services:\n`;
   let volumes = `volumes:\n`;
@@ -140,7 +135,7 @@ async function resolveDockerCompose(
       POSTGRES_PASSWORD: ${dbPassword}
       POSTGRES_DB: ${containerPrefix}
     ports:
-      - "127.0.0.1:54320:5432"
+      - "127.0.0.1:${dbPort}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d ${containerPrefix}"]
       interval: 5s
@@ -148,8 +143,8 @@ async function resolveDockerCompose(
       retries: 12
       start_period: 5s
     volumes:
-      - qwykz_data:/var/lib/postgresql/data\n\n`;
-    volumes += `  qwykz_data:\n`;
+      - ${containerPrefix}_data:/var/lib/postgresql/data\n\n`;
+    volumes += `  ${containerPrefix}_data:\n`;
   }
 
   if (cachingTarget === "docker") {
@@ -158,15 +153,15 @@ async function resolveDockerCompose(
     container_name: ${containerPrefix}-redis
     command: redis-server --appendonly yes
     ports:
-      - "127.0.0.1:63790:6379"
+      - "127.0.0.1:${redisPort}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 10
     volumes:
-      - qwykz_redis_data:/data\n\n`;
-    volumes += `  qwykz_redis_data:\n`;
+      - ${containerPrefix}_redis_data:/data\n\n`;
+    volumes += `  ${containerPrefix}_redis_data:\n`;
   }
 
   return compose + volumes;
@@ -308,7 +303,9 @@ export async function generateExpressProject(options: ProjectOptions) {
       jwtSecret,
       dbPassword,
       options.authTarget,
-      options.cachingTarget
+      options.cachingTarget,
+      options.dbPort,
+      options.redisPort
     ),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages, "express", options.authTarget),
@@ -322,7 +319,7 @@ export async function generateExpressProject(options: ProjectOptions) {
     readTemplate("express/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
     options.dbTarget === "docker" || options.cachingTarget === "docker"
-      ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget)
+      ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort)
       : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
@@ -401,7 +398,18 @@ async function generateLaravelProject(options: ProjectOptions) {
     );
   }
 
-  console.log(`✅ Laravel installation complete!`);
+  if (options.cachingTarget === "upstash" || options.cachingTarget === "docker") {
+    console.log(`\n📦 Installing predis for Redis caching...`);
+    const procRedis = Bun.spawn({
+      cmd: ["composer", "require", "predis/predis"],
+      cwd: targetDir,
+      stdout: "ignore",
+      stderr: "ignore",
+    });
+    await procRedis.exited;
+  }
+
+  console.log(`◑  Scaffolding qwykz architecture..✅ Laravel installation complete!\n`);
 
   console.log(`\n🏗️  Installing API Routes & Sanctum...`);
   const apiProc = Bun.spawn(
@@ -472,7 +480,7 @@ async function generateLaravelProject(options: ProjectOptions) {
     envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
     envContent = envContent.replace(
       "# DB_PORT=3306",
-      `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`,
+      `DB_PORT=${options.dbTarget === "docker" ? options.dbPort : "5432"}`,
     );
     const dbName = options.projectName.replace(/\//g, "-");
     envContent = envContent.replace(
@@ -489,6 +497,18 @@ async function generateLaravelProject(options: ProjectOptions) {
     );
   }
 
+  if (options.cachingTarget === "upstash") {
+    envContent = envContent.replace("CACHE_STORE=database", "CACHE_STORE=redis");
+    envContent = envContent.replace("SESSION_DRIVER=database", "SESSION_DRIVER=redis");
+    envContent += "\n# Upstash Redis\nREDIS_CLIENT=predis\nREDIS_HOST=your-upstash-endpoint\nREDIS_PASSWORD=your-upstash-password\nREDIS_PORT=6379\n";
+  } else if (options.cachingTarget === "docker") {
+    envContent = envContent.replace("CACHE_STORE=database", "CACHE_STORE=redis");
+    envContent = envContent.replace("SESSION_DRIVER=database", "SESSION_DRIVER=redis");
+    envContent += "\nREDIS_CLIENT=predis";
+    envContent = envContent.replace("REDIS_HOST=127.0.0.1", "REDIS_HOST=127.0.0.1");
+    envContent = envContent.replace("REDIS_PORT=6379", `REDIS_PORT=${options.redisPort}`);
+  }
+
   await writeFile(envPath, envContent);
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
@@ -498,7 +518,10 @@ async function generateLaravelProject(options: ProjectOptions) {
     const dockerCompose = await resolveDockerCompose(
       options.projectName,
       dbPassword,
-      options.cachingTarget
+      options.dbTarget,
+      options.cachingTarget,
+      options.dbPort,
+      options.redisPort
     );
 
     await writeFile(join(targetDir, "docker-compose.yml"), dockerCompose);
@@ -532,6 +555,13 @@ async function generateLaravelProject(options: ProjectOptions) {
       userController,
     ),
   ]);
+
+  const pkgPath = join(targetDir, "package.json");
+  if (await Bun.file(pkgPath).exists()) {
+    const pkg = await Bun.file(pkgPath).json();
+    pkg.name = options.projectName.split("/").pop() || "backend";
+    await Bun.write(pkgPath, JSON.stringify(pkg, null, 2));
+  }
 }
 
 async function generateNextJsProject(options: ProjectOptions) {
@@ -580,7 +610,7 @@ async function generateNextJsProject(options: ProjectOptions) {
     const parsed = new URL(options.supabaseDbUrl || "postgresql://postgres:postgres@aws-0-eu-central-1.pooler.supabase.com:5432/postgres");
     envContent = `DATABASE_URL="${options.supabaseDbUrl}"\nDIRECT_URL="postgresql://${parsed.username}:${parsed.password}@${parsed.hostname}:5432/postgres"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   } else {
-    const port = options.dbTarget === "docker" ? "54320" : "5432";
+    const port = options.dbTarget === "docker" ? options.dbPort.toString() : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
     const dbName = options.projectName.replace(/\//g, "-");
     envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
@@ -601,25 +631,29 @@ async function generateNextJsProject(options: ProjectOptions) {
     ["prisma/schema.prisma", await readTemplate("express/schema.prisma")],
     ["prisma.config.ts", await readTemplate("express/prisma.config.ts")],
     ["lib/prisma.ts", prismaClientStub],
-    ["app/api/auth/register/route.ts", await readTemplate("nextjs/auth.route.ts")],
-    ["app/api/auth/login/route.ts", await readTemplate("nextjs/login.route.ts")],
     ["app/api/health/route.ts", await readTemplate("nextjs/health.route.ts")],
     ["__tests__/example.test.ts", await readTemplate("nextjs/example.test.ts")],
   ];
+
+  if (options.authTarget === "local") {
+    files.push(["app/api/auth/register/route.ts", await readTemplate("nextjs/auth.route.ts")]);
+    files.push(["app/api/auth/login/route.ts", await readTemplate("nextjs/login.route.ts")]);
+  }
 
   if (options.authTarget === "clerk") {
     files.push(["middleware.ts", await readTemplate("nextjs/clerk-middleware.ts.stub")]);
     files.push(["app/page.tsx", await readTemplate("nextjs/page.clerk.tsx.stub")]);
   } else if (options.authTarget === "supabase") {
     files.push(["app/page.tsx", await readTemplate("nextjs/page.supabase.tsx.stub")]);
-    files.push(["lib/supabase.ts", await readTemplate("react/supabase.ts.stub")]);
+    const supabaseClient = await readTemplate("react/supabase.ts.stub");
+    files.push(["lib/supabase.ts", supabaseClient.replace(/import\.meta\.env\.VITE/g, "process.env.NEXT_PUBLIC")]);
     files.push(["lib/AuthContext.tsx", await readTemplate("react/AuthContext.tsx.stub")]);
   } else {
     files.push(["app/page.tsx", await readTemplate("nextjs/page.local.tsx.stub")]);
   }
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
-    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget)]);
+    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort)]);
   }
 
   if (options.cachingTarget === "docker") {
@@ -683,6 +717,20 @@ async function generateNextJsProject(options: ProjectOptions) {
   await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
 }
 
+function stripBackendStatus(content: string): string {
+  return content
+    .replace(/\s*const \[backendStatus.*?\] = useState.*?;/g, "")
+    .replace(/\s*const backendStatus = ref.*?;/g, "")
+    .replace(/\s*useEffect\(\(\) => \{[\s\S]*?testBackend\(\)\s*\}, \[.*?\]\)/g, "")
+    .replace(/\s*onMounted\(async \(\) => \{[\s\S]*?catch \(err\) \{[\s\S]*?\}\s*\}\)/g, "")
+    .replace(/\s*<div className="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*\{users\.length > 0 && \([\s\S]*?<\/div>\s*\)\}/g, "")
+    .replace(/\s*<div v-if="users\.length > 0"[\s\S]*?Users API Response[\s\S]*?<\/div>/g, "");
+}
+
 async function generateReactProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding React + Vite...`);
   const proc = Bun.spawn(
@@ -698,18 +746,21 @@ async function generateReactProject(options: ProjectOptions) {
   const indexCss = await readTemplate("react/index.css.stub");
 
   if (options.authTarget === "clerk") {
-    const clerkProvider = await readTemplate("react/clerk-provider.tsx.stub");
+    let clerkProvider = await readTemplate("react/clerk-provider.tsx.stub");
+    if (!options.backendFramework) clerkProvider = stripBackendStatus(clerkProvider);
     await Bun.write(join(targetDir, "src", "App.tsx"), clerkProvider);
   } else if (options.authTarget === "supabase") {
     const supabaseTs = await readTemplate("react/supabase.ts.stub");
     const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
-    const appTsx = await readTemplate("react/App.tsx.stub");
+    let appTsx = await readTemplate("react/App.tsx.stub");
+    if (!options.backendFramework) appTsx = stripBackendStatus(appTsx);
     await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
     await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
     await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
   } else {
     // Local Auth App.tsx
-    const localAppTsx = await readTemplate("react/App.local.tsx.stub");
+    let localAppTsx = await readTemplate("react/App.local.tsx.stub");
+    if (!options.backendFramework) localAppTsx = stripBackendStatus(localAppTsx);
     await Bun.write(join(targetDir, "src", "App.tsx"), localAppTsx);
   }
 
@@ -725,21 +776,25 @@ async function generateReactProject(options: ProjectOptions) {
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
+  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
+    ? "http://localhost:8000/" 
+    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
+
   if (options.authTarget === "clerk") {
-    pkgJson.dependencies["@clerk/clerk-react"] = "^5.0.0";
+    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
     pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="http://localhost:3000/"\n`);
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
   }
 }
 
@@ -759,7 +814,8 @@ async function generateVueProject(options: ProjectOptions) {
 
   if (options.authTarget === "clerk") {
     const clerkPlugin = await readTemplate("vue/clerk-plugin.ts.stub");
-    const appVue = await readTemplate("vue/App.clerk.vue.stub");
+    let appVue = await readTemplate("vue/App.clerk.vue.stub");
+    if (!options.backendFramework) appVue = stripBackendStatus(appVue);
     await Bun.write(join(targetDir, "src", "lib", "clerk.ts"), clerkPlugin);
     await Bun.write(join(targetDir, "src", "App.vue"), appVue);
     await Bun.write(join(targetDir, "src", "main.ts"), `import { createApp } from 'vue'
@@ -773,12 +829,15 @@ app.mount('#app')`);
   } else if (options.authTarget === "supabase") {
     const supabaseTs = await readTemplate("vue/supabase.ts.stub");
     const authTs = await readTemplate("vue/auth.ts.stub");
-    const appVue = await readTemplate("vue/App.vue.stub");
+    let appVue = await readTemplate("vue/App.vue.stub");
+    if (!options.backendFramework) appVue = stripBackendStatus(appVue);
     await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
     await Bun.write(join(targetDir, "src", "lib", "auth.ts"), authTs);
     await Bun.write(join(targetDir, "src", "App.vue"), appVue);
   } else {
-    await Bun.write(join(targetDir, "src", "App.vue"), `<template><div>Ready</div></template>`);
+    let localAppVue = await readTemplate("vue/App.local.vue.stub");
+    if (!options.backendFramework) localAppVue = stripBackendStatus(localAppVue);
+    await Bun.write(join(targetDir, "src", "App.vue"), localAppVue);
   }
 
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
@@ -793,21 +852,25 @@ app.mount('#app')`);
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
+  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
+    ? "http://localhost:8000/" 
+    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
+
   if (options.authTarget === "clerk") {
     pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
     pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    const envContent = `VITE_API_URL="http://localhost:3000/"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
     await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
-    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="http://localhost:3000/"\n`);
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
   }
 }
 
@@ -816,14 +879,15 @@ async function generatePythonProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
   
   await copyDirectoryRecursive(
-    resolveTemplateDir("python"),
+    "python",
     targetDir,
     { "qwykz-app": options.projectName }
   );
   
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
+  envContent = envContent.replace('?schema=public', '');
   
   if (options.cachingTarget !== "none") {
     const redisStub = await readTemplate("python/redis.py.stub");
@@ -834,7 +898,7 @@ async function generatePythonProject(options: ProjectOptions) {
   }
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
-    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
     await Bun.write(join(targetDir, "docker-compose.yml"), dc);
   }
 
@@ -846,14 +910,15 @@ async function generateGoProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding Go (Fiber)...`);
   
   await copyDirectoryRecursive(
-    resolveTemplateDir("go"),
+    "go",
     targetDir,
     { "qwykz-app": options.projectName }
   );
 
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
+  envContent = envContent.replace('?schema=public', '');
 
   if (options.cachingTarget !== "none") {
     const redisStub = await readTemplate("go/redis.go.stub");
@@ -865,7 +930,7 @@ async function generateGoProject(options: ProjectOptions) {
   }
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
-    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
     await Bun.write(join(targetDir, "docker-compose.yml"), dc);
   }
 
@@ -877,14 +942,14 @@ async function generateRustProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding Rust (Axum)...`);
   
   await copyDirectoryRecursive(
-    resolveTemplateDir("rust"),
+    "rust",
     targetDir,
     { "qwykz-app": options.projectName }
   );
 
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
-  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget);
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
 
   if (options.cachingTarget !== "none") {
     const redisStub = await readTemplate("rust/redis.rs.stub");
@@ -893,11 +958,62 @@ async function generateRustProject(options: ProjectOptions) {
     await Bun.write(join(targetDir, "src/cache/redis.rs"), redisStub);
     const cargoPath = join(targetDir, "Cargo.toml");
     const cargoText = await Bun.file(cargoPath).text();
-    await Bun.write(cargoPath, cargoText + "redis = \"0.25.3\"\n");
+    await Bun.write(cargoPath, cargoText + "redis = { version = \"0.25.3\", features = [\"tokio-comp\", \"tokio-rustls-comp\"] }\n");
+    
+    const mainPath = join(targetDir, "src/main.rs");
+    const mainText = await Bun.file(mainPath).text();
+    await Bun.write(mainPath, mainText.replace("mod db;\n", "mod db;\npub mod cache;\n"));
+    
+    const usersPath = join(targetDir, "src/api/handlers/users.rs");
+    await Bun.write(usersPath, `use axum::{
+    extract::State,
+    http::StatusCode,
+    Json,
+};
+use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
+use redis::AsyncCommands;
+use crate::api::AppState;
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct UserResponse {
+    pub id: uuid::Uuid,
+    pub email: String,
+    pub name: Option<String>,
+    pub role: String,
+}
+
+pub async fn get_users(
+    State(state): State<AppState>,
+) -> Result<Json<Vec<UserResponse>>, (StatusCode, String)> {
+    let client = crate::cache::redis::get_client();
+    if let Ok(mut con) = client.get_multiplexed_async_connection().await {
+        if let Ok(cached_users) = con.get::<_, String>("users:all").await {
+            if let Ok(users) = serde_json::from_str::<Vec<UserResponse>>(&cached_users) {
+                return Ok(Json(users));
+            }
+        }
+    }
+
+    let users = sqlx::query_as::<_, UserResponse>(
+        "SELECT id, email, name, role::text as role FROM users ORDER BY created_at DESC"
+    )
+    .fetch_all(&state.db)
+    .await
+    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("Database error: {}", e)))?;
+
+    if let Ok(mut con) = client.get_multiplexed_async_connection().await {
+        if let Ok(json_str) = serde_json::to_string(&users) {
+            let _: redis::RedisResult<()> = con.set_ex("users:all", json_str, 60).await;
+        }
+    }
+
+    Ok(Json(users))
+}`);
   }
 
   if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
-    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget);
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
     await Bun.write(join(targetDir, "docker-compose.yml"), dc);
   }
 
@@ -921,7 +1037,7 @@ async function generateHonoProject(options: ProjectOptions) {
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
     readTemplate("express/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages, "hono", options.authTarget),
     readTemplate("hono/error.middleware.ts"),
@@ -933,7 +1049,7 @@ async function generateHonoProject(options: ProjectOptions) {
     readTemplate(`hono/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("hono/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget) : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort) : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
 
@@ -1002,7 +1118,7 @@ async function generateElysiaProject(options: ProjectOptions) {
     readTemplate("express/schema.prisma"),
     readTemplate("express/prisma.config.ts"),
     readTemplate("express/tsconfig.json"),
-    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort),
     resolvePrismaClient(options.dbTarget),
     resolveServerSource(options.extraPackages, "elysia", options.authTarget),
     readTemplate("elysia/error.middleware.ts"),
@@ -1014,7 +1130,7 @@ async function generateElysiaProject(options: ProjectOptions) {
     readTemplate(`elysia/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("elysia/auth.routes.ts"),
     options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
-    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget) : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort) : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
 
@@ -1103,12 +1219,19 @@ export async function generateProject(options: ProjectOptions) {
     await generateProject(options);
     
     // Generate root orchestration
+    let backendCmd = "bun dev";
+    if (options.backendFramework === "laravel") backendCmd = "php artisan serve";
+    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+    if (options.backendFramework === "go") backendCmd = "go run cmd/api/main.go";
+    if (options.backendFramework === "rust") backendCmd = "cargo run";
+
+    const includeBackendWorkspace = ["express", "hono", "elysia", "laravel"].includes(options.backendFramework!);
     const rootPkg = {
       name: rootName,
       private: true,
-      workspaces: ["backend", "frontend"],
+      workspaces: includeBackendWorkspace ? ["backend", "frontend"] : ["frontend"],
       scripts: {
-        dev: "bunx concurrently \"cd backend && bun dev\" \"cd frontend && bun dev\"",
+        dev: `bunx concurrently "cd backend && ${backendCmd}" "cd frontend && bun dev"`,
         "db:generate": "cd backend && bun run db:generate",
         "db:push": "cd backend && bun run db:push",
         "db:studio": "cd backend && bun run db:studio"

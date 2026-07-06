@@ -17,6 +17,6 @@ async def list_users(
     Get a list of users.
     Requires authentication.
     """
-    result = await session.exec(select(User).order_by(User.created_at.desc()))
-    users = result.all()
+    result = await session.execute(select(User).order_by(User.created_at.desc()))
+    users = result.scalars().all()
     return users

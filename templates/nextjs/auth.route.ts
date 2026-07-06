@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import argon2 from "argon2";
 import { prisma } from "@/lib/prisma";
+import { sign } from "jsonwebtoken";
 
 // Zod Schema
 const registerSchema = z.object({
@@ -37,9 +38,17 @@ export async function POST(req: Request) {
       },
     });
 
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return NextResponse.json({ error: "JWT_SECRET is not configured" }, { status: 500 });
+    }
+
+    const token = sign({ sub: user.id }, JWT_SECRET, { expiresIn: "15m" });
+
     return NextResponse.json({
       message: "User registered successfully",
-      user: { id: user.id, email: user.email }
+      user: { id: user.id, email: user.email },
+      token
     }, { status: 201 });
 
   } catch (error) {

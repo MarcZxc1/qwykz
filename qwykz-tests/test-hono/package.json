@@ -29,7 +29,7 @@
   "devDependencies": {
     "@prisma/config": "^7.8.0",
     "@types/bun": "^1.3.14",
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.1.0",
     "@types/pg": "^8.20.0",
     "effect": "^3.21.4",
     "prisma": "^7.8.0",

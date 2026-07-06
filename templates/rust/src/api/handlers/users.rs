@@ -6,6 +6,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use crate::api::AppState;
+use crate::api::middleware::RequireAdmin;
 
 #[derive(Serialize, FromRow)]
 pub struct UserResponse {
@@ -16,10 +17,11 @@ pub struct UserResponse {
 }
 
 pub async fn get_users(
+    RequireAdmin(_claims): RequireAdmin,
     State(state): State<AppState>,
 ) -> Result<Json<Vec<UserResponse>>, (StatusCode, String)> {
     let users = sqlx::query_as::<_, UserResponse>(
-        "SELECT id, email, name, role FROM users ORDER BY created_at DESC"
+        "SELECT id, email, name, role::text as role FROM users ORDER BY created_at DESC"
     )
     .fetch_all(&state.db)
     .await

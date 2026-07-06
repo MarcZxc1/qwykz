@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"qwykz-go-template/internal/models"
+	"qwykz-app/internal/models"
 )
 
 var DB *gorm.DB
