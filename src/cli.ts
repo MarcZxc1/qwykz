@@ -118,6 +118,51 @@ async function runSetupCommands(
       await runCommand(["bun", "run", "db:generate"], backendDir);
       s.message("🚀 Pushing database schema...");
       await runCommand(["bun", "run", "db:push"], backendDir);
+    } else if (options.backendFramework === "laravel") {
+      if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+        s.message("🐳 Booting up Backend Docker containers...");
+        try {
+          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
+        } catch (e) {}
+      }
+      s.message("🔑 Generating Laravel app key...");
+      await runCommand(["php", "artisan", "key:generate", "--force", "-n"], backendDir, true);
+      s.message("🚀 Running database migrations...");
+      await runCommand(["php", "artisan", "migrate", "--force", "-n"], backendDir, true);
+    } else if (options.backendFramework === "python") {
+      if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+        s.message("🐳 Booting up Backend Docker containers...");
+        try {
+          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
+        } catch (e) {}
+      }
+      if (options.dbTarget === "local") {
+        s.message("📦 Creating local PostgreSQL database...");
+        await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], backendDir, true);
+      }
+      s.message("📦 Creating Python virtual environment...");
+      await runCommand(["python3", "-m", "venv", "venv"], backendDir);
+      s.message("📦 Installing Python dependencies...");
+      const pipCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\pip" : "venv/bin/pip";
+      await runCommand([pipCmd, "install", "-r", "requirements.txt"], backendDir);
+    } else if (options.backendFramework === "go") {
+      if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+        s.message("🐳 Booting up Backend Docker containers...");
+        try {
+          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
+        } catch (e) {}
+      }
+      s.message("📦 Installing Go modules...");
+      await runCommand(["go", "mod", "tidy"], backendDir);
+    } else if (options.backendFramework === "rust") {
+      if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+        s.message("🐳 Booting up Backend Docker containers...");
+        try {
+          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
+        } catch (e) {}
+      }
+      s.message("🚀 Running database migrations (sqlx)...");
+      await runCommand(["cargo", "sqlx", "migrate", "run"], backendDir, true);
     }
   } else if (options.framework === "laravel") {
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
@@ -153,14 +198,25 @@ async function runSetupCommands(
         await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
       } catch (e) {}
     }
+    if (options.dbTarget === "local") {
+      s.message("📦 Creating local PostgreSQL database...");
+      await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], targetDir, true);
+    }
+    s.message("📦 Creating Python virtual environment...");
+    await runCommand(["python", "-m", "venv", "venv"], targetDir, true);
     s.message("📦 Installing Python dependencies...");
-    await runCommand(["pip", "install", "-r", "requirements.txt"], targetDir, true);
+    const pipCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\pip" : "venv/bin/pip";
+    await runCommand([pipCmd, "install", "-r", "requirements.txt"], targetDir, true);
   } else if (options.framework === "go") {
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Booting up Docker containers...");
       try {
         await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
       } catch (e) {}
+    }
+    if (options.dbTarget === "local") {
+      s.message("📦 Creating local PostgreSQL database...");
+      await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], targetDir, true);
     }
     s.message("📦 Installing Go modules...");
     await runCommand(["go", "mod", "tidy"], targetDir, true);
@@ -171,8 +227,10 @@ async function runSetupCommands(
         await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
       } catch (e) {}
     }
-    s.message("📦 Building Rust application...");
-    // Cargo builds dependencies on first run/build
+    s.message("📦 Setting up Database & Migrations (this may take a minute)...");
+    await runCommand(["cargo", "install", "sqlx-cli"], targetDir, true);
+    await runCommand(["sqlx", "database", "create"], targetDir, true);
+    await runCommand(["sqlx", "migrate", "run"], targetDir, true);
   }
 }
 
@@ -197,7 +255,9 @@ export async function runCli() {
 
       let devCmd = "bun dev";
       if (options.framework === "laravel") devCmd = "php artisan serve";
-      if (options.framework === "python") devCmd = "fastapi dev app/main.py";
+      if (options.framework === "python") {
+        devCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+      }
       if (options.framework === "go") devCmd = "go run cmd/api/main.go";
       if (options.framework === "rust") devCmd = "cargo run";
       if (options.framework === "monorepo") devCmd = "bun run dev";

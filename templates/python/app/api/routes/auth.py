@@ -28,8 +28,8 @@ async def register(user_in: UserCreate, session: AsyncSession = Depends(get_db))
     """
     Register a new user.
     """
-    result = await session.exec(select(User).where(User.email == user_in.email))
-    user = result.first()
+    result = await session.execute(select(User).where(User.email == user_in.email))
+    user = result.scalar_one_or_none()
     if user:
         raise HTTPException(
             status_code=400,
@@ -59,8 +59,8 @@ async def login(login_data: LoginRequest, session: AsyncSession = Depends(get_db
     """
     Login a user.
     """
-    result = await session.exec(select(User).where(User.email == login_data.email))
-    user = result.first()
+    result = await session.execute(select(User).where(User.email == login_data.email))
+    user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
     

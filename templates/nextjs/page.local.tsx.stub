@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [token, setToken] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -15,6 +16,7 @@ export default function Home() {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData);
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+    setErrorMsg(null);
 
     const res = await fetch(endpoint, {
       method: "POST",
@@ -27,7 +29,7 @@ export default function Home() {
       localStorage.setItem("token", result.token);
       setToken(result.token);
     } else {
-      alert(result.error || "Authentication failed");
+      setErrorMsg(result.error || "Authentication failed");
     }
   };
 
@@ -64,6 +66,19 @@ export default function Home() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleLogin}>
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <div className="mt-1">
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
+                  />
+                </div>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-gray-700">Email address</label>
               <div className="mt-1">
@@ -71,7 +86,7 @@ export default function Home() {
                   name="email"
                   type="email"
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                 />
               </div>
             </div>
@@ -83,7 +98,7 @@ export default function Home() {
                   name="password"
                   type="password"
                   required
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
                 />
               </div>
             </div>
@@ -96,6 +111,19 @@ export default function Home() {
                 {isLogin ? "Sign In" : "Sign Up"}
               </button>
             </div>
+            
+            {errorMsg && (
+              <div className="rounded-md bg-red-50 p-4 border border-red-200">
+                <div className="flex">
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">Error</h3>
+                    <div className="mt-2 text-sm text-red-700">
+                      <p>{typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </form>
 
           <div className="mt-6">

@@ -22,8 +22,8 @@ class User(UserBase, table=True):
     
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     password: str
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
-    updatedAt: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserCreate(UserBase):
@@ -32,5 +32,5 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     id: uuid.UUID
-    createdAt: datetime
-    updatedAt: datetime
+    created_at: datetime
+    updated_at: datetime

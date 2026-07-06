@@ -6,7 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"qwykz-go-template/internal/models"
+	"qwykz-app/internal/models"
 )
 
 func RequireRole(allowedRoles ...models.Role) fiber.Handler {

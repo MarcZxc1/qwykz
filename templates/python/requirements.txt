@@ -1,7 +1,7 @@
-fastapi
+fastapi[standard]
 uvicorn
 sqlmodel
 asyncpg
-passlib[bcrypt]
+bcrypt
 PyJWT
 pydantic-settings

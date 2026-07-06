@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"qwykz-go-template/internal/database"
-	"qwykz-go-template/internal/models"
+	"qwykz-app/internal/database"
+	"qwykz-app/internal/models"
 )
 
 func GetUsers(c *fiber.Ctx) error {

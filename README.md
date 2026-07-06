@@ -31,8 +31,9 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold
 * **Frontend Powerhouses**:
   * React & Vue apps are generated using high-speed Vite.
   * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
-  * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js` or `Clerk` natively.
+  * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js`, `Clerk`, or native **Classic / Codebase Auth**.
   * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
+  * **Universal Fullstack Alignment**: Frontends automatically map their `VITE_API_URL` exactly to match the chosen backend framework (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust). All backends expose identical routing topologies (`/api/auth`, `/api/users`, etc.) for seamless, plug-and-play cross-stack compatibility.
 * **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
   * **Local Installation**
   * **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)

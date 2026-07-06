@@ -77,3 +77,29 @@ export function injectVariables(
  * In development mode, this is empty and templates are read from disk.
  */
 const EMBEDDED_TEMPLATES: Record<string, string> = {};
+
+import { readdirSync, statSync } from "node:fs";
+
+export function getTemplatesInDirectory(dirPrefix: string): string[] {
+  if (IS_COMPILED) {
+    const prefix = dirPrefix.endsWith("/") ? dirPrefix : dirPrefix + "/";
+    return Object.keys(EMBEDDED_TEMPLATES).filter(k => k.startsWith(prefix));
+  } else {
+    const fullDir = join(TEMPLATES_DIR, dirPrefix);
+    const results: string[] = [];
+    function walk(dir: string, baseDir: string) {
+      for (const entry of readdirSync(dir)) {
+        const fullPath = join(dir, entry);
+        if (statSync(fullPath).isDirectory()) {
+          walk(fullPath, baseDir);
+        } else {
+          // ensure we use forward slashes for the relative path
+          const relativePath = (dirPrefix + "/" + fullPath.replace(baseDir + "/", "")).replace(/\\/g, "/");
+          results.push(relativePath);
+        }
+      }
+    }
+    walk(fullDir, fullDir);
+    return results.map(p => p.replace(/\\/g, "/").replace(/\/+/g, "/"));
+  }
+}

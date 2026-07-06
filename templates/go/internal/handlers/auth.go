@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"qwykz-go-template/internal/database"
-	"qwykz-go-template/internal/models"
+	"qwykz-app/internal/database"
+	"qwykz-app/internal/models"
 )
 
 type RegisterRequest struct {
@@ -29,8 +29,9 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	// Check if user exists
-	var existingUser models.User
-	if err := database.DB.Where("email = ?", req.Email).First(&existingUser).Error; err == nil {
+	var count int64
+	database.DB.Model(&models.User{}).Where("email = ?", req.Email).Count(&count)
+	if count > 0 {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{"error": "Email already registered"})
 	}
 
@@ -50,8 +51,25 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create user"})
 	}
 
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "secret"
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": user.ID,
+		"role":   user.Role,
+		"exp":    time.Now().Add(time.Hour * 72).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to generate token"})
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User registered successfully",
+		"token":   tokenString,
 		"user": fiber.Map{
 			"id":    user.ID,
 			"name":  user.Name,

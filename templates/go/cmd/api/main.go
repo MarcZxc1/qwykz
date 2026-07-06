@@ -6,13 +6,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"qwykz-go-template/internal/database"
-	"qwykz-go-template/internal/handlers"
-	"qwykz-go-template/internal/middleware"
-	"qwykz-go-template/internal/models"
+	"qwykz-app/internal/database"
+	"qwykz-app/internal/handlers"
+	"qwykz-app/internal/middleware"
+	"qwykz-app/internal/models"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, relying on environment variables")
+	}
+
 	// Initialize Database connection
 	database.Connect()
 
@@ -23,13 +28,15 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	// Basic health check
-	app.Get("/health", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
-	})
+
 
 	// API Routes Group
 	api := app.Group("/api")
+
+	// Basic health check
+	api.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
 
 	// Auth Routes
 	auth := api.Group("/auth")
