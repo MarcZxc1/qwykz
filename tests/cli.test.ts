@@ -148,7 +148,7 @@ describe("qwykz CLI integration", () => {
     expect(serverSource).toContain('import helmet from "helmet"');
     expect(serverSource).toContain('import cors from "cors"');
     expect(serverSource).toContain("app.use(helmet())");
-    expect(serverSource).toContain("app.use(cors())");
+    expect(serverSource).toContain("app.use(cors(");
     expect(serverSource).not.toContain("{{");
   });
 

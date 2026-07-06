@@ -11,6 +11,7 @@ const errors = ref<Record<string, string>>({})
 const serverError = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 const mode = ref<'login' | 'register'>('login')
+const backendStatus = ref<string>('Testing connection...')
 
 const authSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -19,7 +20,34 @@ const authSchema = z.object({
 
 onMounted(() => {
   initAuth()
+  testBackend()
 })
+
+const testBackend = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}api/health`)
+    if (res.ok) {
+      if (!session.value?.access_token) {
+        backendStatus.value = "Connected to backend (Waiting for login to test auth)"
+        return
+      }
+      const authRes = await fetch(`${import.meta.env.VITE_API_URL}api/users`, {
+        headers: { Authorization: `Bearer ${session.value.access_token}` }
+      })
+      if (authRes.status === 403) {
+        backendStatus.value = "Connected! (Users API blocked: Requires ADMIN role)"
+      } else if (authRes.ok) {
+        backendStatus.value = "Connected! (Users API authenticated)"
+      } else {
+        backendStatus.value = "Connected to backend, but auth failed."
+      }
+    } else {
+      backendStatus.value = "Failed to connect to backend."
+    }
+  } catch (err) {
+    backendStatus.value = "Backend is unreachable. Is it running?"
+  }
+}
 
 const handleAuth = async () => {
   authLoading.value = true
@@ -83,9 +111,16 @@ const handleAuth = async () => {
 
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <div class="px-4 py-6 sm:px-0">
-        <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 p-8 flex flex-col items-center justify-center bg-white">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome back!</h2>
+        <div class="border-4 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center bg-white space-y-4">
+          <h2 class="text-2xl font-semibold text-gray-800">Welcome back!</h2>
           <p class="text-gray-600">You are securely authenticated as <span class="font-bold">{{ user?.email }}</span></p>
+          
+          <div class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md text-center">
+            <h3 class="font-medium text-gray-900 mb-2">Backend Connection Status:</h3>
+            <p class="text-sm" :class="backendStatus.includes('Connected') ? 'text-green-600' : 'text-red-600'">
+              {{ backendStatus }}
+            </p>
+          </div>
         </div>
       </div>
     </main>

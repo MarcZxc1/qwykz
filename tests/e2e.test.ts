@@ -99,7 +99,8 @@ test("E2E: Next.js with Docker Postgres", async () => {
     await run("bun run db:generate", cwd);
     await run("bun run db:push", cwd);
 
-    const server = spawn("bun", ["dev"], { cwd, stdio: "ignore" });
+    await run("bun run build", cwd);
+    const server = spawn("bun", ["start"], { cwd, stdio: "ignore" });
 
     await waitForServer("http://127.0.0.1:3000/api/health");
     const res = await fetch("http://127.0.0.1:3000/api/health");
@@ -110,6 +111,7 @@ test("E2E: Next.js with Docker Postgres", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Test Next", email: "next@example.com", password: "password123" })
     });
+    if (!authRes.ok) console.log(await authRes.text());
     expect(authRes.status).toBe(201);
     server.kill();
   } finally {
@@ -117,3 +119,122 @@ test("E2E: Next.js with Docker Postgres", async () => {
     await rm(projectName, { recursive: true, force: true }).catch(() => {});
   }
 }, 180000);
+
+test("E2E: React with Vite Build", async () => {
+  const projectName = "e2e-react";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework react`, process.cwd());
+    await run("bun install", cwd);
+    await run("bun run build", cwd);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+}, 180000);
+
+test("E2E: Vue with Vite Build", async () => {
+  const projectName = "e2e-vue";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework vue`, process.cwd());
+    await run("bun install", cwd);
+    await run("bun run build", cwd);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+}, 180000);
+
+test("E2E: Python FastAPI Scaffold Verification", async () => {
+  const projectName = "e2e-python";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework python`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "app/main.py")).exists();
+    const reqStat = await Bun.file(join(cwd, "requirements.txt")).exists();
+    const dbStat = await Bun.file(join(cwd, "app/core/db.py")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(reqStat).toBe(true);
+    expect(dbStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Go Fiber Scaffold Verification", async () => {
+  const projectName = "e2e-go";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework go`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "cmd/api/main.go")).exists();
+    const goModStat = await Bun.file(join(cwd, "go.mod")).exists();
+    const authStat = await Bun.file(join(cwd, "internal/handlers/auth.go")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(goModStat).toBe(true);
+    expect(authStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Rust Axum Scaffold Verification", async () => {
+  const projectName = "e2e-rust";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework rust`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/main.rs")).exists();
+    const cargoStat = await Bun.file(join(cwd, "Cargo.toml")).exists();
+    const dbStat = await Bun.file(join(cwd, "src/db/models.rs")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(cargoStat).toBe(true);
+    expect(dbStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Hono Scaffold Verification", async () => {
+  const projectName = "e2e-hono";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework hono`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/index.ts")).exists();
+    const testStat = await Bun.file(join(cwd, "src/index.test.ts")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(testStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});
+
+test("E2E: Elysia Scaffold Verification", async () => {
+  const projectName = "e2e-elysia";
+  await rm(projectName, { recursive: true, force: true });
+  const cwd = join(process.cwd(), projectName);
+
+  try {
+    await run(`bun run src/index.ts -y --name ${projectName} --framework elysia`, process.cwd());
+    const mainStat = await Bun.file(join(cwd, "src/index.ts")).exists();
+    const testStat = await Bun.file(join(cwd, "src/index.test.ts")).exists();
+    
+    expect(mainStat).toBe(true);
+    expect(testStat).toBe(true);
+  } finally {
+    await rm(projectName, { recursive: true, force: true }).catch(() => {});
+  }
+});

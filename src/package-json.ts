@@ -2,6 +2,7 @@ import { packageVersions } from "./package-versions";
 import { resolveLatestVersions } from "./npm-registry";
 import type {
   DbTarget,
+  CachingTarget,
   ExtraPackage,
   PackageMap,
   ProjectPackageJson,
@@ -14,18 +15,16 @@ import type {
 const CORE_DEPS = [
   "@prisma/adapter-pg",
   "@prisma/client",
-  "argon2",
   "dotenv",
   "express",
-  "jsonwebtoken",
   "pg",
-  "zod",  // always required — auth.controller.ts imports zod unconditionally
+  "zod",  // always required — user.controller.ts imports zod unconditionally
 ] as const;
 
 const CORE_DEV_DEPS = [
+  "@prisma/config",
   "@types/bun",
   "@types/express",
-  "@types/jsonwebtoken",
   "@types/node",
   "@types/pg",
   "effect",
@@ -94,6 +93,8 @@ export async function createPackageJson(
   projectName: string,
   dbTarget: DbTarget,
   extraPackages: ExtraPackage[],
+  cachingTarget: CachingTarget = "none",
+  authTarget: AuthTarget = "local",
 ): Promise<ProjectPackageJson> {
   const versions = await resolveVersionMap(extraPackages);
 
@@ -114,6 +115,23 @@ export async function createPackageJson(
     for (const dep of OPTIONAL_PACKAGES[pkg].devDependencies ?? []) {
       devDependencies[dep] = versions[dep]!;
     }
+  }
+
+  if (cachingTarget === "docker") {
+    dependencies["ioredis"] = "^5.4.1";
+  } else if (cachingTarget === "upstash") {
+    dependencies["@upstash/redis"] = "^1.31.5";
+  }
+
+  if (authTarget === "local") {
+    dependencies["argon2"] = "^0.41.1";
+    dependencies["jsonwebtoken"] = "^9.0.2";
+    devDependencies["@types/jsonwebtoken"] = "^9.0.9";
+  } else if (authTarget === "clerk") {
+    dependencies["@clerk/clerk-sdk-node"] = "^5.0.0";
+    dependencies["@clerk/backend"] = "^1.0.0";
+  } else if (authTarget === "supabase") {
+    dependencies["@supabase/supabase-js"] = "^2.43.0";
   }
 
   return {

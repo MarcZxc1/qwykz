@@ -1,12 +1,31 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, writeFile, readdir, stat, rm } from "node:fs/promises";
+import { join, dirname } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
-import { readTemplate, injectVariables } from "./template-engine";
+import { readTemplate, injectVariables, getTemplatesInDirectory } from "./template-engine";
 import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
 import console from "node:console";
 import { inherits } from "node:util";
 import { cwd, env } from "node:process";
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+async function copyDirectoryRecursive(dirPrefix: string, destDir: string, replacements: Record<string, string>) {
+  const files = getTemplatesInDirectory(dirPrefix);
+  for (const file of files) {
+    if (file.endsWith(".stub")) continue;
+    let content = await readTemplate(file);
+    for (const [key, value] of Object.entries(replacements)) {
+      content = content.split(key).join(value);
+    }
+    const relativeDest = file.slice(dirPrefix.length).replace(/^\//, "");
+    const destPath = join(destDir, relativeDest);
+    await mkdir(dirname(destPath), { recursive: true });
+    await Bun.write(destPath, content);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Cryptographic secret helpers
@@ -44,43 +63,108 @@ async function resolveEnvFile(
   projectName: string,
   jwtSecret: string,
   dbPassword: string,
+  authTarget: AuthTarget = "local",
+  cachingTarget: CachingTarget = "none",
+  dbPort: number = 54320,
+  redisPort: number = 63790
 ): Promise<string> {
   const variantMap: Record<DbTarget, string> = {
     supabase: "express/env.supabase.txt",
     docker: "express/env.docker.txt",
     local: "express/env.local.txt",
+    neon: "express/env.neon.txt",
   };
 
   const raw = await readTemplate(variantMap[dbTarget]);
 
-  if (dbTarget === "supabase") {
-    return injectVariables(raw, { JWT_SECRET: jwtSecret });
+  let authVars = "";
+  if (authTarget === "clerk") {
+    authVars = `\n# Clerk Auth\nCLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\nCLERK_SECRET_KEY="YOUR_CLERK_SECRET_KEY"\n`;
+  } else if (authTarget === "supabase") {
+    authVars = `\n# Supabase Auth\nSUPABASE_URL="https://your-project.supabase.co"\nSUPABASE_ANON_KEY="your-anon-key"\n`;
   }
+
+  let cachingVars = "";
+  if (cachingTarget === "docker") {
+    cachingVars = `\n# Redis Caching (Docker)\nREDIS_URL="redis://127.0.0.1:${redisPort}"\n`;
+  } else if (cachingTarget === "upstash") {
+    cachingVars = `\n# Upstash Redis\nUPSTASH_REDIS_REST_URL="https://your-endpoint.upstash.io"\nUPSTASH_REDIS_REST_TOKEN="your-token"\n`;
+  }
+
+  if (dbTarget === "supabase" || dbTarget === "neon") {
+    return injectVariables(raw, { JWT_SECRET: jwtSecret }) + authVars + cachingVars;
+  }
+
+  const dbName = projectName.replace(/\//g, "-");
 
   if (dbTarget === "docker") {
     return injectVariables(raw, {
-      PROJECT_NAME: projectName,
+      PROJECT_NAME: dbName,
       JWT_SECRET: jwtSecret,
       DB_PASSWORD: dbPassword,
-    });
+      DB_PORT: dbPort.toString()
+    }) + authVars + cachingVars;
   }
 
   // local
   return injectVariables(raw, {
-    PROJECT_NAME: projectName,
+    PROJECT_NAME: dbName,
     JWT_SECRET: jwtSecret,
-  });
+  }) + authVars + cachingVars;
 }
 
 async function resolveDockerCompose(
   projectName: string,
   dbPassword: string,
+  dbTarget: string,
+  cachingTarget: string,
+  dbPort: number = 54320,
+  redisPort: number = 63790
 ): Promise<string> {
-  const raw = await readTemplate("express/docker-compose.yml");
-  return injectVariables(raw, {
-    PROJECT_NAME: projectName,
-    DB_PASSWORD: dbPassword,
-  });
+  let compose = `services:\n`;
+  let volumes = `volumes:\n`;
+  const containerPrefix = projectName.replace(/\//g, "-");
+
+  if (dbTarget === "docker") {
+    compose += `  qwykz-db:
+    image: postgres:17-alpine
+    container_name: ${containerPrefix}-postgres
+    command: postgres -c synchronous_commit=off
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_DB: ${containerPrefix}
+    ports:
+      - "127.0.0.1:${dbPort}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${containerPrefix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    volumes:
+      - ${containerPrefix}_data:/var/lib/postgresql/data\n\n`;
+    volumes += `  ${containerPrefix}_data:\n`;
+  }
+
+  if (cachingTarget === "docker") {
+    compose += `  qwykz-redis:
+    image: redis:7-alpine
+    container_name: ${containerPrefix}-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "127.0.0.1:${redisPort}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ${containerPrefix}_redis_data:/data\n\n`;
+    volumes += `  ${containerPrefix}_redis_data:\n`;
+  }
+
+  return compose + volumes;
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
@@ -93,22 +177,44 @@ async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
 
 async function resolveServerSource(
   extraPackages: ExtraPackage[],
+  framework: "express" | "hono" | "elysia" = "express",
+  authTarget: AuthTarget = "local"
 ): Promise<string> {
   const hasCors = extraPackages.includes("cors");
   const hasHelmet = extraPackages.includes("helmet");
 
   let extraImports = "";
-  if (hasCors) extraImports += 'import cors from "cors";\n';
-  if (hasHelmet) extraImports += 'import helmet from "helmet";\n';
-
   let extraMiddleware = "";
-  if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
-  if (hasCors) extraMiddleware += "app.use(cors());\n";
 
-  const raw = await readTemplate("express/server.ts");
+  if (framework === "express") {
+    if (hasCors) extraImports += 'import cors from "cors";\n';
+    if (hasHelmet) extraImports += 'import helmet from "helmet";\n';
+    if (hasHelmet) extraMiddleware += "app.use(helmet());\n";
+    if (hasCors) extraMiddleware += "app.use(cors({ origin: 'http://localhost:5173', credentials: true }));\n";
+  } else if (framework === "hono") {
+    if (hasCors) extraImports += 'import { cors } from "hono/cors";\n';
+    if (hasHelmet) extraImports += 'import { secureHeaders } from "hono/secure-headers";\n';
+    if (hasHelmet) extraMiddleware += "app.use('*', secureHeaders());\n";
+    if (hasCors) extraMiddleware += "app.use('*', cors({ origin: 'http://localhost:5173', credentials: true }));\n";
+  } else if (framework === "elysia") {
+    if (hasCors) extraImports += 'import { cors } from "@elysiajs/cors";\n';
+    if (hasHelmet) extraImports += 'import { helmet } from "elysia-helmet";\n';
+    if (hasHelmet) extraMiddleware += "\n  .use(helmet())";
+    if (hasCors) extraMiddleware += "\n  .use(cors({ origin: 'http://localhost:5173', credentials: true }))";
+  }
+
+  let authImport = 'import { authRouter } from "./routes/auth.routes";\n';
+  let authRoute = "";
+  if (framework === "express") authRoute = 'app.use("/api/auth", authRouter);\n';
+  else if (framework === "hono") authRoute = 'app.route("/api/auth", authRouter);\n';
+  else if (framework === "elysia") authRoute = '  .use(authRouter)\n';
+
+  const raw = await readTemplate(`${framework}/server.ts`);
   return injectVariables(raw, {
     EXTRA_IMPORTS: extraImports,
     EXTRA_MIDDLEWARE: extraMiddleware,
+    AUTH_IMPORT: authImport,
+    AUTH_ROUTE: authRoute,
   });
 }
 
@@ -119,6 +225,34 @@ async function resolveUserController(
     ? "express/user.controller.zod.ts"
     : "express/user.controller.default.ts";
   return readTemplate(variant);
+}
+
+async function resolveUserService(cachingTarget: CachingTarget): Promise<string> {
+  let redisImport = "";
+  let redisCacheCheck = "";
+  let redisCacheSet = "";
+  let redisCacheInvalidate = "";
+
+  if (cachingTarget !== "none") {
+    redisImport = 'import { redis } from "../lib/redis";\n';
+    redisCacheCheck = `    const cached = await redis.get("users:list");\n    if (cached) return typeof cached === "string" ? JSON.parse(cached) : cached;\n`;
+    
+    if (cachingTarget === "upstash") {
+      redisCacheSet = `    await redis.set("users:list", JSON.stringify(users), { ex: 60 });\n`;
+    } else {
+      redisCacheSet = `    await redis.set("users:list", JSON.stringify(users), "EX", 60);\n`;
+    }
+    
+    redisCacheInvalidate = `    await redis.del("users:list");\n`;
+  }
+
+  const raw = await readTemplate("express/user.service.ts");
+  return injectVariables(raw, {
+    REDIS_IMPORT: redisImport,
+    REDIS_CACHE_CHECK: redisCacheCheck,
+    REDIS_CACHE_SET: redisCacheSet,
+    REDIS_CACHE_INVALIDATE: redisCacheInvalidate,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -168,22 +302,24 @@ export async function generateExpressProject(options: ProjectOptions) {
       options.projectName,
       jwtSecret,
       dbPassword,
+      options.authTarget,
+      options.cachingTarget,
+      options.dbPort,
+      options.redisPort
     ),
     resolvePrismaClient(options.dbTarget),
-    resolveServerSource(options.extraPackages),
+    resolveServerSource(options.extraPackages, "express", options.authTarget),
     readTemplate("express/error.middleware.ts"),
     readTemplate("express/health.routes.ts"),
     readTemplate("express/user.routes.ts"),
     resolveUserController(options.extraPackages),
-    readTemplate("express/user.service.ts"),
-    readTemplate("express/auth.controller.ts"),
-    readTemplate("express/auth.middleware.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`express/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`express/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
     readTemplate("express/auth.routes.ts"),
-    options.dbTarget === "docker"
-      ? readTemplate("express/wait-for-postgres.ts")
-      : Promise.resolve(null),
-    options.dbTarget === "docker"
-      ? resolveDockerCompose(options.projectName, dbPassword)
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker"
+      ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort)
       : Promise.resolve(null),
     readTemplate("express/example.test.ts"),
   ]);
@@ -201,15 +337,24 @@ export async function generateExpressProject(options: ProjectOptions) {
     ["src/middlewares/auth.middleware.ts", authMiddleware],
     ["src/routes/health.routes.ts", healthRoutes],
     ["src/routes/user.routes.ts", userRoutes],
-    ["src/routes/auth.routes.ts", authRoutes],
-    ["src/controllers/user.controller.ts", userController],
-    ["src/controllers/auth.controller.ts", authController],
-    ["src/services/user.service.ts", userService],
+    ["src/routes/auth.routes.ts", authRoutes!],
+    ["src/controllers/user.controller.ts", userController!],
+    ["src/controllers/auth.controller.ts", authController!],
+    ["src/services/user.service.ts", userService!],
   ];
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" && waitForPostgres) {
     files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     files.push(["docker-compose.yml", dockerCompose!]);
+  }
+
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
   }
 
   // Write all files + package.json in parallel
@@ -221,6 +366,8 @@ export async function generateExpressProject(options: ProjectOptions) {
       options.projectName,
       options.dbTarget,
       options.extraPackages,
+      options.cachingTarget,
+      options.authTarget,
     ).then((pkgJson) => writeJson(join(targetDir, "package.json"), pkgJson)),
   ]);
 }
@@ -230,6 +377,7 @@ async function generateLaravelProject(options: ProjectOptions) {
   const dbPassword = generateDbPassword();
 
   console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
+  await rm(targetDir, { recursive: true, force: true }).catch(() => {});
 
   const proc = Bun.spawn({
     cmd: [
@@ -240,18 +388,30 @@ async function generateLaravelProject(options: ProjectOptions) {
       "--no-scripts",
     ],
     cwd: process.cwd(),
-    stdout: "ignore",
-    stderr: "ignore",
+    stdout: "pipe",
+    stderr: "pipe",
   });
 
   const exitCode = await proc.exited;
   if (exitCode !== 0) {
+    const errText = await new Response(proc.stderr).text();
     throw new Error(
-      "Composer failed to install Laravel. Do you have PHP/Composer installed?",
+      `Composer failed to install Laravel. Error: ${errText}`
     );
   }
 
-  console.log(`✅ Laravel installation complete!`);
+  if (options.cachingTarget === "upstash" || options.cachingTarget === "docker") {
+    console.log(`\n📦 Installing predis for Redis caching...`);
+    const procRedis = Bun.spawn({
+      cmd: ["composer", "require", "predis/predis"],
+      cwd: targetDir,
+      stdout: "ignore",
+      stderr: "ignore",
+    });
+    await procRedis.exited;
+  }
+
+  console.log(`◑  Scaffolding qwykz architecture..✅ Laravel installation complete!\n`);
 
   console.log(`\n🏗️  Installing API Routes & Sanctum...`);
   const apiProc = Bun.spawn(
@@ -290,6 +450,8 @@ async function generateLaravelProject(options: ProjectOptions) {
     "DB_CONNECTION=sqlite",
     "DB_CONNECTION=pgsql",
   );
+  
+  envContent += "\n# CORS / Frontend\nFRONTEND_URL=http://localhost:5173\nSANCTUM_STATEFUL_DOMAINS=localhost:5173,localhost:3000\n";
 
   if (options.dbTarget === "supabase") {
     const parsed = new URL(
@@ -320,11 +482,12 @@ async function generateLaravelProject(options: ProjectOptions) {
     envContent = envContent.replace("# DB_HOST=127.0.0.1", "DB_HOST=127.0.0.1");
     envContent = envContent.replace(
       "# DB_PORT=3306",
-      `DB_PORT=${options.dbTarget === "docker" ? "54320" : "5432"}`,
+      `DB_PORT=${options.dbTarget === "docker" ? options.dbPort : "5432"}`,
     );
+    const dbName = options.projectName.replace(/\//g, "-");
     envContent = envContent.replace(
       "# DB_DATABASE=laravel",
-      `DB_DATABASE=${options.projectName}`,
+      `DB_DATABASE=${dbName}`,
     );
     envContent = envContent.replace(
       "# DB_USERNAME=root",
@@ -336,15 +499,31 @@ async function generateLaravelProject(options: ProjectOptions) {
     );
   }
 
+  if (options.cachingTarget === "upstash") {
+    envContent = envContent.replace("CACHE_STORE=database", "CACHE_STORE=redis");
+    envContent = envContent.replace("SESSION_DRIVER=database", "SESSION_DRIVER=redis");
+    envContent += "\n# Upstash Redis\nREDIS_CLIENT=predis\nREDIS_HOST=your-upstash-endpoint\nREDIS_PASSWORD=your-upstash-password\nREDIS_PORT=6379\n";
+  } else if (options.cachingTarget === "docker") {
+    envContent = envContent.replace("CACHE_STORE=database", "CACHE_STORE=redis");
+    envContent = envContent.replace("SESSION_DRIVER=database", "SESSION_DRIVER=redis");
+    envContent += "\nREDIS_CLIENT=predis";
+    envContent = envContent.replace("REDIS_HOST=127.0.0.1", "REDIS_HOST=127.0.0.1");
+    envContent = envContent.replace("REDIS_PORT=6379", `REDIS_PORT=${options.redisPort}`);
+  }
+
   await writeFile(envPath, envContent);
 
-  if (options.dbTarget === "docker") {
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
     console.log(`\n🐳 Generating docker-compose.yml...
   `);
 
     const dockerCompose = await resolveDockerCompose(
       options.projectName,
       dbPassword,
+      options.dbTarget,
+      options.cachingTarget,
+      options.dbPort,
+      options.redisPort
     );
 
     await writeFile(join(targetDir, "docker-compose.yml"), dockerCompose);
@@ -378,6 +557,13 @@ async function generateLaravelProject(options: ProjectOptions) {
       userController,
     ),
   ]);
+
+  const pkgPath = join(targetDir, "package.json");
+  if (await Bun.file(pkgPath).exists()) {
+    const pkg = await Bun.file(pkgPath).json();
+    pkg.name = options.projectName.split("/").pop() || "backend";
+    await Bun.write(pkgPath, JSON.stringify(pkg, null, 2));
+  }
 }
 
 async function generateNextJsProject(options: ProjectOptions) {
@@ -413,8 +599,8 @@ async function generateNextJsProject(options: ProjectOptions) {
   }
 
   console.log(`\n📦 Installing Dependencies (Prisma, Zod, Argon2, pg)...`);
-  await Bun.spawn(["bun", "add", "@prisma/client", "zod", "argon2", "pg", "@prisma/adapter-pg", "jsonwebtoken"], { cwd: targetDir }).exited;
-  await Bun.spawn(["bun", "add", "-d", "prisma", "@types/node", "@types/pg", "@types/jsonwebtoken"], { cwd: targetDir }).exited;
+  await Bun.spawn(["bun", "add", "@prisma/client", "zod", "bcryptjs", "pg", "@prisma/adapter-pg", "jsonwebtoken"], { cwd: targetDir }).exited;
+  await Bun.spawn(["bun", "add", "-d", "prisma", "@types/node", "@types/pg", "@types/jsonwebtoken", "@types/bcryptjs"], { cwd: targetDir }).exited;
 
   console.log(
     `\n🔒 Configuring Security Headers (Helmet & CORS) & Database...`,
@@ -426,9 +612,15 @@ async function generateNextJsProject(options: ProjectOptions) {
     const parsed = new URL(options.supabaseDbUrl || "postgresql://postgres:postgres@aws-0-eu-central-1.pooler.supabase.com:5432/postgres");
     envContent = `DATABASE_URL="${options.supabaseDbUrl}"\nDIRECT_URL="postgresql://${parsed.username}:${parsed.password}@${parsed.hostname}:5432/postgres"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   } else {
-    const port = options.dbTarget === "docker" ? "54320" : "5432";
+    const port = options.dbTarget === "docker" ? options.dbPort.toString() : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
-    envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${options.projectName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
+    const dbName = options.projectName.replace(/\//g, "-");
+    envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
+  }
+  if (options.authTarget === "clerk") {
+    envContent += `\n# Clerk Auth\nNEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\nCLERK_SECRET_KEY="YOUR_CLERK_SECRET_KEY"\n`;
+  } else if (options.authTarget === "supabase") {
+    envContent += `\n# Supabase Auth\nNEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"\nNEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"\n`;
   }
   await Bun.write(envPath, envContent);
 
@@ -441,14 +633,35 @@ async function generateNextJsProject(options: ProjectOptions) {
     ["prisma/schema.prisma", await readTemplate("express/schema.prisma")],
     ["prisma.config.ts", await readTemplate("express/prisma.config.ts")],
     ["lib/prisma.ts", prismaClientStub],
-    ["app/api/auth/register/route.ts", await readTemplate("nextjs/auth.route.ts")],
-    ["app/api/auth/login/route.ts", await readTemplate("nextjs/login.route.ts")],
     ["app/api/health/route.ts", await readTemplate("nextjs/health.route.ts")],
     ["__tests__/example.test.ts", await readTemplate("nextjs/example.test.ts")],
   ];
 
-  if (options.dbTarget === "docker") {
-    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword)]);
+  if (options.authTarget === "local") {
+    files.push(["app/api/auth/register/route.ts", await readTemplate("nextjs/auth.route.ts")]);
+    files.push(["app/api/auth/login/route.ts", await readTemplate("nextjs/login.route.ts")]);
+  }
+
+  if (options.authTarget === "clerk") {
+    files.push(["middleware.ts", await readTemplate("nextjs/clerk-middleware.ts.stub")]);
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.clerk.tsx.stub")]);
+  } else if (options.authTarget === "supabase") {
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.supabase.tsx.stub")]);
+    const supabaseClient = await readTemplate("react/supabase.ts.stub");
+    files.push(["lib/supabase.ts", supabaseClient.replace(/import\.meta\.env\.VITE/g, "process.env.NEXT_PUBLIC")]);
+    files.push(["lib/AuthContext.tsx", await readTemplate("react/AuthContext.tsx.stub")]);
+  } else {
+    files.push(["app/page.tsx", await readTemplate("nextjs/page.local.tsx.stub")]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    files.push(["docker-compose.yml", await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort)]);
+  }
+
+  if (options.cachingTarget === "docker") {
+    files.push(["lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
   }
 
   await Promise.all(
@@ -458,6 +671,24 @@ async function generateNextJsProject(options: ProjectOptions) {
       await Bun.write(fullPath, content || "");
     })
   );
+
+  if (options.authTarget === "clerk") {
+    const layoutPath = join(targetDir, "app", "layout.tsx");
+    let layoutContent = await Bun.file(layoutPath).text();
+    layoutContent = layoutContent.replace(
+      "import \"./globals.css\";",
+      "import \"./globals.css\";\nimport { ClerkProvider } from \"@clerk/nextjs\";"
+    );
+    layoutContent = layoutContent.replace(
+      "<html",
+      "<ClerkProvider>\n    <html"
+    );
+    layoutContent = layoutContent.replace(
+      "</html>",
+      "</html>\n    </ClerkProvider>"
+    );
+    await Bun.write(layoutPath, layoutContent);
+  }
 
   // Inject Prisma and Test scripts into Next.js package.json
   const pkgPath = join(targetDir, "package.json");
@@ -470,7 +701,40 @@ async function generateNextJsProject(options: ProjectOptions) {
     "db:push": "bunx --bun prisma db push",
     "db:studio": "bunx --bun prisma studio",
   };
+  if (options.cachingTarget === "docker") {
+    pkgJson.dependencies["ioredis"] = "^5.4.1";
+  } else if (options.cachingTarget === "upstash") {
+    pkgJson.dependencies["@upstash/redis"] = "^1.31.5";
+  }
+  
+  if (options.authTarget === "clerk") {
+    pkgJson.dependencies["@clerk/nextjs"] = "^7.0.0";
+  } else if (options.authTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    pkgJson.dependencies["zod"] = "^3.23.0";
+  } else {
+    pkgJson.dependencies["zod"] = "^3.23.0";
+  }
+  
   await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+}
+
+function stripBackendStatus(content: string): string {
+  return content
+    .replace(/import\s*\{\s*useState,\s*useEffect\s*\}\s*from\s*["']react["'];/g, 'import { useState } from "react";')
+    .replace(/\s*const \[backendStatus.*?\] = useState.*?;/g, "")
+    .replace(/\s*const backendStatus = ref.*?;/g, "")
+    .replace(/\s*const \[users, setUsers\] = useState<any\[\]>\(\[\]\);/g, "")
+    .replace(/\s*const testBackend = async \(\) => \{[\s\S]*?\}\s*\};\s*/g, "")
+    .replace(/\s*const testBackend = async \(\) => \{[\s\S]*?catch \(e\) \{[\s\S]*?\}\s*\};/g, "")
+    .replace(/\s*useEffect\(\(\) => \{[\s\S]*?testBackend\(\)[\s\S]*?\}, \[.*?\]\);?/g, "")
+    .replace(/\s*onMounted\(async \(\) => \{[\s\S]*?catch \(err\) \{[\s\S]*?\}\s*\}\)/g, "")
+    .replace(/\s*<div className="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div class="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md[^>]*">[\s\S]*?Backend Connection Status[\s\S]*?<\/div>/g, "")
+    .replace(/\s*<div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">\s*<h2[^>]*>Backend Connection Status[\s\S]*?<\/p>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
+    .replace(/\s*<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">\s*<h2[^>]*>Backend Connection Status[\s\S]*?<\/p>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
+    .replace(/\s*\{users\.length > 0 && \([\s\S]*?<\/div>\s*\)\}/g, "")
+    .replace(/\s*<div v-if="users\.length > 0"[\s\S]*?Users API Response[\s\S]*?<\/div>/g, "");
 }
 
 async function generateReactProject(options: ProjectOptions) {
@@ -484,15 +748,28 @@ async function generateReactProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
-  const supabaseTs = await readTemplate("react/supabase.ts.stub");
-  const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
-  const appTsx = await readTemplate("react/App.tsx.stub");
   const viteConfig = await readTemplate("react/vite.config.ts.stub");
   const indexCss = await readTemplate("react/index.css.stub");
 
-  await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
-  await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
-  await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
+  if (options.authTarget === "clerk") {
+    let clerkProvider = await readTemplate("react/clerk-provider.tsx.stub");
+    if (!options.backendFramework) clerkProvider = stripBackendStatus(clerkProvider);
+    await Bun.write(join(targetDir, "src", "App.tsx"), clerkProvider);
+  } else if (options.authTarget === "supabase") {
+    const supabaseTs = await readTemplate("react/supabase.ts.stub");
+    const authContextTsx = await readTemplate("react/AuthContext.tsx.stub");
+    let appTsx = await readTemplate("react/App.tsx.stub");
+    if (!options.backendFramework) appTsx = stripBackendStatus(appTsx);
+    await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
+    await Bun.write(join(targetDir, "src", "lib", "AuthContext.tsx"), authContextTsx);
+    await Bun.write(join(targetDir, "src", "App.tsx"), appTsx);
+  } else {
+    // Local Auth App.tsx
+    let localAppTsx = await readTemplate("react/App.local.tsx.stub");
+    if (!options.backendFramework) localAppTsx = stripBackendStatus(localAppTsx);
+    await Bun.write(join(targetDir, "src", "App.tsx"), localAppTsx);
+  }
+
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "index.css"), indexCss);
 
@@ -501,16 +778,30 @@ async function generateReactProject(options: ProjectOptions) {
   pkgJson.dependencies = pkgJson.dependencies || {};
   pkgJson.devDependencies = pkgJson.devDependencies || {};
   
-  pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
   pkgJson.dependencies["zod"] = "^3.23.0";
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
+    ? "http://localhost:8000/" 
+    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
 
-  const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
-  await Bun.write(join(targetDir, ".env"), envContent);
-  await Bun.write(join(targetDir, ".env.example"), envContent);
+  if (options.authTarget === "clerk") {
+    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else if (options.authTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else {
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
+  }
 }
 
 async function generateVueProject(options: ProjectOptions) {
@@ -524,33 +815,379 @@ async function generateVueProject(options: ProjectOptions) {
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
-  const supabaseTs = await readTemplate("vue/supabase.ts.stub");
-  const authTs = await readTemplate("vue/auth.ts.stub");
-  const appVue = await readTemplate("vue/App.vue.stub");
   const viteConfig = await readTemplate("vue/vite.config.ts.stub");
   const styleCss = await readTemplate("vue/style.css.stub");
 
-  await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
-  await Bun.write(join(targetDir, "src", "lib", "auth.ts"), authTs);
-  await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+  if (options.authTarget === "clerk") {
+    const clerkPlugin = await readTemplate("vue/clerk-plugin.ts.stub");
+    let appVue = await readTemplate("vue/App.clerk.vue.stub");
+    if (!options.backendFramework) appVue = stripBackendStatus(appVue);
+    await Bun.write(join(targetDir, "src", "lib", "clerk.ts"), clerkPlugin);
+    await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+    await Bun.write(join(targetDir, "src", "main.ts"), `import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import { setupClerk } from './lib/clerk'
+
+const app = createApp(App)
+setupClerk(app)
+app.mount('#app')`);
+  } else if (options.authTarget === "supabase") {
+    const supabaseTs = await readTemplate("vue/supabase.ts.stub");
+    const authTs = await readTemplate("vue/auth.ts.stub");
+    let appVue = await readTemplate("vue/App.vue.stub");
+    if (!options.backendFramework) appVue = stripBackendStatus(appVue);
+    await Bun.write(join(targetDir, "src", "lib", "supabase.ts"), supabaseTs);
+    await Bun.write(join(targetDir, "src", "lib", "auth.ts"), authTs);
+    await Bun.write(join(targetDir, "src", "App.vue"), appVue);
+  } else {
+    let localAppVue = await readTemplate("vue/App.local.vue.stub");
+    if (!options.backendFramework) localAppVue = stripBackendStatus(localAppVue);
+    await Bun.write(join(targetDir, "src", "App.vue"), localAppVue);
+  }
+
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "style.css"), styleCss);
+  await Bun.write(join(targetDir, "src", "vite-env.d.ts"), `/// <reference types="vite/client" />\n\ndeclare module '*.vue' {\n  import type { DefineComponent } from 'vue'\n  const component: DefineComponent<{}, {}, any>\n  export default component\n}`);
 
   const pkgPath = join(targetDir, "package.json");
   const pkgJson = await Bun.file(pkgPath).json();
   pkgJson.dependencies = pkgJson.dependencies || {};
   pkgJson.devDependencies = pkgJson.devDependencies || {};
   
-  pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
   pkgJson.dependencies["zod"] = "^3.23.0";
   pkgJson.dependencies["tailwindcss"] = "^4.0.0";
   pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
   
-  await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
+    ? "http://localhost:8000/" 
+    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
 
-  const envContent = `VITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+  if (options.authTarget === "clerk") {
+    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else if (options.authTarget === "supabase") {
+    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
+    await Bun.write(join(targetDir, ".env"), envContent);
+    await Bun.write(join(targetDir, ".env.example"), envContent);
+  } else {
+    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
+    await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
+  }
+}
+
+async function generatePythonProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
+  
+  await copyDirectoryRecursive(
+    "python",
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
+  
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
+  envContent = envContent.replace('?schema=public', '');
+  
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("python/redis.py.stub");
+    await Bun.write(join(targetDir, "app/core/redis.py"), redisStub);
+    const reqPath = join(targetDir, "requirements.txt");
+    const reqText = await Bun.file(reqPath).text();
+    await Bun.write(reqPath, reqText + "redis>=5.0.1\n");
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
   await Bun.write(join(targetDir, ".env"), envContent);
-  await Bun.write(join(targetDir, ".env.example"), envContent);
+}
+
+async function generateGoProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  console.log(`\n🚀 Scaffolding Go (Fiber)...`);
+  
+  await copyDirectoryRecursive(
+    "go",
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
+
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
+  envContent = envContent.replace('?schema=public', '');
+
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("go/redis.go.stub");
+    await Bun.spawn(["mkdir", "-p", join(targetDir, "internal/cache")]).exited;
+    await Bun.write(join(targetDir, "internal/cache/redis.go"), redisStub);
+    const modPath = join(targetDir, "go.mod");
+    const modText = await Bun.file(modPath).text();
+    await Bun.write(modPath, modText + "\nrequire github.com/redis/go-redis/v9 v9.5.1\n");
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
+  await Bun.write(join(targetDir, ".env"), envContent);
+}
+
+async function generateRustProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  console.log(`\n🚀 Scaffolding Rust (Axum)...`);
+  
+  await copyDirectoryRecursive(
+    "rust",
+    targetDir,
+    { "qwykz-app": options.projectName }
+  );
+
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+  let envContent = await resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort);
+
+  if (options.cachingTarget !== "none") {
+    const redisStub = await readTemplate("rust/redis.rs.stub");
+    await Bun.spawn(["mkdir", "-p", join(targetDir, "src/cache")]).exited;
+    await Bun.write(join(targetDir, "src/cache/mod.rs"), "pub mod redis;\n");
+    await Bun.write(join(targetDir, "src/cache/redis.rs"), redisStub);
+    const cargoPath = join(targetDir, "Cargo.toml");
+    const cargoText = await Bun.file(cargoPath).text();
+    await Bun.write(cargoPath, cargoText + "redis = { version = \"0.25.3\", features = [\"tokio-comp\", \"tokio-rustls-comp\"] }\n");
+    
+    const mainPath = join(targetDir, "src/main.rs");
+    const mainText = await Bun.file(mainPath).text();
+    await Bun.write(mainPath, mainText.replace("mod db;\n", "mod db;\npub mod cache;\n"));
+    
+    const usersPath = join(targetDir, "src/api/handlers/users.rs");
+    await Bun.write(usersPath, `use axum::{
+    extract::State,
+    http::StatusCode,
+    Json,
+};
+use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
+use redis::AsyncCommands;
+use crate::api::AppState;
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct UserResponse {
+    pub id: uuid::Uuid,
+    pub email: String,
+    pub name: Option<String>,
+    pub role: String,
+}
+
+pub async fn get_users(
+    State(state): State<AppState>,
+) -> Result<Json<Vec<UserResponse>>, (StatusCode, String)> {
+    let client = crate::cache::redis::get_client();
+    if let Ok(mut con) = client.get_multiplexed_async_connection().await {
+        if let Ok(cached_users) = con.get::<_, String>("users:all").await {
+            if let Ok(users) = serde_json::from_str::<Vec<UserResponse>>(&cached_users) {
+                return Ok(Json(users));
+            }
+        }
+    }
+
+    let users = sqlx::query_as::<_, UserResponse>(
+        "SELECT id, email, name, role::text as role FROM users ORDER BY created_at DESC"
+    )
+    .fetch_all(&state.db)
+    .await
+    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, format!("Database error: {}", e)))?;
+
+    if let Ok(mut con) = client.get_multiplexed_async_connection().await {
+        if let Ok(json_str) = serde_json::to_string(&users) {
+            let _: redis::RedisResult<()> = con.set_ex("users:all", json_str, 60).await;
+        }
+    }
+
+    Ok(Json(users))
+}`);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    const dc = await resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort);
+    await Bun.write(join(targetDir, "docker-compose.yml"), dc);
+  }
+
+  await Bun.write(join(targetDir, ".env"), envContent);
+}
+
+async function generateHonoProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+
+  await Promise.all(
+    PROJECT_FOLDERS.map((folder) =>
+      mkdir(join(targetDir, folder), { recursive: true }),
+    ),
+  );
+
+  const [
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose, exampleTest
+  ] = await Promise.all([
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort),
+    resolvePrismaClient(options.dbTarget),
+    resolveServerSource(options.extraPackages, "hono", options.authTarget),
+    readTemplate("hono/error.middleware.ts"),
+    readTemplate("hono/health.routes.ts"),
+    readTemplate("hono/user.routes.ts"),
+    options.extraPackages.includes("zod") ? readTemplate("hono/user.controller.zod.ts") : readTemplate("hono/user.controller.default.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`hono/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`hono/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate("hono/auth.routes.ts"),
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort) : Promise.resolve(null),
+    readTemplate("express/example.test.ts"),
+  ]);
+
+  const files: Array<[string, string]> = [
+    ["prisma/schema.prisma", prismaSchema],
+    ["prisma.config.ts", prismaConfig],
+    ["tsconfig.json", tsconfig],
+    [".env", envFile],
+    ["src/lib/prisma.ts", prismaClient],
+    ["src/index.ts", serverSource],
+    ["src/middlewares/error.middleware.ts", errorMiddleware],
+    ["src/middlewares/auth.middleware.ts", authMiddleware],
+    ["src/routes/health.routes.ts", healthRoutes],
+    ["src/routes/user.routes.ts", userRoutes],
+    ["src/routes/auth.routes.ts", authRoutes!],
+    ["src/controllers/user.controller.ts", userController],
+    ["src/controllers/auth.controller.ts", authController!],
+    ["src/services/user.service.ts", userService],
+    ["src/index.test.ts", exampleTest],
+  ];
+
+  if (options.dbTarget === "docker" && waitForPostgres) {
+    files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    files.push(["docker-compose.yml", dockerCompose!]);
+  }
+
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
+  await Promise.all([
+    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
+      // Override for Hono
+      pkg.dependencies.hono = "^4.0.0";
+      pkg.dependencies["@hono/node-server"] = "^1.11.0";
+      delete pkg.dependencies.cors;
+      delete pkg.dependencies.helmet;
+      delete pkg.devDependencies["@types/cors"];
+      delete pkg.dependencies.express;
+      delete pkg.devDependencies["@types/express"];
+      return writeJson(join(targetDir, "package.json"), pkg);
+    }),
+  ]);
+}
+
+async function generateElysiaProject(options: ProjectOptions) {
+  const targetDir = join(process.cwd(), options.projectName);
+  const jwtSecret = generateJwtSecret();
+  const dbPassword = generateDbPassword();
+
+  await Promise.all(
+    PROJECT_FOLDERS.map((folder) =>
+      mkdir(join(targetDir, folder), { recursive: true }),
+    ),
+  );
+
+  const [
+    prismaSchema, prismaConfig, tsconfig, envFile, prismaClient, serverSource, errorMiddleware, healthRoutes, userRoutes, userController, userService, authController, authMiddleware, authRoutes, waitForPostgres, dockerCompose, exampleTest
+  ] = await Promise.all([
+    readTemplate("express/schema.prisma"),
+    readTemplate("express/prisma.config.ts"),
+    readTemplate("express/tsconfig.json"),
+    resolveEnvFile(options.dbTarget, options.projectName, jwtSecret, dbPassword, options.authTarget, options.cachingTarget, options.dbPort, options.redisPort),
+    resolvePrismaClient(options.dbTarget),
+    resolveServerSource(options.extraPackages, "elysia", options.authTarget),
+    readTemplate("elysia/error.middleware.ts"),
+    readTemplate("elysia/health.routes.ts"),
+    readTemplate("elysia/user.routes.ts"),
+    options.extraPackages.includes("zod") ? readTemplate("elysia/user.controller.zod.ts") : readTemplate("elysia/user.controller.default.ts"),
+    resolveUserService(options.cachingTarget),
+    readTemplate(`elysia/auth.controller${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate(`elysia/auth.middleware${options.authTarget === 'local' ? '' : '.' + options.authTarget}.ts`),
+    readTemplate("elysia/auth.routes.ts"),
+    options.dbTarget === "docker" ? readTemplate("express/wait-for-postgres.ts") : Promise.resolve(null),
+    options.dbTarget === "docker" || options.cachingTarget === "docker" ? resolveDockerCompose(options.projectName, dbPassword, options.dbTarget, options.cachingTarget, options.dbPort, options.redisPort) : Promise.resolve(null),
+    readTemplate("express/example.test.ts"),
+  ]);
+
+  const files: Array<[string, string]> = [
+    ["prisma/schema.prisma", prismaSchema],
+    ["prisma.config.ts", prismaConfig],
+    ["tsconfig.json", tsconfig],
+    [".env", envFile],
+    ["src/lib/prisma.ts", prismaClient],
+    ["src/index.ts", serverSource],
+    ["src/middlewares/error.middleware.ts", errorMiddleware],
+    ["src/middlewares/auth.middleware.ts", authMiddleware],
+    ["src/routes/health.routes.ts", healthRoutes],
+    ["src/routes/user.routes.ts", userRoutes],
+    ["src/routes/auth.routes.ts", authRoutes!],
+    ["src/controllers/user.controller.ts", userController],
+    ["src/controllers/auth.controller.ts", authController!],
+    ["src/services/user.service.ts", userService],
+    ["src/index.test.ts", exampleTest],
+  ];
+
+  if (options.dbTarget === "docker" && waitForPostgres) {
+    files.splice(5, 0, ["src/lib/wait-for-postgres.ts", waitForPostgres!]);
+  }
+
+  if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
+    files.push(["docker-compose.yml", dockerCompose!]);
+  }
+
+  if (options.cachingTarget === "docker") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.docker.ts")]);
+  } else if (options.cachingTarget === "upstash") {
+    files.push(["src/lib/redis.ts", await readTemplate("express/redis.upstash.ts")]);
+  }
+
+  await Promise.all([
+    ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
+      // Override for Elysia
+      pkg.dependencies.elysia = "^1.0.0";
+      if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
+      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "^3.1.0";
+      delete pkg.dependencies.cors;
+      delete pkg.dependencies.helmet;
+      delete pkg.devDependencies["@types/cors"];
+      delete pkg.dependencies.express;
+      delete pkg.devDependencies["@types/express"];
+      return writeJson(join(targetDir, "package.json"), pkg);
+    }),
+  ]);
 }
 
 export async function generateProject(options: ProjectOptions) {
@@ -564,5 +1201,53 @@ export async function generateProject(options: ProjectOptions) {
     await generateReactProject(options);
   } else if (options.framework === "vue") {
     await generateVueProject(options);
+  } else if (options.framework === "python") {
+    await generatePythonProject(options);
+  } else if (options.framework === "go") {
+    await generateGoProject(options);
+  } else if (options.framework === "rust") {
+    await generateRustProject(options);
+  } else if (options.framework === "hono") {
+    await generateHonoProject(options);
+  } else if (options.framework === "elysia") {
+    await generateElysiaProject(options);
+  } else if (options.framework === "monorepo") {
+    const rootName = options.projectName;
+    const targetDir = join(process.cwd(), rootName);
+    
+    // Generate backend
+    options.framework = options.backendFramework!;
+    options.projectName = `${rootName}/backend`;
+    await generateProject(options);
+    
+    // Generate frontend
+    options.framework = options.frontendFramework!;
+    options.projectName = `${rootName}/frontend`;
+    await generateProject(options);
+    
+    // Generate root orchestration
+    let backendCmd = "bun dev";
+    if (options.backendFramework === "laravel") backendCmd = "php artisan serve";
+    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+    if (options.backendFramework === "go") backendCmd = "go run cmd/api/main.go";
+    if (options.backendFramework === "rust") backendCmd = "cargo run";
+
+    const includeBackendWorkspace = ["express", "hono", "elysia", "laravel"].includes(options.backendFramework!);
+    const rootPkg = {
+      name: rootName,
+      private: true,
+      workspaces: includeBackendWorkspace ? ["backend", "frontend"] : ["frontend"],
+      scripts: {
+        dev: `bunx concurrently "cd backend && ${backendCmd}" "cd frontend && bun dev"`,
+        "db:generate": "cd backend && bun run db:generate",
+        "db:push": "cd backend && bun run db:push",
+        "db:studio": "cd backend && bun run db:studio"
+      }
+    };
+    await Bun.write(join(targetDir, "package.json"), JSON.stringify(rootPkg, null, 2));
+    
+    // Restore project name and framework
+    options.projectName = rootName;
+    options.framework = "monorepo";
   }
 }

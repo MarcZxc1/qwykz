@@ -3,7 +3,7 @@ import express from "express";
 import { prisma } from "./lib/prisma";
 import { healthRouter } from "./routes/health.routes";
 import { userRouter } from "./routes/user.routes";
-import { authRouter } from "./routes/auth.routes";
+{{AUTH_IMPORT}}
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -12,7 +12,7 @@ const port = Number(process.env.PORT ?? 3000);
 
 app.use("/api/health", healthRouter);
 app.use("/api/users", userRouter);
-app.use("/api/auth", authRouter);
+{{AUTH_ROUTE}}
 
 app.use(notFoundHandler);
 app.use(errorHandler);

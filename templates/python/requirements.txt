@@ -1,0 +1,7 @@
+fastapi[standard]
+uvicorn
+sqlmodel
+asyncpg
+bcrypt
+PyJWT
+pydantic-settings

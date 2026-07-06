@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { sign } from "jsonwebtoken";
 
 // Zod Schema
 const registerSchema = z.object({
@@ -13,35 +14,44 @@ const registerSchema = z.object({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const parsed = registerSchema.parse(body);
+    const parsed = registerSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
+    }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email: parsed.email },
+      where: { email: parsed.data.email },
     });
 
     if (existingUser) {
       return NextResponse.json({ error: "Email already registered" }, { status: 400 });
     }
 
-    const hashedPassword = await argon2.hash(parsed.password);
+    const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
     const user = await prisma.user.create({
       data: {
-        name: parsed.name,
-        email: parsed.email,
+        name: parsed.data.name,
+        email: parsed.data.email,
         password: hashedPassword,
       },
     });
 
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return NextResponse.json({ error: "JWT_SECRET is not configured" }, { status: 500 });
+    }
+
+    const token = sign({ sub: user.id }, JWT_SECRET, { expiresIn: "15m" });
+
     return NextResponse.json({
       message: "User registered successfully",
-      user: { id: user.id, email: user.email }
+      user: { id: user.id, email: user.email },
+      token
     }, { status: 201 });
 
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
-    }
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

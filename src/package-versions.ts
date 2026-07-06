@@ -12,6 +12,7 @@ export const packageVersions = {
     zod: "^4.4.3",
   },
   devDependencies: {
+    "@prisma/config": "^7.8.0",
     "@types/bun": "^1.3.14",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

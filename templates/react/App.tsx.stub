@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { supabase } from './lib/supabase'
 import { AuthProvider, useAuth } from './lib/AuthContext'
@@ -139,7 +139,33 @@ function AuthForm() {
 }
 
 function Dashboard() {
-  const { user, signOut } = useAuth()
+  const { user, session, signOut } = useAuth()
+  const [backendStatus, setBackendStatus] = useState<string>("Testing connection...")
+  
+  useEffect(() => {
+    async function testBackend() {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}api/health`)
+        if (res.ok) {
+          const authRes = await fetch(`${import.meta.env.VITE_API_URL}api/users`, {
+            headers: { Authorization: `Bearer ${session?.access_token}` }
+          })
+          if (authRes.status === 403) {
+            setBackendStatus("Connected! (Users API blocked: Requires ADMIN role)")
+          } else if (authRes.ok) {
+            setBackendStatus("Connected! (Users API authenticated)")
+          } else {
+            setBackendStatus("Connected to backend, but auth failed.")
+          }
+        } else {
+          setBackendStatus("Failed to connect to backend.")
+        }
+      } catch (err) {
+        setBackendStatus("Backend is unreachable. Is it running?")
+      }
+    }
+    testBackend()
+  }, [session])
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -163,9 +189,16 @@ function Dashboard() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 p-8 flex flex-col items-center justify-center bg-white">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Welcome back!</h2>
+          <div className="border-4 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center bg-white space-y-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Welcome back!</h2>
             <p className="text-gray-600">You are securely authenticated as <span className="font-bold">{user?.email}</span></p>
+            
+            <div className="mt-8 p-4 bg-gray-50 rounded-md border border-gray-200 w-full max-w-md">
+              <h3 className="font-medium text-gray-900 mb-2">Backend Connection Status:</h3>
+              <p className={`text-sm ${backendStatus.includes('Connected') ? 'text-green-600' : 'text-red-600'}`}>
+                {backendStatus}
+              </p>
+            </div>
           </div>
         </div>
       </main>
