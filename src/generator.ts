@@ -1,4 +1,4 @@
-import { mkdir, writeFile, readdir, stat } from "node:fs/promises";
+import { mkdir, writeFile, readdir, stat, rm } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
@@ -377,6 +377,7 @@ async function generateLaravelProject(options: ProjectOptions) {
   const dbPassword = generateDbPassword();
 
   console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
+  await rm(targetDir, { recursive: true, force: true }).catch(() => {});
 
   const proc = Bun.spawn({
     cmd: [
@@ -387,14 +388,15 @@ async function generateLaravelProject(options: ProjectOptions) {
       "--no-scripts",
     ],
     cwd: process.cwd(),
-    stdout: "ignore",
-    stderr: "ignore",
+    stdout: "pipe",
+    stderr: "pipe",
   });
 
   const exitCode = await proc.exited;
   if (exitCode !== 0) {
+    const errText = await new Response(proc.stderr).text();
     throw new Error(
-      "Composer failed to install Laravel. Do you have PHP/Composer installed?",
+      `Composer failed to install Laravel. Error: ${errText}`
     );
   }
 
