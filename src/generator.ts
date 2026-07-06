@@ -390,6 +390,7 @@ async function generateLaravelProject(options: ProjectOptions) {
     cwd: process.cwd(),
     stdout: "ignore",
     stderr: "ignore",
+    env: { ...process.env, COMPOSER_HOME: join(process.cwd(), options.projectName, ".composer") },
   });
 
   const exitCode = await proc.exited;
@@ -406,6 +407,7 @@ async function generateLaravelProject(options: ProjectOptions) {
       cwd: targetDir,
       stdout: "ignore",
       stderr: "ignore",
+      env: { ...process.env, COMPOSER_HOME: join(targetDir, ".composer") },
     });
     await procRedis.exited;
   }
