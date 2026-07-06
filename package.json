@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build:bin": "bun run scripts/build-bin.ts",
-    "test": "bun test --timeout 180000 tests/cli.test.ts tests/e2e.test.ts tests/full-matrix.test.ts"
+    "test": "bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
