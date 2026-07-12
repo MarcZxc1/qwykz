@@ -1,6 +1,8 @@
 import { spinner } from "@clack/prompts";
 import pc from "picocolors";
 import { join } from "node:path";
+import { mkdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { generateProject } from "./generator";
 import {
   promptForAutomaticSetup,
@@ -11,64 +13,75 @@ import {
 /** Check if --verbose flag is present in process.argv */
 const isVerbose = process.argv.includes("--verbose");
 
-async function runCommand(command: string[], cwd: string, ignoreFailure = false) {
+function outputFrom(stream: ReadableStream<Uint8Array> | number | null | undefined): Promise<string> {
+  if (!stream || typeof stream === "number") return Promise.resolve("");
+  return new Response(stream).text();
+}
+
+function formatCommandFailure(command: string[], exitCode: number, output: string) {
+  const cmdStr = command.join(" ");
+  const details = output.trim();
+  const truncatedDetails = details.length > 16_000
+    ? `…output truncated…\n${details.slice(-16_000)}`
+    : details;
+
+  const suggestions = [
+    "  Suggestions:",
+    "    • Re-run with --verbose to stream command output live",
+  ];
+
+  if (cmdStr.startsWith("bun ") || cmdStr.startsWith("bunx ")) {
+    suggestions.push(
+      "    • Check your internet connection and npm registry access",
+      "    • Ensure Bun is installed and up-to-date (https://bun.sh)",
+    );
+  }
+  if (cmdStr.includes("docker")) {
+    suggestions.push("    • Ensure Docker Desktop is running");
+  }
+  if (cmdStr.includes("prisma")) {
+    suggestions.push("    • Ensure your DATABASE_URL is correct in .env");
+  }
+
+  return [
+    `Command "${cmdStr}" exited with code ${exitCode}`,
+    ...(truncatedDetails ? ["", truncatedDetails] : []),
+    "",
+    ...suggestions,
+  ].join("\n");
+}
+
+export async function runCommand(command: string[], cwd: string, ignoreFailure = false) {
   try {
     const proc = Bun.spawn({
-      cmd: ["bash", "-c", command.join(" ")],
+      // Pass arguments directly instead of re-parsing them through a shell. This
+      // preserves paths with spaces and avoids losing the child environment.
+      cmd: command,
       cwd,
-      stdout: isVerbose ? "inherit" : "ignore",
+      stdout: isVerbose ? "inherit" : "pipe",
       stderr: isVerbose ? "inherit" : "pipe",
       stdin: "inherit",
+      env: { ...process.env },
     });
 
+    const stdout = outputFrom(proc.stdout);
+    const stderr = outputFrom(proc.stderr);
     const exitCode = await proc.exited;
     if (exitCode !== 0) {
-      // If not verbose, read stderr for error details
-      let errorDetails = "";
-      if (!isVerbose && proc.stderr && typeof proc.stderr !== "number") {
-        errorDetails = await new Response(proc.stderr).text();
-      }
-      throw new Error(
-        `Command "${command.join(" ")}" exited with code ${exitCode}` +
-          (errorDetails ? `\n${errorDetails}` : ""),
-      );
+      const [stdoutText, stderrText] = await Promise.all([stdout, stderr]);
+      throw new Error(formatCommandFailure(command, exitCode, `${stderrText}\n${stdoutText}`));
     }
+
+    await Promise.all([stdout, stderr]);
   } catch (error) {
-    const cmdStr = command.join(" ");
-
-    console.error("");
-    console.error(pc.red(pc.bold("✖ Command failed: ")) + pc.dim(cmdStr));
-    console.error("");
-
-    if (error instanceof Error && error.message) {
-      console.error(pc.yellow("  Reason: ") + error.message.split("\n")[0]);
-    }
-
-    console.error("");
-    console.error(pc.cyan("  Suggestions:"));
-    console.error(pc.dim("    • Check your internet connection"));
-    console.error(
-      pc.dim("    • Ensure Bun is installed and up-to-date (https://bun.sh)"),
-    );
-
-    if (cmdStr.includes("docker")) {
-      console.error(pc.dim("    • Ensure Docker Desktop is running"));
-    }
-    if (cmdStr.includes("prisma")) {
-      console.error(
-        pc.dim("    • Ensure your DATABASE_URL is correct in .env"),
-      );
-    }
-
-    console.error(pc.dim("    • Re-run with --verbose for full output"));
-    console.error("");
     if (ignoreFailure) {
-      console.error(pc.yellow(`  ⚠️  Warning: Could not execute "${command[0]}". Skipping...`));
+      console.error(pc.yellow(`  ⚠️  Warning: Could not execute "${command.join(" ")}". Skipping...`));
+      if (error instanceof Error) console.error(pc.dim(error.message));
       console.error("");
       return false;
     }
 
-    process.exit(1);
+    throw error;
   }
   return true;
 }
@@ -234,7 +247,18 @@ async function runSetupCommands(
   }
 }
 
+async function ensureBunTmpDir() {
+  const bunTmpDir = process.env.BUN_TMPDIR || join(tmpdir(), "qwykz-bun-tmp");
+  const bunInstallDir =
+    process.env.BUN_INSTALL || join(tmpdir(), "qwykz-bun-install");
+  process.env.BUN_TMPDIR = bunTmpDir;
+  process.env.BUN_INSTALL = bunInstallDir;
+  await mkdir(bunTmpDir, { recursive: true });
+  await mkdir(bunInstallDir, { recursive: true });
+}
+
 export async function runCli() {
+  await ensureBunTmpDir();
   const options = await promptForProjectOptions();
   const s = spinner();
 
@@ -265,6 +289,7 @@ export async function runCli() {
       const proc = Bun.spawn(["bash", "-c", devCmd], {
         cwd: join(process.cwd(), options.projectName),
         stdio: ["inherit", "inherit", "inherit"],
+        env: { ...process.env },
       });
       process.on("SIGINT", () => proc.kill());
       process.on("SIGTERM", () => proc.kill());

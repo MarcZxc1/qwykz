@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 
+function getApiErrorMessage(data: any) {
+  const fieldErrors = data?.error?.details?.fieldErrors;
+  const validationMessages = fieldErrors
+    ? Object.values(fieldErrors).flat().filter(Boolean).join(" ")
+    : "";
+
+  return validationMessages || data?.error?.message || data?.message || "Authentication failed";
+}
+
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
   const [isLogin, setIsLogin] = useState(true);
@@ -56,8 +65,8 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || data.error || "Authentication failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(getApiErrorMessage(data));
       setToken(data.token);
     } catch (err: any) {
       setError(err.message);
@@ -76,7 +85,7 @@ export default function App() {
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input required type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                <input required minLength={2} type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
             )}
             <div>
@@ -85,7 +94,7 @@ export default function App() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+              <input required minLength={isLogin ? 1 : 8} type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
             <button type="submit" className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
               {isLogin ? "Sign In" : "Sign Up"}

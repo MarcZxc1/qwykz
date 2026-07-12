@@ -33,6 +33,7 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold
   * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
   * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js`, `Clerk`, or native **Classic / Codebase Auth**.
   * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
+  * **Deterministic installs**: framework/runtime packages are always included for the selected stack, while optional packages stay opt-in and visible in the prompts.
   * **Universal Fullstack Alignment**: Frontends automatically map their `VITE_API_URL` exactly to match the chosen backend framework (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust). All backends expose identical routing topologies (`/api/auth`, `/api/users`, etc.) for seamless, plug-and-play cross-stack compatibility.
 * **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
   * **Local Installation**
@@ -97,6 +98,18 @@ Check out the [Wiki Guides](docs/home.md) for deep dives into:
 * [The Template Engine](docs/template-engine.md)
 * [Dependency Resolution](docs/dependency-resolution.md)
 * [Adding New Features](docs/contributing.md)
+* [Roadmap](docs/roadmap.md)
+
+## Roadmap
+
+Planned work that will make `qwykz` more trustworthy and more valuable as an open-source CLI:
+
+* `--dry-run` and diff output so users can preview every file and dependency before writing anything.
+* A scaffold manifest so each generated project records its selected stack, packages, and generator version.
+* A strict package policy mode so only framework/runtime packages and explicitly selected extras are installed.
+* [Production-ready Supabase Auth and Clerk fullstack support](docs/fullstack-managed-auth-plan.md), delivered through a tested provider/backend capability matrix.
+* A plugin system for community-supported frameworks, auth providers, and deployment targets.
+* Template validation in CI so generated files stay in sync with prompts, manifests, and package selection.
 
 ## Contributing
 

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Deep Analysis"
+  short_description: "Perform evidence-based, full-scope analysis"
+  default_prompt: "Use $deep-analysis to deeply analyze this request and project, verify the evidence, and report risks before acting."
+
+policy:
+  allow_implicit_invocation: true

@@ -2,8 +2,18 @@ import { mkdir, writeFile, readdir, stat, rm } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createPackageJson } from "./package-json";
+import { packageVersions } from "./package-versions";
 import { readTemplate, injectVariables, getTemplatesInDirectory } from "./template-engine";
-import type { DbTarget, ExtraPackage, ProjectOptions } from "./types";
+import { resolveLatestVersions } from "./npm-registry";
+import type {
+  AuthTarget,
+  CachingTarget,
+  DbTarget,
+  ExtraPackage,
+  PackageMap,
+  ProjectOptions,
+  ProjectPackageJson,
+} from "./types";
 import console from "node:console";
 import { inherits } from "node:util";
 import { cwd, env } from "node:process";
@@ -36,9 +46,9 @@ function generateJwtSecret(): string {
   return randomBytes(48).toString("hex");
 }
 
-/** Generate a 16-byte (32-char hex) password for the Docker PostgreSQL user. */
+/** Generate a 12-byte (24-char hex) password for the Docker PostgreSQL user. */
 function generateDbPassword(): string {
-  return "qwykz_local_password";
+  return randomBytes(12).toString("hex");
 }
 
 const PROJECT_FOLDERS = [
@@ -52,6 +62,242 @@ const PROJECT_FOLDERS = [
 
 async function writeJson(path: string, value: unknown) {
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+async function resolveViteVersions(packageNames: string[]): Promise<Record<string, string>> {
+  const resolved = await resolveLatestVersions(packageNames);
+
+  for (const name of packageNames) {
+    if (!resolved[name]) resolved[name] = "latest";
+  }
+
+  return resolved;
+}
+
+async function writeViteIndexHtml(targetDir: string, framework: "react" | "vue") {
+  const title = framework === "react" ? "React + Vite" : "Vue + Vite";
+  const html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${title}</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/${framework === "react" ? "main.tsx" : "main.ts"}"></script>
+  </body>
+</html>
+`;
+  await writeFile(join(targetDir, "index.html"), html);
+}
+
+/** The local URL exposed by each supported fullstack backend. */
+export function resolveFrontendApiUrl(backendFramework?: string): string {
+  if (backendFramework === "laravel" || backendFramework === "python") {
+    return "http://localhost:8000/";
+  }
+  if (backendFramework === "rust") {
+    return "http://localhost:8080/";
+  }
+  // Express, Hono, Elysia, and Fiber all listen on port 3000.
+  return "http://localhost:3000/";
+}
+
+async function writeReactScaffold(targetDir: string) {
+  await Promise.all([
+    writeViteIndexHtml(targetDir, "react"),
+    writeFile(
+      join(targetDir, "src", "main.tsx"),
+      `import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
+`,
+    ),
+    writeFile(
+      join(targetDir, "src", "vite-env.d.ts"),
+      `/// <reference types="vite/client" />\n`,
+    ),
+    writeFile(
+      join(targetDir, "tsconfig.json"),
+      `{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
+`,
+    ),
+  ]);
+}
+
+async function writeVueScaffold(targetDir: string, includeClerkBootstrap = false) {
+  await Promise.all([
+    writeViteIndexHtml(targetDir, "vue"),
+    writeFile(
+      join(targetDir, "src", "main.ts"),
+      includeClerkBootstrap
+        ? `import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import { setupClerk } from './lib/clerk'
+
+const app = createApp(App)
+setupClerk(app)
+app.mount('#app')
+`
+        : `import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+
+createApp(App).mount('#app')
+`,
+    ),
+    writeFile(
+      join(targetDir, "src", "vite-env.d.ts"),
+      `/// <reference types="vite/client" />
+
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent<{}, {}, any>
+  export default component
+}
+`,
+    ),
+    writeFile(
+      join(targetDir, "tsconfig.json"),
+      `{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "strict": true,
+    "jsx": "preserve"
+  },
+  "include": ["src"]
+}
+`,
+    ),
+  ]);
+}
+
+async function createVitePackageJson(
+  projectName: string,
+  framework: "react" | "vue",
+  authTarget: AuthTarget,
+): Promise<ProjectPackageJson> {
+  const baseDeps = framework === "react"
+    ? [
+        "react",
+        "react-dom",
+        "tailwindcss",
+        "@clerk/react",
+        "@supabase/supabase-js",
+        "zod",
+      ]
+    : [
+        "vue",
+        "tailwindcss",
+        "@clerk/vue",
+        "@supabase/supabase-js",
+        "zod",
+      ];
+
+  const devDeps = framework === "react"
+    ? [
+        "vite",
+        "typescript",
+        "@vitejs/plugin-react",
+        "@tailwindcss/vite",
+        "@types/react",
+        "@types/react-dom",
+        "@types/node",
+      ]
+    : [
+        "vite",
+        "typescript",
+        "@vitejs/plugin-vue",
+        "@tailwindcss/vite",
+        "@vue/compiler-sfc",
+        "@types/node",
+      ];
+
+  const versions = await resolveViteVersions([...baseDeps, ...devDeps]);
+
+  const dependencies: PackageMap = {
+    ...(framework === "react"
+      ? {
+          react: versions.react!,
+          "react-dom": versions["react-dom"]!,
+        }
+      : {
+          vue: versions.vue!,
+        }),
+    tailwindcss: versions.tailwindcss!,
+  };
+
+  const devDependencies: PackageMap = {
+    vite: versions.vite!,
+    typescript: versions.typescript!,
+    "@tailwindcss/vite": versions["@tailwindcss/vite"]!,
+    "@types/node": versions["@types/node"]!,
+  };
+
+  if (framework === "react") {
+    devDependencies["@vitejs/plugin-react"] = versions["@vitejs/plugin-react"]!;
+    devDependencies["@types/react"] = versions["@types/react"]!;
+    devDependencies["@types/react-dom"] = versions["@types/react-dom"]!;
+  } else {
+    devDependencies["@vitejs/plugin-vue"] = versions["@vitejs/plugin-vue"]!;
+    devDependencies["@vue/compiler-sfc"] = versions["@vue/compiler-sfc"]!;
+  }
+
+  if (authTarget === "clerk") {
+    dependencies[framework === "react" ? "@clerk/react" : "@clerk/vue"] =
+      versions[framework === "react" ? "@clerk/react" : "@clerk/vue"]!;
+  } else if (authTarget === "supabase") {
+    dependencies["@supabase/supabase-js"] = versions["@supabase/supabase-js"]!;
+    dependencies.zod = versions.zod!;
+  }
+
+  return {
+    name: projectName,
+    version: "1.0.0",
+    type: "module",
+    scripts: {
+      dev: "vite",
+      build: "vite build",
+      preview: "vite preview",
+      typecheck: "tsc --noEmit",
+    },
+    dependencies,
+    devDependencies,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -390,6 +636,7 @@ async function generateLaravelProject(options: ProjectOptions) {
     cwd: process.cwd(),
     stdout: "pipe",
     stderr: "pipe",
+    env: { ...process.env },
   });
 
   const exitCode = await proc.exited;
@@ -407,6 +654,7 @@ async function generateLaravelProject(options: ProjectOptions) {
       cwd: targetDir,
       stdout: "ignore",
       stderr: "ignore",
+      env: { ...process.env },
     });
     await procRedis.exited;
   }
@@ -420,6 +668,7 @@ async function generateLaravelProject(options: ProjectOptions) {
       cwd: targetDir,
       stdout: "ignore",
       stderr: "ignore",
+      env: { ...process.env },
     },
   );
   await apiProc.exited;
@@ -590,6 +839,7 @@ async function generateNextJsProject(options: ProjectOptions) {
       cwd: process.cwd(),
       stdout: "ignore",
       stderr: "inherit",
+      env: { ...process.env },
     },
   );
 
@@ -598,9 +848,24 @@ async function generateNextJsProject(options: ProjectOptions) {
     throw new Error("Failed to scaffold Next.js. Ensure you have network connectivity.");
   }
 
-  console.log(`\n📦 Installing Dependencies (Prisma, Zod, Argon2, pg)...`);
-  await Bun.spawn(["bun", "add", "@prisma/client", "zod", "bcryptjs", "pg", "@prisma/adapter-pg", "jsonwebtoken"], { cwd: targetDir }).exited;
-  await Bun.spawn(["bun", "add", "-d", "prisma", "@types/node", "@types/pg", "@types/jsonwebtoken", "@types/bcryptjs"], { cwd: targetDir }).exited;
+  const nextDependencies = ["@prisma/client", "pg", "@prisma/adapter-pg"];
+  const nextDevDependencies = ["prisma", "@prisma/config", "@types/node", "@types/pg"];
+  if (options.authTarget === "local") {
+    nextDependencies.push("zod", "bcryptjs", "jsonwebtoken");
+    nextDevDependencies.push("@types/jsonwebtoken", "@types/bcryptjs");
+  } else if (options.authTarget === "supabase") {
+    nextDependencies.push("zod");
+  }
+
+  console.log(`\n📦 Installing generated application dependencies...`);
+  await Bun.spawn(["bun", "add", ...nextDependencies], {
+    cwd: targetDir,
+    env: { ...process.env },
+  }).exited;
+  await Bun.spawn(["bun", "add", "-d", ...nextDevDependencies], {
+    cwd: targetDir,
+    env: { ...process.env },
+  }).exited;
 
   console.log(
     `\n🔒 Configuring Security Headers (Helmet & CORS) & Database...`,
@@ -612,7 +877,7 @@ async function generateNextJsProject(options: ProjectOptions) {
     const parsed = new URL(options.supabaseDbUrl || "postgresql://postgres:postgres@aws-0-eu-central-1.pooler.supabase.com:5432/postgres");
     envContent = `DATABASE_URL="${options.supabaseDbUrl}"\nDIRECT_URL="postgresql://${parsed.username}:${parsed.password}@${parsed.hostname}:5432/postgres"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   } else {
-    const port = options.dbTarget === "docker" ? options.dbPort.toString() : "5432";
+    const port = options.dbTarget === "docker" ? (options.dbPort ?? 54320).toString() : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
     const dbName = options.projectName.replace(/\//g, "-");
     envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
@@ -634,7 +899,7 @@ async function generateNextJsProject(options: ProjectOptions) {
     ["prisma.config.ts", await readTemplate("express/prisma.config.ts")],
     ["lib/prisma.ts", prismaClientStub],
     ["app/api/health/route.ts", await readTemplate("nextjs/health.route.ts")],
-    ["__tests__/example.test.ts", await readTemplate("nextjs/example.test.ts")],
+    ["__tests__/example.test.ts", await readTemplate("nextjs/example.test.ts.stub")],
   ];
 
   if (options.authTarget === "local") {
@@ -697,6 +962,7 @@ async function generateNextJsProject(options: ProjectOptions) {
   pkgJson.scripts = {
     ...pkgJson.scripts,
     "test": "bun test",
+    "postinstall": "prisma generate",
     "db:generate": "bunx --bun prisma generate",
     "db:push": "bunx --bun prisma db push",
     "db:studio": "bunx --bun prisma studio",
@@ -720,9 +986,10 @@ async function generateNextJsProject(options: ProjectOptions) {
 }
 
 function stripBackendStatus(content: string): string {
-  return content
-    .replace(/import\s*\{\s*useState,\s*useEffect\s*\}\s*from\s*["']react["'];/g, 'import { useState } from "react";')
-    .replace(/\s*const \[backendStatus.*?\] = useState.*?;/g, "")
+  const stripped = content
+    .replace(/import\s*\{\s*useState,\s*useEffect\s*\}\s*from\s*["']react["'];?/g, 'import { useState } from "react";')
+    .replace(/\s*const \[backendStatus[^\n]*/g, "")
+    .replace(/\s*const \{ getToken \} = useAuth\(\);?/g, "")
     .replace(/\s*const backendStatus = ref.*?;/g, "")
     .replace(/\s*const \[users, setUsers\] = useState<any\[\]>\(\[\]\);/g, "")
     .replace(/\s*const testBackend = async \(\) => \{[\s\S]*?\}\s*\};\s*/g, "")
@@ -735,16 +1002,15 @@ function stripBackendStatus(content: string): string {
     .replace(/\s*<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">\s*<h2[^>]*>Backend Connection Status[\s\S]*?<\/p>\s*<\/div>\s*<\/div>\s*<\/div>/g, "")
     .replace(/\s*\{users\.length > 0 && \([\s\S]*?<\/div>\s*\)\}/g, "")
     .replace(/\s*<div v-if="users\.length > 0"[\s\S]*?Users API Response[\s\S]*?<\/div>/g, "");
+
+  return stripped.replace(
+    /,\s*useAuth(?=\s*\}\s*from\s*["']@clerk\/react["'];?)/g,
+    "",
+  );
 }
 
 async function generateReactProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding React + Vite...`);
-  const proc = Bun.spawn(
-    ["bunx", "create-vite", options.projectName, "--template", "react-ts"],
-    { cwd: process.cwd(), stdout: "ignore", stderr: "ignore" },
-  );
-  if (await proc.exited !== 0) throw new Error("Failed to scaffold React.");
-
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
@@ -772,46 +1038,28 @@ async function generateReactProject(options: ProjectOptions) {
 
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "index.css"), indexCss);
+  await writeReactScaffold(targetDir);
 
-  const pkgPath = join(targetDir, "package.json");
-  const pkgJson = await Bun.file(pkgPath).json();
-  pkgJson.dependencies = pkgJson.dependencies || {};
-  pkgJson.devDependencies = pkgJson.devDependencies || {};
-  
-  pkgJson.dependencies["zod"] = "^3.23.0";
-  pkgJson.dependencies["tailwindcss"] = "^4.0.0";
-  pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
-  
-  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
-    ? "http://localhost:8000/" 
-    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
+  const pkgJson = await createVitePackageJson(options.projectName, "react", options.authTarget);
+  await writeJson(join(targetDir, "package.json"), pkgJson);
+
+  const apiUrl = resolveFrontendApiUrl(options.backendFramework);
 
   if (options.authTarget === "clerk") {
-    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
-    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
   }
 }
 
 async function generateVueProject(options: ProjectOptions) {
   console.log(`\n🚀 Scaffolding Vue + Vite...`);
-  const proc = Bun.spawn(
-    ["bunx", "create-vite", options.projectName, "--template", "vue-ts"],
-    { cwd: process.cwd(), stdout: "ignore", stderr: "ignore" },
-  );
-  if (await proc.exited !== 0) throw new Error("Failed to scaffold Vue.");
-
   const targetDir = join(process.cwd(), options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
@@ -848,35 +1096,22 @@ app.mount('#app')`);
 
   await Bun.write(join(targetDir, "vite.config.ts"), viteConfig);
   await Bun.write(join(targetDir, "src", "style.css"), styleCss);
-  await Bun.write(join(targetDir, "src", "vite-env.d.ts"), `/// <reference types="vite/client" />\n\ndeclare module '*.vue' {\n  import type { DefineComponent } from 'vue'\n  const component: DefineComponent<{}, {}, any>\n  export default component\n}`);
+  await writeVueScaffold(targetDir, options.authTarget === "clerk");
 
-  const pkgPath = join(targetDir, "package.json");
-  const pkgJson = await Bun.file(pkgPath).json();
-  pkgJson.dependencies = pkgJson.dependencies || {};
-  pkgJson.devDependencies = pkgJson.devDependencies || {};
-  
-  pkgJson.dependencies["zod"] = "^3.23.0";
-  pkgJson.dependencies["tailwindcss"] = "^4.0.0";
-  pkgJson.devDependencies["@tailwindcss/vite"] = "^4.0.0";
-  
-  const apiUrl = (options.backendFramework === "laravel" || options.backendFramework === "python") 
-    ? "http://localhost:8000/" 
-    : options.backendFramework === "rust" ? "http://localhost:8080/" : "http://localhost:3000/";
+  const pkgJson = await createVitePackageJson(options.projectName, "vue", options.authTarget);
+  await writeJson(join(targetDir, "package.json"), pkgJson);
+
+  const apiUrl = resolveFrontendApiUrl(options.backendFramework);
 
   if (options.authTarget === "clerk") {
-    pkgJson.dependencies["@clerk/vue"] = "^2.0.0";
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     const envContent = `VITE_API_URL="${apiUrl}"\nVITE_CLERK_PUBLISHABLE_KEY="YOUR_CLERK_PUBLISHABLE_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else if (options.authTarget === "supabase") {
-    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     const envContent = `VITE_API_URL="${apiUrl}"\nVITE_SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"\nVITE_SUPABASE_ANON_KEY="YOUR_ANON_KEY"\n`;
     await Bun.write(join(targetDir, ".env"), envContent);
     await Bun.write(join(targetDir, ".env.example"), envContent);
   } else {
-    await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
     await Bun.write(join(targetDir, ".env"), `VITE_API_URL="${apiUrl}"\n`);
   }
 }
@@ -1094,7 +1329,7 @@ async function generateHonoProject(options: ProjectOptions) {
 
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget, "hono").then((pkg) => {
       // Override for Hono
       pkg.dependencies.hono = "^4.0.0";
       pkg.dependencies["@hono/node-server"] = "^1.11.0";
@@ -1175,7 +1410,7 @@ async function generateElysiaProject(options: ProjectOptions) {
 
   await Promise.all([
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
-    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget).then((pkg) => {
+    createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget, "elysia").then((pkg) => {
       // Override for Elysia
       pkg.dependencies.elysia = "^1.0.0";
       if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
@@ -1233,16 +1468,28 @@ export async function generateProject(options: ProjectOptions) {
     if (options.backendFramework === "rust") backendCmd = "cargo run";
 
     const includeBackendWorkspace = ["express", "hono", "elysia", "laravel"].includes(options.backendFramework!);
+    const hasPrismaBackend = ["express", "hono", "elysia"].includes(options.backendFramework!);
     const rootPkg = {
       name: rootName,
       private: true,
       workspaces: includeBackendWorkspace ? ["backend", "frontend"] : ["frontend"],
       scripts: {
         dev: `bunx concurrently "cd backend && ${backendCmd}" "cd frontend && bun dev"`,
-        "db:generate": "cd backend && bun run db:generate",
-        "db:push": "cd backend && bun run db:push",
-        "db:studio": "cd backend && bun run db:studio"
-      }
+        ...(hasPrismaBackend
+          ? {
+              "db:generate": "cd backend && bun run db:generate",
+              "db:push": "cd backend && bun run db:push",
+              "db:studio": "cd backend && bun run db:studio",
+            }
+          : options.backendFramework === "laravel"
+            ? { "db:migrate": "cd backend && php artisan migrate" }
+            : {}),
+      },
+      // `bunx concurrently` resolves this local dependency instead of fetching
+      // an undeclared package the first time `bun run dev` is executed.
+      devDependencies: {
+        concurrently: packageVersions.devDependencies.concurrently,
+      },
     };
     await Bun.write(join(targetDir, "package.json"), JSON.stringify(rootPkg, null, 2));
     

@@ -44,7 +44,7 @@ func main() {
 	auth.Post("/login", handlers.Login)
 
 	// Users Routes
-	api.Get("/users", handlers.GetUsers)
+	api.Get("/users", middleware.RequireRole(models.RoleAdmin), handlers.GetUsers)
 
 	// Example protected route showing RBAC usage
 	api.Get("/admin-only", middleware.RequireRole(models.RoleAdmin), func(c *fiber.Ctx) error {

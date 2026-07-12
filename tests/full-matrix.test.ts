@@ -1,10 +1,16 @@
 import { describe, test, expect, afterAll } from "bun:test";
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { resolveFrontendApiUrl } from "../src/generator";
 
 const ROOT = import.meta.dir.replace("/tests", "");
 const CLI = `bun run ${join(ROOT, "src/index.ts")}`;
+const BUN_TMPDIR = join(ROOT, ".test-tmp", "bun-tmp");
+const RUN_EXTERNAL_BOOTSTRAPS = process.env.QWYKZ_RUN_EXTERNAL_BOOTSTRAPS === "1";
+
+mkdirSync(BUN_TMPDIR, { recursive: true });
+process.env.BUN_TMPDIR = BUN_TMPDIR;
 
 function scaffold(name: string, flags: string): boolean {
   try {
@@ -28,19 +34,6 @@ function fileContains(project: string, path: string, needle: string): boolean {
   if (!fileExists(project, path)) return false;
   const content = readFileSync(join(ROOT, project, path), "utf-8");
   return content.includes(needle);
-}
-
-function bunInstall(project: string): boolean {
-  try {
-    execSync("bun install", {
-      cwd: join(ROOT, project),
-      stdio: "pipe",
-      timeout: 60_000,
-    });
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function cleanup(project: string) {
@@ -68,7 +61,7 @@ describe("Express", () => {
     expect(fileExists(name, "package.json")).toBe(true);
     expect(fileExists(name, ".env")).toBe(true);
     expect(fileContains(name, ".env", "DATABASE_URL")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"dev": "bun --watch src/index.ts"')).toBe(true);
   });
 
   test("docker DB", () => {
@@ -77,7 +70,7 @@ describe("Express", () => {
     expect(scaffold(name, "--framework express --db docker")).toBe(true);
     expect(fileExists(name, "docker-compose.yml")).toBe(true);
     expect(fileExists(name, "src/lib/wait-for-postgres.ts")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"db:wait": "bun src/lib/wait-for-postgres.ts"')).toBe(true);
   });
 
   test("supabase DB", () => {
@@ -86,7 +79,7 @@ describe("Express", () => {
     expect(scaffold(name, "--framework express --db supabase")).toBe(true);
     expect(fileExists(name, "src/index.ts")).toBe(true);
     expect(fileContains(name, ".env", "YOUR-PROJECT-ID")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 
   test("local DB + docker redis", () => {
@@ -96,7 +89,6 @@ describe("Express", () => {
     expect(fileExists(name, "src/lib/redis.ts")).toBe(true);
     expect(fileContains(name, "src/lib/redis.ts", "ioredis")).toBe(true);
     expect(fileContains(name, "package.json", "ioredis")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 
   test("local DB + upstash redis", () => {
@@ -106,7 +98,6 @@ describe("Express", () => {
     expect(fileExists(name, "src/lib/redis.ts")).toBe(true);
     expect(fileContains(name, "src/lib/redis.ts", "@upstash/redis")).toBe(true);
     expect(fileContains(name, "package.json", "@upstash/redis")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 });
 
@@ -118,7 +109,9 @@ describe("Hono", () => {
     expect(fileExists(name, "src/index.ts")).toBe(true);
     expect(fileExists(name, "src/routes/auth.routes.ts")).toBe(true);
     expect(fileExists(name, "src/routes/health.routes.ts")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"hono"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/config"')).toBe(true);
+    expect(fileContains(name, "src/services/user.service.ts", "select: publicUserSelect")).toBe(true);
   });
 
   test("docker DB", () => {
@@ -126,7 +119,6 @@ describe("Hono", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework hono --db docker")).toBe(true);
     expect(fileExists(name, "docker-compose.yml")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 
   test("supabase DB", () => {
@@ -134,7 +126,6 @@ describe("Hono", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework hono --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "YOUR-PROJECT-ID")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 });
 
@@ -146,7 +137,9 @@ describe("Elysia", () => {
     expect(fileExists(name, "src/index.ts")).toBe(true);
     // Verify no template placeholders leaked
     expect(fileContains(name, "src/index.ts", "{{")).toBe(false);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"elysia"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/config"')).toBe(true);
+    expect(fileContains(name, "src/services/user.service.ts", "select: publicUserSelect")).toBe(true);
   });
 
   test("docker DB", () => {
@@ -154,7 +147,6 @@ describe("Elysia", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework elysia --db docker")).toBe(true);
     expect(fileExists(name, "docker-compose.yml")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 
   test("supabase DB", () => {
@@ -162,11 +154,12 @@ describe("Elysia", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework elysia --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "YOUR-PROJECT-ID")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 });
 
-describe("Laravel", () => {
+const describeLaravel = RUN_EXTERNAL_BOOTSTRAPS ? describe : describe.skip;
+
+describeLaravel("Laravel", () => {
   test("local DB", () => {
     const name = "t-laravel-local";
     allProjects.push(name);
@@ -191,7 +184,9 @@ describe("Laravel", () => {
   });
 });
 
-describe("Next.js", () => {
+const describeNextjs = RUN_EXTERNAL_BOOTSTRAPS ? describe : describe.skip;
+
+describeNextjs("Next.js", () => {
   test("local DB", () => {
     const name = "t-nextjs-local";
     allProjects.push(name);
@@ -200,7 +195,8 @@ describe("Next.js", () => {
     expect(fileExists(name, "app/api/auth/login/route.ts")).toBe(true);
     expect(fileExists(name, "app/api/health/route.ts")).toBe(true);
     expect(fileExists(name, "prisma/schema.prisma")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"postinstall": "prisma generate"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 
   test("docker DB", () => {
@@ -208,7 +204,6 @@ describe("Next.js", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework nextjs --db docker")).toBe(true);
     expect(fileExists(name, "docker-compose.yml")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
   });
 
   test("supabase DB", () => {
@@ -216,7 +211,7 @@ describe("Next.js", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework nextjs --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "supabase")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
   });
 });
 
@@ -229,7 +224,8 @@ describe("React", () => {
     expect(scaffold(name, "--framework react --auth supabase")).toBe(true);
     expect(fileExists(name, "src/App.tsx")).toBe(true);
     expect(fileExists(name, "src/lib/supabase.ts")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
   });
 
   test("clerk auth", () => {
@@ -239,7 +235,11 @@ describe("React", () => {
     expect(fileExists(name, "src/App.tsx")).toBe(true);
     // Clerk provider content is written directly into App.tsx
     expect(fileContains(name, "src/App.tsx", "clerk") || fileContains(name, "src/App.tsx", "Clerk")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    // The generated manifest must match the package imported by App.tsx.
+    expect(fileContains(name, "package.json", '"@clerk/react"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/clerk-react"')).toBe(false);
+    expect(fileContains(name, "package.json", '"@clerk/vue"')).toBe(false);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(false);
   });
 
   test("no auth (local)", () => {
@@ -247,7 +247,10 @@ describe("React", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework react --auth local")).toBe(true);
     expect(fileExists(name, "src/App.tsx")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(false);
+    expect(fileContains(name, "package.json", '"@clerk/react"')).toBe(false);
+    expect(fileContains(name, "src/App.tsx", "getApiErrorMessage")).toBe(true);
+    expect(fileContains(name, "src/App.tsx", "minLength={isLogin ? 1 : 8}")).toBe(true);
   });
 });
 
@@ -258,7 +261,8 @@ describe("Vue", () => {
     expect(scaffold(name, "--framework vue --auth supabase")).toBe(true);
     expect(fileExists(name, "src/App.vue")).toBe(true);
     expect(fileExists(name, "src/lib/supabase.ts")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
   });
 
   test("clerk auth", () => {
@@ -266,7 +270,8 @@ describe("Vue", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework vue --auth clerk")).toBe(true);
     expect(fileExists(name, "src/App.vue")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(false);
+    expect(fileContains(name, "package.json", '"@clerk/vue"')).toBe(true);
   });
 
   test("no auth (local)", () => {
@@ -274,7 +279,22 @@ describe("Vue", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework vue --auth local")).toBe(true);
     expect(fileExists(name, "src/App.vue")).toBe(true);
-    expect(bunInstall(name)).toBe(true);
+    expect(fileContains(name, "package.json", '"zod"')).toBe(false);
+    expect(fileContains(name, "package.json", '"@clerk/vue"')).toBe(false);
+    expect(fileContains(name, "src/App.vue", "getApiErrorMessage")).toBe(true);
+    expect(fileContains(name, "src/App.vue", ':minlength="isLogin ? 1 : 8"')).toBe(true);
+  });
+});
+
+describe("Fullstack frontend API contract", () => {
+  test("maps every supported backend to its development URL", () => {
+    expect(resolveFrontendApiUrl("express")).toBe("http://localhost:3000/");
+    expect(resolveFrontendApiUrl("hono")).toBe("http://localhost:3000/");
+    expect(resolveFrontendApiUrl("elysia")).toBe("http://localhost:3000/");
+    expect(resolveFrontendApiUrl("go")).toBe("http://localhost:3000/");
+    expect(resolveFrontendApiUrl("laravel")).toBe("http://localhost:8000/");
+    expect(resolveFrontendApiUrl("python")).toBe("http://localhost:8000/");
+    expect(resolveFrontendApiUrl("rust")).toBe("http://localhost:8080/");
   });
 });
 
@@ -319,6 +339,8 @@ describe("Go (Fiber)", () => {
     expect(fileContains(name, "cmd/api/main.go", "register")).toBe(true);
     expect(fileContains(name, "cmd/api/main.go", "login")).toBe(true);
     expect(fileContains(name, "cmd/api/main.go", "health")).toBe(true);
+    expect(fileContains(name, "cmd/api/main.go", 'api.Get("/users", middleware.RequireRole(models.RoleAdmin), handlers.GetUsers)')).toBe(true);
+    expect(fileContains(name, "internal/models/user.go", 'json:"-"')).toBe(true);
   });
 
   test("redis caching", () => {

@@ -35,7 +35,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 # Test Projects
-test*/
+test-*
 vuetest*/
 qwykz-tests/
 nexttesst*/
