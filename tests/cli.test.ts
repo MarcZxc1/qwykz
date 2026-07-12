@@ -4,6 +4,10 @@ import { mkdirSync, rmSync, existsSync } from "node:fs";
 
 const CLI_PATH = join(import.meta.dirname!, "..", "src", "index.ts");
 const TMP_BASE = join(import.meta.dirname!, "..", ".test-tmp");
+const BUN_TMPDIR = join(TMP_BASE, "bun-tmp");
+
+mkdirSync(BUN_TMPDIR, { recursive: true });
+process.env.BUN_TMPDIR = BUN_TMPDIR;
 
 let testDir: string;
 let testCounter = 0;
@@ -226,5 +230,75 @@ describe("qwykz CLI integration", () => {
     expect(pkgJson.dependencies.argon2).toBeDefined();
     expect(pkgJson.dependencies.jsonwebtoken).toBeDefined();
     expect(pkgJson.devDependencies["@types/jsonwebtoken"]).toBeDefined();
+    expect(pkgJson.devDependencies.effect).toBeUndefined();
+    const userService = await Bun.file(join(projectDir, "src/services/user.service.ts")).text();
+    expect(userService).toContain("select: publicUserSelect");
+  });
+
+  test("installs only the dependencies required by Clerk Node auth", async () => {
+    const projectName = "clerk-api";
+
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--auth", "clerk"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
+    expect(pkgJson.dependencies["@clerk/clerk-sdk-node"]).toBeDefined();
+    expect(pkgJson.dependencies["@clerk/backend"]).toBeUndefined();
+    expect(pkgJson.dependencies.zod).toBeUndefined();
+    expect(pkgJson.dependencies.argon2).toBeUndefined();
+    expect(pkgJson.dependencies.jsonwebtoken).toBeUndefined();
+  });
+
+  test("uses Hono-specific dependencies for Clerk auth", async () => {
+    const projectName = "clerk-hono";
+
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "hono", "--auth", "clerk"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
+    expect(pkgJson.dependencies["@clerk/backend"]).toBeDefined();
+    expect(pkgJson.dependencies["@clerk/clerk-sdk-node"]).toBeUndefined();
+    expect(pkgJson.devDependencies["@prisma/config"]).toBeDefined();
+  });
+
+  test("uses backend-appropriate scripts in a fullstack monorepo", async () => {
+    const projectName = "python-monorepo";
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun", "run", CLI_PATH,
+        "--yes", "--name", projectName,
+        "--framework", "monorepo",
+        "--frontend", "react",
+        "--backend", "python",
+      ],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const rootPackage = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
+    expect(rootPackage.scripts.dev).toContain("venv/bin/fastapi dev app/main.py");
+    expect(rootPackage.devDependencies.concurrently).toBeDefined();
+    expect(rootPackage.scripts["db:generate"]).toBeUndefined();
+    expect(rootPackage.scripts["db:push"]).toBeUndefined();
+    expect(rootPackage.scripts["db:studio"]).toBeUndefined();
   });
 });

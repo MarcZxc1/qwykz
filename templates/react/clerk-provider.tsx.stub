@@ -1,4 +1,4 @@
-import { ClerkProvider, SignedIn, SignedOut, SignIn, SignUp, UserButton, useAuth } from '@clerk/clerk-react'
+import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/react'
 import { useState, useEffect } from 'react'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -46,7 +46,7 @@ function Dashboard() {
               <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
             </div>
             <div className="flex items-center">
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </div>
           </div>
         </div>
@@ -71,16 +71,18 @@ function Dashboard() {
 }
 
 function AuthPages() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [showSignUp, setShowSignUp] = useState(false)
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
-        {isLogin ? <SignIn routing="virtual" /> : <SignUp routing="virtual" />}
-        <button 
-          onClick={() => setIsLogin(!isLogin)} 
-          className="mt-4 text-blue-600 hover:underline"
-        >
-          {isLogin ? "Need an account? Sign Up" : "Already have an account? Sign In"}
+        {showSignUp ? <SignUpButton mode="modal">
+          <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Sign up</button>
+        </SignUpButton> : <SignInButton mode="modal">
+          <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Sign in</button>
+        </SignInButton>}
+        <button onClick={() => setShowSignUp(!showSignUp)} className="mt-4 text-blue-600 hover:underline">
+          {showSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
         </button>
       </div>
     </div>
@@ -90,12 +92,12 @@ function AuthPages() {
 export default function App() {
   return (
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-      <SignedIn>
+      <Show when="signed-in">
         <Dashboard />
-      </SignedIn>
-      <SignedOut>
+      </Show>
+      <Show when="signed-out">
         <AuthPages />
-      </SignedOut>
+      </Show>
     </ClerkProvider>
   )
 }

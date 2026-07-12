@@ -10,6 +10,8 @@ import {
 import pc from "picocolors";
 import pkg from "../package.json";
 import type {
+  AuthTarget,
+  CachingTarget,
   DbTarget,
   ExtraPackage,
   ProjectOptions,
@@ -60,8 +62,12 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
     const dbRaw = getFlagValue("--db") ?? "local";
-    const authRaw = getFlagValue("--auth") ?? "local";
     const frameworkRaw = getFlagValue("--framework") ?? "express";
+    // A standalone Vite SPA has no qwykz backend to serve local JWT auth.
+    // Default it to a managed auth provider instead.
+    const authRaw = getFlagValue("--auth") ?? (
+      ["react", "vue"].includes(frameworkRaw) ? "supabase" : "local"
+    );
     const dbTarget: DbTarget = (
       ["supabase", "local", "docker", "neon"].includes(dbRaw) ? dbRaw : "local"
     ) as DbTarget;
@@ -129,9 +135,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   const projectType = await select({
     message: "What type of project do you want to generate?",
     options: [
-      { value: "backend", label: "Backend API" },
-      { value: "frontend", label: "Frontend SPA (Serverless Architecture)" },
-      { value: "fullstack", label: "Fullstack Application" },
+      { value: "backend", label: "Backend API (database-backed REST API)" },
+      { value: "frontend", label: "Frontend app (React/Vue SPA or Next.js app)" },
+      { value: "fullstack", label: "Fullstack monorepo (frontend + API)" },
     ],
   });
   stopOnCancel(projectType);
@@ -144,13 +150,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     framework = await select({
       message: "What stack do you want to generate?",
       options: [
-        { value: "express", label: "Express.js + Typescript" },
-        { value: "hono", label: "Hono - Edge Optimized" },
-        { value: "elysia", label: "Elysia - Bun Native" },
-        { value: "laravel", label: "Vanilla Laravel" },
-        { value: "python", label: "Python FastAPI" },
-        { value: "go", label: "Go Fiber" },
-        { value: "rust", label: "Rust Axum" },
+        { value: "express", label: "Express + TypeScript (Prisma + PostgreSQL)" },
+        { value: "hono", label: "Hono + TypeScript (Prisma + PostgreSQL)" },
+        { value: "elysia", label: "Elysia + Bun (Prisma + PostgreSQL)" },
+        { value: "laravel", label: "Laravel + PHP (PostgreSQL API)" },
+        { value: "python", label: "FastAPI + Python (SQLModel + PostgreSQL)" },
+        { value: "go", label: "Fiber + Go (GORM + PostgreSQL)" },
+        { value: "rust", label: "Axum + Rust (SQLx + PostgreSQL)" },
       ],
     }) as string;
     stopOnCancel(framework);
@@ -158,9 +164,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     framework = await select({
       message: "What frontend framework do you want to generate?",
       options: [
-        { value: "nextjs", label: "Next.js (App Router)" },
-        { value: "react", label: "React + Vite" },
-        { value: "vue", label: "Vue + Vite" },
+        { value: "nextjs", label: "Next.js App Router (full-stack web app)" },
+        { value: "react", label: "React + Vite (SPA)" },
+        { value: "vue", label: "Vue + Vite (SPA)" },
       ],
     }) as string;
     stopOnCancel(framework);
@@ -169,8 +175,8 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     frontendFramework = await select({
         message: "Select your Frontend Framework:",
         options: [
-          { value: "react", label: "React + Vite" },
-          { value: "vue", label: "Vue + Vite" },
+          { value: "react", label: "React + Vite (SPA)" },
+          { value: "vue", label: "Vue + Vite (SPA)" },
         ],
       }) as Framework;
       stopOnCancel(frontendFramework);
@@ -178,13 +184,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       backendFramework = await select({
         message: "Select your Backend Framework:",
         options: [
-          { value: "express", label: "Express.js + Typescript" },
-          { value: "hono", label: "Hono - Edge Optimized" },
-          { value: "elysia", label: "Elysia - Bun Native" },
-          { value: "laravel", label: "Vanilla Laravel" },
-          { value: "python", label: "Python FastAPI" },
-          { value: "go", label: "Go Fiber" },
-          { value: "rust", label: "Rust Axum" },
+          { value: "express", label: "Express + TypeScript (Prisma + PostgreSQL)" },
+          { value: "hono", label: "Hono + TypeScript (Prisma + PostgreSQL)" },
+          { value: "elysia", label: "Elysia + Bun (Prisma + PostgreSQL)" },
+          { value: "laravel", label: "Laravel + PHP (PostgreSQL API)" },
+          { value: "python", label: "FastAPI + Python (SQLModel + PostgreSQL)" },
+          { value: "go", label: "Fiber + Go (GORM + PostgreSQL)" },
+          { value: "rust", label: "Axum + Rust (SQLx + PostgreSQL)" },
         ],
       }) as Framework;
       stopOnCancel(backendFramework);
@@ -203,28 +209,42 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     stopOnCancel(dbTarget);
   }
 
+  const targetBackend = framework === "monorepo" ? backendFramework : framework;
+  const supportsProviderAuth = ["express", "hono", "elysia", "nextjs"].includes(targetBackend as string);
+  const isStandaloneSpa = projectType === "frontend" && ["react", "vue"].includes(framework);
+
   let authTarget: string | symbol = "local";
   if (["express", "nextjs", "react", "vue", "hono", "elysia", "monorepo"].includes(framework as string)) {
     authTarget = await select({
       message: "Select your Authentication Provider:",
-      options: [
-        { value: "local", label: "Classic / Codebase Auth" },
-        { value: "supabase", label: "Supabase Auth" },
-        { value: "clerk", label: "Clerk Auth" },
-      ],
+      options: isStandaloneSpa
+        ? [
+            { value: "supabase", label: "Supabase Auth (managed; required by SPA-only auth)" },
+            { value: "clerk", label: "Clerk Auth (managed; required by SPA-only auth)" },
+          ]
+        : supportsProviderAuth
+          ? [
+              { value: "local", label: "Built-in JWT auth (backend only)" },
+              { value: "supabase", label: "Supabase Auth (managed)" },
+              { value: "clerk", label: "Clerk Auth (managed)" },
+            ]
+          : [
+              { value: "local", label: "Built-in API auth (only compatible option)" },
+            ],
       initialValue: projectType === "frontend" ? "supabase" : "local",
     });
     stopOnCancel(authTarget);
   }
 
+  const supportsUpstash = ["express", "hono", "elysia"].includes(targetBackend as string);
   let cachingTarget: string | symbol = "none";
   if (["express", "laravel", "nextjs", "hono", "elysia", "python", "go", "rust", "monorepo"].includes(framework as string)) {
     cachingTarget = await select({
-      message: "Do you want to add a Redis caching layer?",
+      message: "Add Redis client configuration for caching?",
       options: [
         { value: "none", label: "None" },
-        { value: "upstash", label: "Upstash Serverless Redis (Cloud)" },
-        { value: "docker", label: "Containerized Redis" },
+        ...(supportsUpstash ? [{ value: "upstash", label: "Upstash Redis (managed REST client)" }] : []),
+        { value: "docker", label: "Docker Redis (local service)" },
       ],
     });
     stopOnCancel(cachingTarget);
@@ -232,18 +252,19 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
   const extraPackages: ExtraPackage[] = [];
 
-  const targetBackend = framework === "monorepo" ? backendFramework : framework;
-
   if (["express", "hono", "elysia"].includes(targetBackend as string)) {
+    const zodMessage = authTarget === "local"
+      ? "Use Zod for additional user-route validation? (It is already used for local auth validation.)"
+      : "Add Zod validation to the generated user route?";
     const shouldInstallZod = await confirm({
-      message: "Install Zod for request validation?",
+      message: zodMessage,
       initialValue: false,
     });
     stopOnCancel(shouldInstallZod);
     if (shouldInstallZod) extraPackages.push("zod");
 
     const shouldInstallHelmet = await confirm({
-      message: "Install Helmet for security headers?",
+      message: "Enable security headers?",
       initialValue: false,
     });
     stopOnCancel(shouldInstallHelmet);
@@ -254,13 +275,22 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       extraPackages.push("cors");
     } else {
       const shouldInstallCors = await confirm({
-        message: "Install CORS for cross-origin requests?",
+        message: "Enable CORS for cross-origin requests?",
         initialValue: false,
       });
       stopOnCancel(shouldInstallCors);
       if (shouldInstallCors) extraPackages.push("cors");
     }
   }
+
+  const selectedStack = framework === "monorepo"
+    ? `${frontendFramework} frontend + ${backendFramework} backend`
+    : framework;
+  console.log(
+    pc.dim(
+      `Base framework/runtime dependencies are installed automatically for ${selectedStack}; optional packages are only added when you select them.`,
+    ),
+  );
 
   return {
     framework: framework as Framework,
@@ -299,6 +329,7 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
   const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
   
   if (options.framework === "monorepo") {
+    const backendFramework = options.backendFramework!;
     let envInstructions = "";
     if (options.dbTarget === "supabase" || options.authTarget !== "local") {
       envInstructions = `⚠️  ACTION REQUIRED:
@@ -312,20 +343,38 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
     }
 
     const hasDocker = options.dbTarget === "docker" || options.cachingTarget === "docker";
-    const dockerCmd = hasDocker ? "  cd backend && docker compose up -d\n  cd ..\n" : "";
-    const dockerOneLiner = hasDocker ? "cd backend && docker compose up -d && cd .. && " : "";
+    const dockerCmd = hasDocker ? "  docker compose up -d\n" : "";
+    const dockerOneLiner = hasDocker ? "docker compose up -d && " : "";
+    let backendSetup = "";
+    let backendSetupOneLiner = "";
+
+    if (["express", "hono", "elysia"].includes(backendFramework)) {
+      backendSetup = `  cd backend\n${dockerCmd}  bun run db:generate\n  bun run db:push\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && ${dockerOneLiner}bun run db:generate && bun run db:push && cd ..`;
+    } else if (backendFramework === "laravel") {
+      backendSetup = `  cd backend\n${dockerCmd}  php artisan key:generate\n  php artisan migrate\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && ${dockerOneLiner}php artisan key:generate && php artisan migrate && cd ..`;
+    } else if (backendFramework === "python") {
+      const pipCmd = process.platform === "win32" ? "venv\\Scripts\\pip" : "venv/bin/pip";
+      backendSetup = `  cd backend\n${dockerCmd}  python3 -m venv venv\n  ${pipCmd} install -r requirements.txt\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && ${dockerOneLiner}python3 -m venv venv && ${pipCmd} install -r requirements.txt && cd ..`;
+    } else if (backendFramework === "go") {
+      backendSetup = `  cd backend\n${dockerCmd}  go mod tidy\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && ${dockerOneLiner}go mod tidy && cd ..`;
+    } else if (backendFramework === "rust") {
+      backendSetup = `  cd backend\n${dockerCmd}  cargo install sqlx-cli\n  sqlx database create\n  sqlx migrate run\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && ${dockerOneLiner}cargo install sqlx-cli && sqlx database create && sqlx migrate run && cd ..`;
+    }
     
     outro(`Your boilerplate "${options.projectName}" is ready.
 
 ${envInstructions}
 Manual Execution:
   cd ${options.projectName}
-${dockerCmd}${installCmd}  bun run db:generate
-  bun run db:push
-  bun run dev
+${installCmd}${backendSetup}  bun run dev
 
 Automated One-liner:
-  cd ${options.projectName} && ${dockerOneLiner}${installCmd.trim()} && bun run db:generate && bun run db:push && bun run dev`);
+  cd ${options.projectName} && ${installCmd.trim()} && ${backendSetupOneLiner} && bun run dev`);
     return;
   }
 

@@ -1,6 +1,7 @@
 import { packageVersions } from "./package-versions";
 import { resolveLatestVersions } from "./npm-registry";
 import type {
+  AuthTarget,
   DbTarget,
   CachingTarget,
   ExtraPackage,
@@ -18,19 +19,18 @@ const CORE_DEPS = [
   "dotenv",
   "express",
   "pg",
-  "zod",  // always required — user.controller.ts imports zod unconditionally
 ] as const;
 
 const CORE_DEV_DEPS = [
-  "@prisma/config",
   "@types/bun",
   "@types/express",
   "@types/node",
   "@types/pg",
-  "effect",
   "prisma",
   "typescript",
 ] as const;
+
+type NodeFramework = "express" | "hono" | "elysia";
 
 const OPTIONAL_PACKAGES: Record<
   ExtraPackage,
@@ -38,7 +38,7 @@ const OPTIONAL_PACKAGES: Record<
 > = {
   cors: { dependencies: ["cors"], devDependencies: ["@types/cors"] },
   helmet: { dependencies: ["helmet"] },
-  zod: {},  // zod is in CORE_DEPS; this flag only controls the user controller variant
+  zod: { dependencies: ["zod"] },
 };
 
 // ---------------------------------------------------------------------------
@@ -49,8 +49,14 @@ const OPTIONAL_PACKAGES: Record<
  * Collect all package names that need version resolution based on the
  * user's selected options.
  */
+function getCoreDevDependencies() {
+  // Every Bun backend uses the shared prisma.config.ts template, which imports
+  // defineConfig from @prisma/config.
+  return ["@prisma/config", ...CORE_DEV_DEPS];
+}
+
 function collectAllPackageNames(extraPackages: ExtraPackage[]): string[] {
-  const names = new Set<string>([...CORE_DEPS, ...CORE_DEV_DEPS]);
+  const names = new Set<string>([...CORE_DEPS, ...getCoreDevDependencies()]);
 
   for (const pkg of extraPackages) {
     for (const dep of OPTIONAL_PACKAGES[pkg].dependencies ?? []) names.add(dep);
@@ -95,8 +101,14 @@ export async function createPackageJson(
   extraPackages: ExtraPackage[],
   cachingTarget: CachingTarget = "none",
   authTarget: AuthTarget = "local",
+  framework: NodeFramework = "express",
 ): Promise<ProjectPackageJson> {
-  const versions = await resolveVersionMap(extraPackages);
+  // Local auth validates credentials with Zod; external auth variants only need
+  // Zod when the caller explicitly requests the Zod user-controller variant.
+  const requiredPackages = new Set(extraPackages);
+  if (authTarget === "local") requiredPackages.add("zod");
+  const selectedPackages = [...requiredPackages];
+  const versions = await resolveVersionMap(selectedPackages);
 
   const dependencies: PackageMap = {};
   for (const dep of CORE_DEPS) {
@@ -104,11 +116,11 @@ export async function createPackageJson(
   }
 
   const devDependencies: PackageMap = {};
-  for (const dep of CORE_DEV_DEPS) {
+  for (const dep of getCoreDevDependencies()) {
     devDependencies[dep] = versions[dep]!;
   }
 
-  for (const pkg of extraPackages) {
+  for (const pkg of selectedPackages) {
     for (const dep of OPTIONAL_PACKAGES[pkg].dependencies ?? []) {
       dependencies[dep] = versions[dep]!;
     }
@@ -128,8 +140,11 @@ export async function createPackageJson(
     dependencies["jsonwebtoken"] = "^9.0.2";
     devDependencies["@types/jsonwebtoken"] = "^9.0.9";
   } else if (authTarget === "clerk") {
-    dependencies["@clerk/clerk-sdk-node"] = "^5.0.0";
-    dependencies["@clerk/backend"] = "^1.0.0";
+    if (framework === "express") {
+      dependencies["@clerk/clerk-sdk-node"] = "^5.0.0";
+    } else {
+      dependencies["@clerk/backend"] = "^1.0.0";
+    }
   } else if (authTarget === "supabase") {
     dependencies["@supabase/supabase-js"] = "^2.43.0";
   }

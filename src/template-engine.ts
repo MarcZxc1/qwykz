@@ -11,6 +11,23 @@ const TEMPLATES_DIR = join(__dirname, "..", "templates");
  */
 const IS_COMPILED = __dirname.startsWith("/$bunfs");
 
+export function readEmbeddedTemplate(
+  templates: Record<string, string>,
+  relativePath: string,
+): string {
+  const embedded = templates[relativePath];
+  // Empty files (for example Python __init__.py) are valid templates. Only an
+  // absent map entry means the binary failed to embed the template.
+  if (embedded === undefined) {
+    throw new Error(
+      `Template file not found: "${relativePath}"\n` +
+        `  This template was not embedded in the compiled binary.\n` +
+        `  Rebuild the binary with: bun run build:bin`,
+    );
+  }
+  return embedded;
+}
+
 /**
  * Read a template file from the templates/ directory.
  * Uses Bun.file(path).text() for fast reads.
@@ -19,15 +36,7 @@ const IS_COMPILED = __dirname.startsWith("/$bunfs");
 export async function readTemplate(relativePath: string): Promise<string> {
   // In compiled binary mode, use the embedded templates
   if (IS_COMPILED) {
-    const embedded = EMBEDDED_TEMPLATES[relativePath];
-    if (!embedded) {
-      throw new Error(
-        `Template file not found: "${relativePath}"\n` +
-          `  This template was not embedded in the compiled binary.\n` +
-          `  Rebuild the binary with: bun run build:bin`,
-      );
-    }
-    return embedded;
+    return readEmbeddedTemplate(EMBEDDED_TEMPLATES, relativePath);
   }
 
   // In development mode, read from filesystem
