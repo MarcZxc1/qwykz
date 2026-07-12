@@ -80,7 +80,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "package_keywords",
-      "community": 2,
+      "community": 11,
       "norm_label": "keywords"
     },
     {
@@ -90,7 +90,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_boilerplate",
-      "community": 2,
+      "community": 11,
       "norm_label": "boilerplate"
     },
     {
@@ -100,7 +100,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_scaffold",
-      "community": 2,
+      "community": 11,
       "norm_label": "scaffold"
     },
     {
@@ -110,7 +110,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_generator",
-      "community": 2,
+      "community": 11,
       "norm_label": "generator"
     },
     {
@@ -120,7 +120,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_cli",
-      "community": 2,
+      "community": 11,
       "norm_label": "cli"
     },
     {
@@ -134,13 +134,23 @@
       "norm_label": "express"
     },
     {
+      "label": "typescript",
+      "file_type": "concept",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "ref_typescript",
+      "community": 11,
+      "norm_label": "typescript"
+    },
+    {
       "label": "bun",
       "file_type": "concept",
       "source_file": "package.json",
       "source_location": "L9",
       "_origin": "ast",
       "id": "package_json_ref_bun",
-      "community": 2,
+      "community": 11,
       "norm_label": "bun"
     },
     {
@@ -150,7 +160,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_prisma",
-      "community": 2,
+      "community": 11,
       "norm_label": "prisma"
     },
     {
@@ -160,7 +170,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_postgresql",
-      "community": 2,
+      "community": 11,
       "norm_label": "postgresql"
     },
     {
@@ -170,7 +180,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_mvc",
-      "community": 2,
+      "community": 11,
       "norm_label": "mvc"
     },
     {
@@ -180,7 +190,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_rest",
-      "community": 2,
+      "community": 11,
       "norm_label": "rest"
     },
     {
@@ -190,7 +200,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_api",
-      "community": 2,
+      "community": 11,
       "norm_label": "api"
     },
     {
@@ -200,7 +210,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_jwt",
-      "community": 2,
+      "community": 11,
       "norm_label": "jwt"
     },
     {
@@ -210,7 +220,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_authentication",
-      "community": 2,
+      "community": 11,
       "norm_label": "authentication"
     },
     {
@@ -230,7 +240,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ref_docker",
-      "community": 2,
+      "community": 11,
       "norm_label": "docker"
     },
     {
@@ -482,26 +492,6 @@
       "id": "picocolors",
       "community": 2,
       "norm_label": "picocolors"
-    },
-    {
-      "label": "run-all-maximized.ts",
-      "file_type": "code",
-      "source_file": "run-all-maximized.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "run_all_maximized",
-      "community": 40,
-      "norm_label": "run-all-maximized.ts"
-    },
-    {
-      "label": "tests",
-      "file_type": "code",
-      "source_file": "run-all-maximized.ts",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "run_all_maximized_tests",
-      "community": 40,
-      "norm_label": "tests"
     },
     {
       "label": "build-bin.ts",
@@ -1364,10 +1354,20 @@
       "norm_label": "is_compiled"
     },
     {
+      "label": "readEmbeddedTemplate()",
+      "file_type": "code",
+      "source_file": "src/template-engine.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "src_template_engine_readembeddedtemplate",
+      "community": 5,
+      "norm_label": "readembeddedtemplate()"
+    },
+    {
       "label": "readTemplate()",
       "file_type": "code",
       "source_file": "src/template-engine.ts",
-      "source_location": "L19",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "src_template_engine_readtemplate",
       "community": 5,
@@ -1377,7 +1377,7 @@
       "label": "injectVariables()",
       "file_type": "code",
       "source_file": "src/template-engine.ts",
-      "source_location": "L56",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "src_template_engine_injectvariables",
       "community": 5,
@@ -1387,7 +1387,7 @@
       "label": "EMBEDDED_TEMPLATES",
       "file_type": "code",
       "source_file": "src/template-engine.ts",
-      "source_location": "L79",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "src_template_engine_embedded_templates",
       "community": 5,
@@ -1397,7 +1397,7 @@
       "label": "getTemplatesInDirectory()",
       "file_type": "code",
       "source_file": "src/template-engine.ts",
-      "source_location": "L83",
+      "source_location": "L92",
       "_origin": "ast",
       "id": "src_template_engine_gettemplatesindirectory",
       "community": 5,
@@ -2244,10 +2244,20 @@
       "norm_label": "user.service.ts"
     },
     {
-      "label": "userService",
+      "label": "publicUserSelect",
       "file_type": "code",
       "source_file": "templates/elysia/user.service.ts",
       "source_location": "L3",
+      "_origin": "ast",
+      "id": "templates_elysia_user_service_publicuserselect",
+      "community": 44,
+      "norm_label": "publicuserselect"
+    },
+    {
+      "label": "userService",
+      "file_type": "code",
+      "source_file": "templates/elysia/user.service.ts",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "templates_elysia_user_service_userservice",
       "community": 44,
@@ -3094,10 +3104,20 @@
       "norm_label": "user.service.ts"
     },
     {
-      "label": "userService",
+      "label": "publicUserSelect",
       "file_type": "code",
       "source_file": "templates/express/user.service.ts",
       "source_location": "L4",
+      "_origin": "ast",
+      "id": "templates_express_user_service_publicuserselect",
+      "community": 48,
+      "norm_label": "publicuserselect"
+    },
+    {
+      "label": "userService",
+      "file_type": "code",
+      "source_file": "templates/express/user.service.ts",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "templates_express_user_service_userservice",
       "community": 48,
@@ -4156,10 +4176,20 @@
       "norm_label": "user.service.ts"
     },
     {
-      "label": "userService",
+      "label": "publicUserSelect",
       "file_type": "code",
       "source_file": "templates/hono/user.service.ts",
       "source_location": "L3",
+      "_origin": "ast",
+      "id": "templates_hono_user_service_publicuserselect",
+      "community": 53,
+      "norm_label": "publicuserselect"
+    },
+    {
+      "label": "userService",
+      "file_type": "code",
+      "source_file": "templates/hono/user.service.ts",
+      "source_location": "L12",
       "_origin": "ast",
       "id": "templates_hono_user_service_userservice",
       "community": 53,
@@ -5502,7 +5532,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "templates_rust_src_db_models",
-      "community": 17,
+      "community": 40,
       "norm_label": "models.rs"
     },
     {
@@ -5512,7 +5542,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "templates_rust_src_db_models_role",
-      "community": 17,
+      "community": 40,
       "norm_label": "role"
     },
     {
@@ -5522,7 +5552,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "templates_rust_src_db_models_user",
-      "community": 17,
+      "community": 40,
       "norm_label": "user"
     },
     {
@@ -5532,7 +5562,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "templates_rust_src_db_models_rs_uuid",
-      "community": 17,
+      "community": 40,
       "norm_label": "uuid"
     },
     {
@@ -5542,7 +5572,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "templates_rust_src_db_models_rs_string",
-      "community": 17,
+      "community": 40,
       "norm_label": "string"
     },
     {
@@ -5562,7 +5592,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "utc",
-      "community": 17,
+      "community": 40,
       "norm_label": "utc"
     },
     {
@@ -5584,6 +5614,414 @@
       "id": "templates_rust_src_main_main",
       "community": 57,
       "norm_label": "main()"
+    },
+    {
+      "label": "cli.test.ts",
+      "file_type": "code",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_cli_test",
+      "community": 77,
+      "norm_label": "cli.test.ts"
+    },
+    {
+      "label": "CLI_PATH",
+      "file_type": "code",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "tests_cli_test_cli_path",
+      "community": 77,
+      "norm_label": "cli_path"
+    },
+    {
+      "label": "TMP_BASE",
+      "file_type": "code",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "tests_cli_test_tmp_base",
+      "community": 77,
+      "norm_label": "tmp_base"
+    },
+    {
+      "label": "BUN_TMPDIR",
+      "file_type": "code",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_cli_test_bun_tmpdir",
+      "community": 77,
+      "norm_label": "bun_tmpdir"
+    },
+    {
+      "label": "e2e.old.test.ts",
+      "file_type": "code",
+      "source_file": "tests/e2e.old.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_e2e_old_test",
+      "community": 79,
+      "norm_label": "e2e.old.test.ts"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "tests/e2e.old.test.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "tests_e2e_old_test_run",
+      "community": 79,
+      "norm_label": "run()"
+    },
+    {
+      "label": "waitForServer()",
+      "file_type": "code",
+      "source_file": "tests/e2e.old.test.ts",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "tests_e2e_old_test_waitforserver",
+      "community": 79,
+      "norm_label": "waitforserver()"
+    },
+    {
+      "label": "e2e.test.ts",
+      "file_type": "code",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_e2e_test",
+      "community": 78,
+      "norm_label": "e2e.test.ts"
+    },
+    {
+      "label": "BUN_TMPDIR",
+      "file_type": "code",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "tests_e2e_test_bun_tmpdir",
+      "community": 78,
+      "norm_label": "bun_tmpdir"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "tests_e2e_test_run",
+      "community": 78,
+      "norm_label": "run()"
+    },
+    {
+      "label": "waitForServer()",
+      "file_type": "code",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "tests_e2e_test_waitforserver",
+      "community": 78,
+      "norm_label": "waitforserver()"
+    },
+    {
+      "label": "full-matrix.test.ts",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test",
+      "community": 74,
+      "norm_label": "full-matrix.test.ts"
+    },
+    {
+      "label": "ROOT",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_root",
+      "community": 74,
+      "norm_label": "root"
+    },
+    {
+      "label": "BUN_TMPDIR",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_bun_tmpdir",
+      "community": 74,
+      "norm_label": "bun_tmpdir"
+    },
+    {
+      "label": "scaffold()",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_scaffold",
+      "community": 74,
+      "norm_label": "scaffold()"
+    },
+    {
+      "label": "fileExists()",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_fileexists",
+      "community": 74,
+      "norm_label": "fileexists()"
+    },
+    {
+      "label": "fileContains()",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_filecontains",
+      "community": 74,
+      "norm_label": "filecontains()"
+    },
+    {
+      "label": "cleanup()",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_cleanup",
+      "community": 74,
+      "norm_label": "cleanup()"
+    },
+    {
+      "label": "allProjects",
+      "file_type": "code",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "tests_full_matrix_test_allprojects",
+      "community": 74,
+      "norm_label": "allprojects"
+    },
+    {
+      "label": "run-all-maximized.ts",
+      "file_type": "code",
+      "source_file": "tests/scripts/run-all-maximized.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_scripts_run_all_maximized",
+      "community": 83,
+      "norm_label": "run-all-maximized.ts"
+    },
+    {
+      "label": "tests",
+      "file_type": "code",
+      "source_file": "tests/scripts/run-all-maximized.ts",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "tests_scripts_run_all_maximized_tests",
+      "community": 83,
+      "norm_label": "tests"
+    },
+    {
+      "label": "test-matrix.sh",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_matrix",
+      "community": 81,
+      "norm_label": "test-matrix.sh"
+    },
+    {
+      "label": "test-matrix.sh script",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_matrix_sh__entry",
+      "community": 81,
+      "norm_label": "test-matrix.sh script"
+    },
+    {
+      "label": "inject_credentials()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L20",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_matrix_inject_credentials",
+      "community": 81,
+      "norm_label": "inject_credentials()"
+    },
+    {
+      "label": "test_endpoints()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L38",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_matrix_test_endpoints",
+      "community": 81,
+      "norm_label": "test_endpoints()"
+    },
+    {
+      "label": "run_matrix_test()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L72",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_matrix_run_matrix_test",
+      "community": 81,
+      "norm_label": "run_matrix_test()"
+    },
+    {
+      "label": "test-monorepo.ts",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-monorepo.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_scripts_test_monorepo",
+      "community": 84,
+      "norm_label": "test-monorepo.ts"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-monorepo.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "tests_scripts_test_monorepo_main",
+      "community": 84,
+      "norm_label": "main()"
+    },
+    {
+      "label": "test-qwykz.sh",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_qwykz",
+      "community": 82,
+      "norm_label": "test-qwykz.sh"
+    },
+    {
+      "label": "test-qwykz.sh script",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_qwykz_sh__entry",
+      "community": 82,
+      "norm_label": "test-qwykz.sh script"
+    },
+    {
+      "label": "inject_credentials()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L27",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_qwykz_inject_credentials",
+      "community": 82,
+      "norm_label": "inject_credentials()"
+    },
+    {
+      "label": "run_test()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L47",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_qwykz_run_test",
+      "community": 82,
+      "norm_label": "run_test()"
+    },
+    {
+      "label": "test_endpoint()",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L112",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_qwykz_test_endpoint",
+      "community": 82,
+      "norm_label": "test_endpoint()"
+    },
+    {
+      "label": "test-rust-endpoints.sh",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-rust-endpoints.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_rust_endpoints",
+      "community": 85,
+      "norm_label": "test-rust-endpoints.sh"
+    },
+    {
+      "label": "test-rust-endpoints.sh script",
+      "file_type": "code",
+      "source_file": "tests/scripts/test-rust-endpoints.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "tests_scripts_test_rust_endpoints_sh__entry",
+      "community": 85,
+      "norm_label": "test-rust-endpoints.sh script"
+    },
+    {
+      "label": "template-engine.test.ts",
+      "file_type": "code",
+      "source_file": "tests/template-engine.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_template_engine_test",
+      "community": 5,
+      "norm_label": "template-engine.test.ts"
     },
     {
       "label": "tsconfig.json",
@@ -5844,6 +6282,966 @@
       "id": "ref_templates",
       "community": 6,
       "norm_label": "templates"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents",
+      "community": 80,
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "graphify",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_graphify",
+      "community": 80,
+      "norm_label": "graphify"
+    },
+    {
+      "label": "CODE_OF_CONDUCT.md",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "code_of_conduct",
+      "community": 72,
+      "norm_label": "code_of_conduct.md"
+    },
+    {
+      "label": "Contributor Covenant Code of Conduct",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "community": 72,
+      "norm_label": "contributor covenant code of conduct"
+    },
+    {
+      "label": "Our Pledge",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "code_of_conduct_our_pledge",
+      "community": 72,
+      "norm_label": "our pledge"
+    },
+    {
+      "label": "Our Standards",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "code_of_conduct_our_standards",
+      "community": 72,
+      "norm_label": "our standards"
+    },
+    {
+      "label": "Enforcement Responsibilities",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "code_of_conduct_enforcement_responsibilities",
+      "community": 72,
+      "norm_label": "enforcement responsibilities"
+    },
+    {
+      "label": "Scope",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "code_of_conduct_scope",
+      "community": 72,
+      "norm_label": "scope"
+    },
+    {
+      "label": "Enforcement",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "code_of_conduct_enforcement",
+      "community": 72,
+      "norm_label": "enforcement"
+    },
+    {
+      "label": "Enforcement Guidelines",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "code_of_conduct_enforcement_guidelines",
+      "community": 72,
+      "norm_label": "enforcement guidelines"
+    },
+    {
+      "label": "1. Correction",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "code_of_conduct_1_correction",
+      "community": 72,
+      "norm_label": "1. correction"
+    },
+    {
+      "label": "2. Warning",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "code_of_conduct_2_warning",
+      "community": 72,
+      "norm_label": "2. warning"
+    },
+    {
+      "label": "3. Temporary Ban",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L95",
+      "_origin": "ast",
+      "id": "code_of_conduct_3_temporary_ban",
+      "community": 72,
+      "norm_label": "3. temporary ban"
+    },
+    {
+      "label": "4. Permanent Ban",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L106",
+      "_origin": "ast",
+      "id": "code_of_conduct_4_permanent_ban",
+      "community": 72,
+      "norm_label": "4. permanent ban"
+    },
+    {
+      "label": "Attribution",
+      "file_type": "document",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L115",
+      "_origin": "ast",
+      "id": "code_of_conduct_attribution",
+      "community": 72,
+      "norm_label": "attribution"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "readme",
+      "community": 17,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "\u26a1 qwykz \u26a1",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "readme_qwykz",
+      "community": 17,
+      "norm_label": "\u26a1 qwykz \u26a1"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "readme_features",
+      "community": 17,
+      "norm_label": "features"
+    },
+    {
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "readme_installation",
+      "community": 17,
+      "norm_label": "installation"
+    },
+    {
+      "label": "Run without installing (Recommended)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L50",
+      "_origin": "ast",
+      "id": "readme_run_without_installing_recommended",
+      "community": 17,
+      "norm_label": "run without installing (recommended)"
+    },
+    {
+      "label": "Global Install",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "readme_global_install",
+      "community": 17,
+      "norm_label": "global install"
+    },
+    {
+      "label": "Usage",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L64",
+      "_origin": "ast",
+      "id": "readme_usage",
+      "community": 17,
+      "norm_label": "usage"
+    },
+    {
+      "label": "Interactive Mode",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "readme_interactive_mode",
+      "community": 17,
+      "norm_label": "interactive mode"
+    },
+    {
+      "label": "Non-Interactive Mode (Automated)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L77",
+      "_origin": "ast",
+      "id": "readme_non_interactive_mode_automated",
+      "community": 17,
+      "norm_label": "non-interactive mode (automated)"
+    },
+    {
+      "label": "Documentation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "readme_documentation",
+      "community": 17,
+      "norm_label": "documentation"
+    },
+    {
+      "label": "Roadmap",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L103",
+      "_origin": "ast",
+      "id": "readme_roadmap",
+      "community": 17,
+      "norm_label": "roadmap"
+    },
+    {
+      "label": "Contributing",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "_origin": "ast",
+      "id": "readme_contributing",
+      "community": 17,
+      "norm_label": "contributing"
+    },
+    {
+      "label": "SECURITY.md",
+      "file_type": "document",
+      "source_file": "SECURITY.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "security",
+      "community": 75,
+      "norm_label": "security.md"
+    },
+    {
+      "label": "Security Policy",
+      "file_type": "document",
+      "source_file": "SECURITY.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "security_security_policy",
+      "community": 75,
+      "norm_label": "security policy"
+    },
+    {
+      "label": "Supported Versions",
+      "file_type": "document",
+      "source_file": "SECURITY.md",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "security_supported_versions",
+      "community": 75,
+      "norm_label": "supported versions"
+    },
+    {
+      "label": "Reporting a Vulnerability",
+      "file_type": "document",
+      "source_file": "SECURITY.md",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "security_reporting_a_vulnerability",
+      "community": 75,
+      "norm_label": "reporting a vulnerability"
+    },
+    {
+      "label": "What to expect:",
+      "file_type": "document",
+      "source_file": "SECURITY.md",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "security_what_to_expect",
+      "community": 75,
+      "norm_label": "what to expect:"
+    },
+    {
+      "label": "architecture.md",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_architecture",
+      "community": 17,
+      "norm_label": "architecture.md"
+    },
+    {
+      "label": "Architecture Overview",
+      "file_type": "document",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_architecture_architecture_overview",
+      "community": 17,
+      "norm_label": "architecture overview"
+    },
+    {
+      "label": "contributing.md",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_contributing",
+      "community": 17,
+      "norm_label": "contributing.md"
+    },
+    {
+      "label": "Contributing Guide",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_contributing_contributing_guide",
+      "community": 17,
+      "norm_label": "contributing guide"
+    },
+    {
+      "label": "Getting Started",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "docs_contributing_getting_started",
+      "community": 17,
+      "norm_label": "getting started"
+    },
+    {
+      "label": "Testing Your Changes",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "docs_contributing_testing_your_changes",
+      "community": 17,
+      "norm_label": "testing your changes"
+    },
+    {
+      "label": "Adding a New Template Feature",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "docs_contributing_adding_a_new_template_feature",
+      "community": 17,
+      "norm_label": "adding a new template feature"
+    },
+    {
+      "label": "Submitting a PR",
+      "file_type": "document",
+      "source_file": "docs/contributing.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "docs_contributing_submitting_a_pr",
+      "community": 17,
+      "norm_label": "submitting a pr"
+    },
+    {
+      "label": "dependency-resolution.md",
+      "file_type": "document",
+      "source_file": "docs/dependency-resolution.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_dependency_resolution",
+      "community": 17,
+      "norm_label": "dependency-resolution.md"
+    },
+    {
+      "label": "Dependency Resolution",
+      "file_type": "document",
+      "source_file": "docs/dependency-resolution.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_dependency_resolution_dependency_resolution",
+      "community": 17,
+      "norm_label": "dependency resolution"
+    },
+    {
+      "label": "The 3-Tier Fallback Strategy",
+      "file_type": "document",
+      "source_file": "docs/dependency-resolution.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_dependency_resolution_the_3_tier_fallback_strategy",
+      "community": 17,
+      "norm_label": "the 3-tier fallback strategy"
+    },
+    {
+      "label": "fullstack-managed-auth-plan.md",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan",
+      "community": 17,
+      "norm_label": "fullstack-managed-auth-plan.md"
+    },
+    {
+      "label": "Fullstack Managed Authentication Plan",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "community": 71,
+      "norm_label": "fullstack managed authentication plan"
+    },
+    {
+      "label": "Objective",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_objective",
+      "community": 71,
+      "norm_label": "objective"
+    },
+    {
+      "label": "Current State",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_current_state",
+      "community": 71,
+      "norm_label": "current state"
+    },
+    {
+      "label": "Product Decisions",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_product_decisions",
+      "community": 71,
+      "norm_label": "product decisions"
+    },
+    {
+      "label": "Authentication and database choices are independent",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_authentication_and_database_choices_are_independent",
+      "community": 71,
+      "norm_label": "authentication and database choices are independent"
+    },
+    {
+      "label": "The frontend owns provider authentication",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_the_frontend_owns_provider_authentication",
+      "community": 71,
+      "norm_label": "the frontend owns provider authentication"
+    },
+    {
+      "label": "The backend verifies every API request",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_the_backend_verifies_every_api_request",
+      "community": 71,
+      "norm_label": "the backend verifies every api request"
+    },
+    {
+      "label": "Application profiles use provider identities",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_application_profiles_use_provider_identities",
+      "community": 71,
+      "norm_label": "application profiles use provider identities"
+    },
+    {
+      "label": "Supported-Combination Rollout",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L96",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_supported_combination_rollout",
+      "community": 71,
+      "norm_label": "supported-combination rollout"
+    },
+    {
+      "label": "Package Contract",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L114",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_package_contract",
+      "community": 71,
+      "norm_label": "package contract"
+    },
+    {
+      "label": "Environment Contract",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L130",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_environment_contract",
+      "community": 71,
+      "norm_label": "environment contract"
+    },
+    {
+      "label": "Generated API Contract",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L160",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_generated_api_contract",
+      "community": 71,
+      "norm_label": "generated api contract"
+    },
+    {
+      "label": "Implementation Phases",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L176",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "community": 71,
+      "norm_label": "implementation phases"
+    },
+    {
+      "label": "Phase 0: Freeze and audit the existing experimental path",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L178",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_phase_0_freeze_and_audit_the_existing_experimental_path",
+      "community": 71,
+      "norm_label": "phase 0: freeze and audit the existing experimental path"
+    },
+    {
+      "label": "Phase 1: React/Vue with Express/Hono/Elysia",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L188",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_phase_1_react_vue_with_express_hono_elysia",
+      "community": 71,
+      "norm_label": "phase 1: react/vue with express/hono/elysia"
+    },
+    {
+      "label": "Phase 2: Next.js review",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L204",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_phase_2_next_js_review",
+      "community": 71,
+      "norm_label": "phase 2: next.js review"
+    },
+    {
+      "label": "Phase 3: FastAPI, Laravel, Go, and Rust",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L214",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_phase_3_fastapi_laravel_go_and_rust",
+      "community": 71,
+      "norm_label": "phase 3: fastapi, laravel, go, and rust"
+    },
+    {
+      "label": "Phase 4: Optional synchronization and organizations",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L225",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_phase_4_optional_synchronization_and_organizations",
+      "community": 71,
+      "norm_label": "phase 4: optional synchronization and organizations"
+    },
+    {
+      "label": "Generator Work Breakdown",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L235",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "community": 71,
+      "norm_label": "generator work breakdown"
+    },
+    {
+      "label": "Types and prompts",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L237",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_types_and_prompts",
+      "community": 71,
+      "norm_label": "types and prompts"
+    },
+    {
+      "label": "Dependency generation",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L246",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_dependency_generation",
+      "community": 71,
+      "norm_label": "dependency generation"
+    },
+    {
+      "label": "Templates and generator selection",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L255",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_templates_and_generator_selection",
+      "community": 71,
+      "norm_label": "templates and generator selection"
+    },
+    {
+      "label": "Testing",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L264",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_testing",
+      "community": 71,
+      "norm_label": "testing"
+    },
+    {
+      "label": "Release Gates",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L277",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_release_gates",
+      "community": 71,
+      "norm_label": "release gates"
+    },
+    {
+      "label": "Risks and Mitigations",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L294",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_risks_and_mitigations",
+      "community": 71,
+      "norm_label": "risks and mitigations"
+    },
+    {
+      "label": "Recommended Delivery Order",
+      "file_type": "document",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L307",
+      "_origin": "ast",
+      "id": "docs_fullstack_managed_auth_plan_recommended_delivery_order",
+      "community": 71,
+      "norm_label": "recommended delivery order"
+    },
+    {
+      "label": "home.md",
+      "file_type": "document",
+      "source_file": "docs/home.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_home",
+      "community": 17,
+      "norm_label": "home.md"
+    },
+    {
+      "label": "qwykz Wiki",
+      "file_type": "document",
+      "source_file": "docs/home.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_home_qwykz_wiki",
+      "community": 17,
+      "norm_label": "qwykz wiki"
+    },
+    {
+      "label": "Table of Contents",
+      "file_type": "document",
+      "source_file": "docs/home.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_home_table_of_contents",
+      "community": 17,
+      "norm_label": "table of contents"
+    },
+    {
+      "label": "roadmap.md",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_roadmap",
+      "community": 17,
+      "norm_label": "roadmap.md"
+    },
+    {
+      "label": "Roadmap",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_roadmap_roadmap",
+      "community": 73,
+      "norm_label": "roadmap"
+    },
+    {
+      "label": "Priority 1: Trust And Predictability",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "docs_roadmap_priority_1_trust_and_predictability",
+      "community": 73,
+      "norm_label": "priority 1: trust and predictability"
+    },
+    {
+      "label": "1. Dry-run and diff mode",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "docs_roadmap_1_dry_run_and_diff_mode",
+      "community": 73,
+      "norm_label": "1. dry-run and diff mode"
+    },
+    {
+      "label": "2. Scaffold manifest",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "docs_roadmap_2_scaffold_manifest",
+      "community": 73,
+      "norm_label": "2. scaffold manifest"
+    },
+    {
+      "label": "3. Strict package policy mode",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "docs_roadmap_3_strict_package_policy_mode",
+      "community": 73,
+      "norm_label": "3. strict package policy mode"
+    },
+    {
+      "label": "Priority 2: Managed Fullstack Authentication",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "docs_roadmap_priority_2_managed_fullstack_authentication",
+      "community": 73,
+      "norm_label": "priority 2: managed fullstack authentication"
+    },
+    {
+      "label": "4. Production-ready Supabase Auth and Clerk",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "docs_roadmap_4_production_ready_supabase_auth_and_clerk",
+      "community": 73,
+      "norm_label": "4. production-ready supabase auth and clerk"
+    },
+    {
+      "label": "Priority 3: Extensibility",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L80",
+      "_origin": "ast",
+      "id": "docs_roadmap_priority_3_extensibility",
+      "community": 73,
+      "norm_label": "priority 3: extensibility"
+    },
+    {
+      "label": "5. Plugin system",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L82",
+      "_origin": "ast",
+      "id": "docs_roadmap_5_plugin_system",
+      "community": 73,
+      "norm_label": "5. plugin system"
+    },
+    {
+      "label": "Priority 4: Reliability Automation",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L99",
+      "_origin": "ast",
+      "id": "docs_roadmap_priority_4_reliability_automation",
+      "community": 73,
+      "norm_label": "priority 4: reliability automation"
+    },
+    {
+      "label": "6. Template validation CI",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L101",
+      "_origin": "ast",
+      "id": "docs_roadmap_6_template_validation_ci",
+      "community": 73,
+      "norm_label": "6. template validation ci"
+    },
+    {
+      "label": "Recommended Implementation Order",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "docs_roadmap_recommended_implementation_order",
+      "community": 73,
+      "norm_label": "recommended implementation order"
+    },
+    {
+      "label": "Notes For Contributors",
+      "file_type": "document",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L128",
+      "_origin": "ast",
+      "id": "docs_roadmap_notes_for_contributors",
+      "community": 73,
+      "norm_label": "notes for contributors"
+    },
+    {
+      "label": "template-engine.md",
+      "file_type": "document",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_template_engine",
+      "community": 17,
+      "norm_label": "template-engine.md"
+    },
+    {
+      "label": "The Template Engine",
+      "file_type": "document",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_template_engine_the_template_engine",
+      "community": 17,
+      "norm_label": "the template engine"
+    },
+    {
+      "label": "Variable Injection",
+      "file_type": "document",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "docs_template_engine_variable_injection",
+      "community": 17,
+      "norm_label": "variable injection"
+    },
+    {
+      "label": "Compiled Mode vs Development Mode",
+      "file_type": "document",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "docs_template_engine_compiled_mode_vs_development_mode",
+      "community": 17,
+      "norm_label": "compiled mode vs development mode"
+    },
+    {
+      "label": "SKILL.md",
+      "file_type": "document",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "skills_deep_analysis_skill",
+      "community": 76,
+      "norm_label": "skill.md"
+    },
+    {
+      "label": "Deep analysis",
+      "file_type": "document",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "skills_deep_analysis_skill_deep_analysis",
+      "community": 76,
+      "norm_label": "deep analysis"
+    },
+    {
+      "label": "Workflow",
+      "file_type": "document",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "skills_deep_analysis_skill_workflow",
+      "community": 76,
+      "norm_label": "workflow"
+    },
+    {
+      "label": "Reporting rules",
+      "file_type": "document",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "skills_deep_analysis_skill_reporting_rules",
+      "community": 76,
+      "norm_label": "reporting rules"
+    },
+    {
+      "label": "Default output shape",
+      "file_type": "document",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "skills_deep_analysis_skill_default_output_shape",
+      "community": 76,
+      "norm_label": "default output shape"
     }
   ],
   "links": [
@@ -6181,7 +7579,7 @@
       "weight": 1.0,
       "context": "import",
       "source": "package_keywords",
-      "target": "typescript",
+      "target": "ref_typescript",
       "confidence_score": 1.0
     },
     {
@@ -6535,16 +7933,6 @@
       "context": "import",
       "source": "package_dependencies_picocolors",
       "target": "picocolors",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "run-all-maximized.ts",
-      "source_location": "L10",
-      "weight": 1.0,
-      "source": "run_all_maximized",
-      "target": "run_all_maximized_tests",
       "confidence_score": 1.0
     },
     {
@@ -7404,6 +8792,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "src_generator",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -7741,6 +9140,17 @@
       "source_location": "L1104",
       "weight": 1.0,
       "source": "src_generator_generatevueproject",
+      "target": "src_generator_resolvefrontendapiurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
       "target": "src_generator_resolvefrontendapiurl",
       "confidence_score": 1.0
     },
@@ -9074,7 +10484,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/template-engine.ts",
-      "source_location": "L79",
+      "source_location": "L88",
       "weight": 1.0,
       "source": "src_template_engine",
       "target": "src_template_engine_embedded_templates",
@@ -9094,7 +10504,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/template-engine.ts",
-      "source_location": "L83",
+      "source_location": "L92",
       "weight": 1.0,
       "source": "src_template_engine",
       "target": "src_template_engine_gettemplatesindirectory",
@@ -9104,7 +10514,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/template-engine.ts",
-      "source_location": "L56",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_template_engine",
       "target": "src_template_engine_injectvariables",
@@ -9124,7 +10534,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/template-engine.ts",
-      "source_location": "L19",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_template_engine",
+      "target": "src_template_engine_readembeddedtemplate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/template-engine.ts",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_template_engine",
       "target": "src_template_engine_readtemplate",
@@ -9138,6 +10558,39 @@
       "weight": 1.0,
       "source": "src_template_engine",
       "target": "src_template_engine_templates_dir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/template-engine.test.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tests_template_engine_test",
+      "target": "src_template_engine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/template-engine.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "src_template_engine_readtemplate",
+      "target": "src_template_engine_readembeddedtemplate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/template-engine.test.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tests_template_engine_test",
+      "target": "src_template_engine_readembeddedtemplate",
       "confidence_score": 1.0
     },
     {
@@ -9858,6 +11311,16 @@
       "source_location": "L3",
       "weight": 1.0,
       "source": "templates_elysia_user_service",
+      "target": "templates_elysia_user_service_publicuserselect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "templates/elysia/user.service.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "templates_elysia_user_service",
       "target": "templates_elysia_user_service_userservice",
       "confidence_score": 1.0
     },
@@ -10570,6 +12033,16 @@
       "source_location": "L4",
       "weight": 1.0,
       "source": "templates_express_user_service",
+      "target": "templates_express_user_service_publicuserselect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "templates/express/user.service.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "templates_express_user_service",
       "target": "templates_express_user_service_userservice",
       "confidence_score": 1.0
     },
@@ -10610,7 +12083,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "templates/go/cmd/api/main.go",
-      "source_location": "L50",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "templates_go_cmd_api_main_main",
       "target": "templates_go_internal_middleware_auth_requirerole"
@@ -11482,6 +12955,16 @@
       "confidence": "EXTRACTED",
       "source_file": "templates/hono/user.service.ts",
       "source_location": "L3",
+      "weight": 1.0,
+      "source": "templates_hono_user_service",
+      "target": "templates_hono_user_service_publicuserselect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "templates/hono/user.service.ts",
+      "source_location": "L12",
       "weight": 1.0,
       "source": "templates_hono_user_service",
       "target": "templates_hono_user_service_userservice",
@@ -13793,6 +15276,333 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tests_cli_test",
+      "target": "tests_cli_test_bun_tmpdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tests_cli_test",
+      "target": "tests_cli_test_cli_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/cli.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "tests_cli_test",
+      "target": "tests_cli_test_tmp_base",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e.old.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "tests_e2e_old_test",
+      "target": "tests_e2e_old_test_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e.old.test.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tests_e2e_old_test",
+      "target": "tests_e2e_old_test_waitforserver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "tests_e2e_test",
+      "target": "tests_e2e_test_bun_tmpdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "tests_e2e_test",
+      "target": "tests_e2e_test_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/e2e.test.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "tests_e2e_test",
+      "target": "tests_e2e_test_waitforserver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_allprojects",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_bun_tmpdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_filecontains",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_fileexists",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_root",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test",
+      "target": "tests_full_matrix_test_scaffold",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/full-matrix.test.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "tests_full_matrix_test_filecontains",
+      "target": "tests_full_matrix_test_fileexists",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/run-all-maximized.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "tests_scripts_run_all_maximized",
+      "target": "tests_scripts_run_all_maximized_tests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "tests_scripts_test_matrix",
+      "target": "tests_scripts_test_matrix_inject_credentials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "tests_scripts_test_matrix",
+      "target": "tests_scripts_test_matrix_run_matrix_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tests_scripts_test_matrix",
+      "target": "tests_scripts_test_matrix_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "tests_scripts_test_matrix",
+      "target": "tests_scripts_test_matrix_test_endpoints",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L132",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_matrix_sh__entry",
+      "target": "tests_scripts_test_matrix_run_matrix_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L87",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_matrix_run_matrix_test",
+      "target": "tests_scripts_test_matrix_inject_credentials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-matrix.sh",
+      "source_location": "L100",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_matrix_run_matrix_test",
+      "target": "tests_scripts_test_matrix_test_endpoints",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-monorepo.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "tests_scripts_test_monorepo",
+      "target": "tests_scripts_test_monorepo_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "tests_scripts_test_qwykz",
+      "target": "tests_scripts_test_qwykz_inject_credentials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "tests_scripts_test_qwykz",
+      "target": "tests_scripts_test_qwykz_run_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tests_scripts_test_qwykz",
+      "target": "tests_scripts_test_qwykz_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L265",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_qwykz_sh__entry",
+      "target": "tests_scripts_test_qwykz_run_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L93",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_qwykz_run_test",
+      "target": "tests_scripts_test_qwykz_inject_credentials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-qwykz.sh",
+      "source_location": "L112",
+      "weight": 1.0,
+      "context": "call",
+      "source": "tests_scripts_test_qwykz_run_test",
+      "target": "tests_scripts_test_qwykz_test_endpoint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/scripts/test-rust-endpoints.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "tests_scripts_test_rust_endpoints",
+      "target": "tests_scripts_test_rust_endpoints_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tsconfig.json",
       "source_location": "L2",
       "weight": 1.0,
@@ -14043,8 +15853,968 @@
       "source": "tsconfig_exclude",
       "target": "ref_templates",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "agents",
+      "target": "agents_graphify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "code_of_conduct",
+      "target": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_attribution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_enforcement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_enforcement_guidelines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_enforcement_responsibilities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_our_pledge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_our_standards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "code_of_conduct_contributor_covenant_code_of_conduct",
+      "target": "code_of_conduct_scope",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "code_of_conduct_enforcement_guidelines",
+      "target": "code_of_conduct_1_correction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "code_of_conduct_enforcement_guidelines",
+      "target": "code_of_conduct_2_warning",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "code_of_conduct_enforcement_guidelines",
+      "target": "code_of_conduct_3_temporary_ban",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CODE_OF_CONDUCT.md",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "code_of_conduct_enforcement_guidelines",
+      "target": "code_of_conduct_4_permanent_ban",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "readme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_architecture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_contributing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_dependency_resolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_fullstack_managed_auth_plan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_roadmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "docs_template_engine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "readme",
+      "target": "readme_qwykz",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_contributing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_documentation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_features",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_installation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_roadmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "readme_qwykz",
+      "target": "readme_usage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "readme_installation",
+      "target": "readme_global_install",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "readme_installation",
+      "target": "readme_run_without_installing_recommended",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "readme_usage",
+      "target": "readme_interactive_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "readme_usage",
+      "target": "readme_non_interactive_mode_automated",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "SECURITY.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "security",
+      "target": "security_security_policy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "SECURITY.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "security_security_policy",
+      "target": "security_reporting_a_vulnerability",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "SECURITY.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "security_security_policy",
+      "target": "security_supported_versions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "SECURITY.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "security_reporting_a_vulnerability",
+      "target": "security_what_to_expect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_architecture",
+      "target": "docs_architecture_architecture_overview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_architecture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/contributing.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_contributing",
+      "target": "docs_contributing_contributing_guide",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_contributing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/contributing.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "docs_contributing_contributing_guide",
+      "target": "docs_contributing_adding_a_new_template_feature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/contributing.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "docs_contributing_contributing_guide",
+      "target": "docs_contributing_getting_started",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/contributing.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "docs_contributing_contributing_guide",
+      "target": "docs_contributing_submitting_a_pr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/contributing.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "docs_contributing_contributing_guide",
+      "target": "docs_contributing_testing_your_changes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/dependency-resolution.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_dependency_resolution",
+      "target": "docs_dependency_resolution_dependency_resolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_dependency_resolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/dependency-resolution.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "docs_dependency_resolution_dependency_resolution",
+      "target": "docs_dependency_resolution_the_3_tier_fallback_strategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan",
+      "target": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "docs_roadmap",
+      "target": "docs_fullstack_managed_auth_plan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_current_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L130",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_environment_contract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_generated_api_contract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L235",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L176",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_objective",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_package_contract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_product_decisions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L307",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_recommended_delivery_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L277",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_release_gates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L294",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_risks_and_mitigations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_fullstack_managed_authentication_plan",
+      "target": "docs_fullstack_managed_auth_plan_supported_combination_rollout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_product_decisions",
+      "target": "docs_fullstack_managed_auth_plan_application_profiles_use_provider_identities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_product_decisions",
+      "target": "docs_fullstack_managed_auth_plan_authentication_and_database_choices_are_independent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_product_decisions",
+      "target": "docs_fullstack_managed_auth_plan_the_backend_verifies_every_api_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_product_decisions",
+      "target": "docs_fullstack_managed_auth_plan_the_frontend_owns_provider_authentication",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "target": "docs_fullstack_managed_auth_plan_phase_0_freeze_and_audit_the_existing_experimental_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L188",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "target": "docs_fullstack_managed_auth_plan_phase_1_react_vue_with_express_hono_elysia",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L204",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "target": "docs_fullstack_managed_auth_plan_phase_2_next_js_review",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L214",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "target": "docs_fullstack_managed_auth_plan_phase_3_fastapi_laravel_go_and_rust",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L225",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_implementation_phases",
+      "target": "docs_fullstack_managed_auth_plan_phase_4_optional_synchronization_and_organizations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L246",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "target": "docs_fullstack_managed_auth_plan_dependency_generation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L255",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "target": "docs_fullstack_managed_auth_plan_templates_and_generator_selection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L264",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "target": "docs_fullstack_managed_auth_plan_testing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/fullstack-managed-auth-plan.md",
+      "source_location": "L237",
+      "weight": 1.0,
+      "source": "docs_fullstack_managed_auth_plan_generator_work_breakdown",
+      "target": "docs_fullstack_managed_auth_plan_types_and_prompts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_home_qwykz_wiki",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_template_engine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "docs_home_qwykz_wiki",
+      "target": "docs_home_table_of_contents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_roadmap",
+      "target": "docs_roadmap_roadmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_notes_for_contributors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_priority_1_trust_and_predictability",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_priority_2_managed_fullstack_authentication",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_priority_3_extensibility",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_priority_4_reliability_automation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "docs_roadmap_roadmap",
+      "target": "docs_roadmap_recommended_implementation_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_1_trust_and_predictability",
+      "target": "docs_roadmap_1_dry_run_and_diff_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_1_trust_and_predictability",
+      "target": "docs_roadmap_2_scaffold_manifest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_1_trust_and_predictability",
+      "target": "docs_roadmap_3_strict_package_policy_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_2_managed_fullstack_authentication",
+      "target": "docs_roadmap_4_production_ready_supabase_auth_and_clerk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_3_extensibility",
+      "target": "docs_roadmap_5_plugin_system",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/roadmap.md",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "docs_roadmap_priority_4_reliability_automation",
+      "target": "docs_roadmap_6_template_validation_ci",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_template_engine",
+      "target": "docs_template_engine_the_template_engine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "docs_template_engine_the_template_engine",
+      "target": "docs_template_engine_compiled_mode_vs_development_mode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/template-engine.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "docs_template_engine_the_template_engine",
+      "target": "docs_template_engine_variable_injection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "skills_deep_analysis_skill",
+      "target": "skills_deep_analysis_skill_deep_analysis",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "skills_deep_analysis_skill_deep_analysis",
+      "target": "skills_deep_analysis_skill_default_output_shape",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "skills_deep_analysis_skill_deep_analysis",
+      "target": "skills_deep_analysis_skill_reporting_rules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "skills/deep-analysis/SKILL.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "skills_deep_analysis_skill_deep_analysis",
+      "target": "skills_deep_analysis_skill_workflow",
+      "confidence_score": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a296ccba9b6f10ce7b7a27c0238fb8c2c2461cb2"
+  "built_at_commit": "108004ee51893fe17ae6e4425e1d32026e30442a"
 }

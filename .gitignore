@@ -26,6 +26,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .eslintcache
 .cache
 .test-tmp
+graphify-out/cache/
+graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
 *.tsbuildinfo
 
 # IntelliJ based IDEs
@@ -35,7 +37,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 # Test Projects
-test-*
-vuetest*/
-qwykz-tests/
-nexttesst*/
+/test-*
+/vuetest*/
+/qwykz-tests/
+/nexttesst*/

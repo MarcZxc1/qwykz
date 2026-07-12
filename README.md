@@ -16,7 +16,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-%233ECF8E.svg?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold Enterprise-grade **Backend**, **Frontend**, and **Fullstack** applications. 
+A lightning-fast CLI tool built with [Bun](https://bun.sh) to scaffold organized **Backend**, **Frontend**, and **Fullstack** starter applications for beginners and AI-assisted development.
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Wiki / Docs](docs/home.md) • [Contributing](#contributing)
 
@@ -27,7 +27,7 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to instantly scaffold
 ## Features
 
 * **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Hono, Elysia, Laravel, Python FastAPI, Go Fiber, Rust Axum), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
-* **Enterprise Architecture**: Automatically generates scalable Service/Controller/Model patterns for backend code right out of the box, standardizing best practices for every language.
+* **Enterprise-Inspired Architecture**: Organizes generated projects around clear service, controller, model, middleware, route, database, and configuration layers.
 * **Frontend Powerhouses**:
   * React & Vue apps are generated using high-speed Vite.
   * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
