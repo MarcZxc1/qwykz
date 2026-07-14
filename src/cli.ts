@@ -280,7 +280,9 @@ export async function runCli() {
       let devCmd = "bun dev";
       if (options.framework === "laravel") devCmd = "php artisan serve";
       if (options.framework === "python") {
-        devCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+        devCmd = process.platform === "win32"
+          ? "venv\\\\Scripts\\\\uvicorn app.main:app --reload"
+          : "venv/bin/uvicorn app.main:app --reload";
       }
       if (options.framework === "go") devCmd = "go run cmd/api/main.go";
       if (options.framework === "rust") devCmd = "cargo run";

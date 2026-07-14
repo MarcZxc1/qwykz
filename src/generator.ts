@@ -368,14 +368,18 @@ async function resolveDockerCompose(
   redisPort: number = 63790
 ): Promise<string> {
   let compose = `services:\n`;
-  let volumes = `volumes:\n`;
+  let volumes = "";
   const containerPrefix = projectName.replace(/\//g, "-");
 
   if (dbTarget === "docker") {
     compose += `  qwykz-db:
     image: postgres:17-alpine
     container_name: ${containerPrefix}-postgres
-    command: postgres -c synchronous_commit=off
+    command: postgres -c synchronous_commit=off -c max_connections=50
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 1.0
+    pids_limit: 200
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${dbPassword}
@@ -388,16 +392,37 @@ async function resolveDockerCompose(
       timeout: 5s
       retries: 12
       start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - ${containerPrefix}_data:/var/lib/postgresql/data\n\n`;
-    volumes += `  ${containerPrefix}_data:\n`;
+    volumes += `  ${containerPrefix}_data:
+    labels:
+      io.qwykz.managed: "true"
+      io.qwykz.kind: "postgres"\n`;
   }
 
   if (cachingTarget === "docker") {
     compose += `  qwykz-redis:
     image: redis:7-alpine
     container_name: ${containerPrefix}-redis
-    command: redis-server --appendonly yes
+    command:
+      - redis-server
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+      - --maxmemory
+      - 96mb
+      - --maxmemory-policy
+      - allkeys-lru
+    mem_limit: 128m
+    mem_reservation: 32m
+    cpus: 0.5
+    pids_limit: 100
     ports:
       - "127.0.0.1:${redisPort}:6379"
     healthcheck:
@@ -405,12 +430,14 @@ async function resolveDockerCompose(
       interval: 5s
       timeout: 5s
       retries: 10
-    volumes:
-      - ${containerPrefix}_redis_data:/data\n\n`;
-    volumes += `  ${containerPrefix}_redis_data:\n`;
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"\n\n`;
   }
 
-  return compose + volumes;
+  return volumes ? `${compose}volumes:\n${volumes}` : compose;
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
@@ -1463,7 +1490,7 @@ export async function generateProject(options: ProjectOptions) {
     // Generate root orchestration
     let backendCmd = "bun dev";
     if (options.backendFramework === "laravel") backendCmd = "php artisan serve";
-    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\uvicorn app.main:app --reload" : "venv/bin/uvicorn app.main:app --reload";
     if (options.backendFramework === "go") backendCmd = "go run cmd/api/main.go";
     if (options.backendFramework === "rust") backendCmd = "cargo run";
 

@@ -384,8 +384,8 @@ Automated One-liner:
     if (options.framework === "python") {
       const isWin = process.platform === "win32";
       const activateCmd = isWin ? "venv\\\\Scripts\\\\activate" : "source venv/bin/activate";
-      langCmds = `  python -m venv venv\n  ${activateCmd}\n  pip install -r requirements.txt\n  fastapi dev app/main.py`;
-      langOneLiner = `python -m venv venv && ${activateCmd} && pip install -r requirements.txt && fastapi dev app/main.py`;
+      langCmds = `  python -m venv venv\n  ${activateCmd}\n  pip install -r requirements.txt\n  uvicorn app.main:app --reload`;
+      langOneLiner = `python -m venv venv && ${activateCmd} && pip install -r requirements.txt && uvicorn app.main:app --reload`;
     } else if (options.framework === "go") {
       langCmds = "  go mod tidy\n  go run cmd/api/main.go";
       langOneLiner = "go mod tidy && go run cmd/api/main.go";
