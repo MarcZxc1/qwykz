@@ -1,16 +1,16 @@
-# Graph Report - qwykz  (2026-07-13)
+# Graph Report - qwykz  (2026-07-15)
 
 ## Corpus Check
-- 137 files · ~31,721 words
+- 137 files · ~32,864 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 719 nodes · 917 edges · 86 communities (53 shown, 33 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
+- 725 nodes · 923 edges · 85 communities (52 shown, 33 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `108004ee`
+- Built from commit: `9bbbe36f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -53,7 +53,6 @@
 - GetUsers
 - auth.route.ts
 - login.route.ts
-- run-all-maximized.ts
 - auth.routes.ts
 - health.routes.ts
 - user.routes.ts
@@ -111,7 +110,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (86 total, 33 thin omitted)
+## Communities (85 total, 33 thin omitted)
 
 ### Community 0 - "User"
 Cohesion: 0.08
@@ -130,8 +129,8 @@ Cohesion: 0.05
 Nodes (15): express, supabase, AuthRequest, authMiddleware(), AuthRequest, clerkMiddleware, AuthRequest, supabase (+7 more)
 
 ### Community 4 - "AppState"
-Cohesion: 0.10
-Nodes (34): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+26 more)
+Cohesion: 0.08
+Nodes (39): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+31 more)
 
 ### Community 5 - "generator.ts"
 Cohesion: 0.16
@@ -179,7 +178,7 @@ Nodes (5): LoginRequest, RegisterRequest, Ctx, Login(), Register()
 
 ### Community 17 - "README.md"
 Cohesion: 0.07
-Nodes (24): Architecture Overview, Adding a New Template Feature, Contributing Guide, Getting Started, Submitting a PR, Testing Your Changes, Dependency Resolution, The 3-Tier Fallback Strategy (+16 more)
+Nodes (26): Architecture Overview, Adding a New Template Feature, Contributing Guide, Getting Started, Submitting a PR, Testing Your Changes, Dependency Resolution, The 3-Tier Fallback Strategy (+18 more)
 
 ### Community 18 - "config.py"
 Cohesion: 0.50
@@ -213,10 +212,6 @@ Nodes (3): adapter, globalPrisma, pool
 Cohesion: 0.67
 Nodes (3): health_check(), Json, Value
 
-### Community 40 - "run-all-maximized.ts"
-Cohesion: 0.47
-Nodes (5): Role, String, Uuid, User, Utc
-
 ### Community 71 - "Fullstack Managed Authentication Plan"
 Cohesion: 0.08
 Nodes (26): Application profiles use provider identities, Authentication and database choices are independent, Current State, Dependency generation, Environment Contract, Fullstack Managed Authentication Plan, Generated API Contract, Generator Work Breakdown (+18 more)
@@ -226,8 +221,8 @@ Cohesion: 0.15
 Nodes (12): 1. Correction, 2. Warning, 3. Temporary Ban, 4. Permanent Ban, Attribution, Contributor Covenant Code of Conduct, Enforcement, Enforcement Guidelines (+4 more)
 
 ### Community 73 - "Roadmap"
-Cohesion: 0.15
-Nodes (13): 1. Dry-run and diff mode, 2. Scaffold manifest, 3. Strict package policy mode, 4. Production-ready Supabase Auth and Clerk, 5. Plugin system, 6. Template validation CI, Notes For Contributors, Priority 1: Trust And Predictability (+5 more)
+Cohesion: 0.12
+Nodes (17): 1. Dry-run and diff mode, 2. Scaffold manifest, 3. Strict package policy mode, 4. Production-ready Supabase Auth and Clerk, 5. Plugin system, 6. Template validation CI, 7. Generated app smoke tests, 8. AI context pack (+9 more)
 
 ### Community 74 - "full-matrix.test.ts"
 Cohesion: 0.29
@@ -254,7 +249,7 @@ Cohesion: 0.60
 Nodes (3): inject_credentials(), run_test(), test-qwykz.sh script
 
 ## Knowledge Gaps
-- **266 isolated node(s):** `name`, `version`, `description`, `type`, `url` (+261 more)
+- **271 isolated node(s):** `name`, `version`, `description`, `type`, `url` (+266 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -262,11 +257,11 @@ Nodes (3): inject_credentials(), run_test(), test-qwykz.sh script
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `keywords` connect `keywords` to `package.json`, `express`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+  _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Why does `express` connect `express` to `keywords`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
-  _267 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _272 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
   _Cohesion score 0.08048103607770583 - nodes in this community are weakly interconnected._
 - **Should `package-json.ts` be split into smaller, more focused modules?**

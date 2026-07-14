@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>qwykz — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 719 nodes, 917 edges, 86 communities. Commit: 108004e</p>
+<p class="subtitle">Generated from graphify knowledge graph: 725 nodes, 923 edges, 85 communities. Commit: 9bbbe36</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -72,10 +72,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#security-global">Security &amp; Global Graph</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#express">express</a>
+    <a href="#roadmap">Roadmap</a>
     <a href="#error-middleware-ts">error.middleware.ts</a>
     <a href="#error-middleware-ts-e6a200">error.middleware.ts</a>
     <a href="#contributor-covenant-code-of-conduct">Contributor Covenant Code of Conduct</a>
-    <a href="#roadmap">Roadmap</a>
     <a href="#auth-controller-clerk-ts">auth.controller.clerk.ts</a>
     <a href="#auth-controller-supabase-ts">auth.controller.supabase.ts</a>
     <a href="#other">Other</a>
@@ -88,15 +88,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>89 nodes</small>")
+    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>129 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
     BUILD_GRAPH_321CBB04("Graph Build<br/><small>205 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>32 nodes</small>")
+    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>34 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
     CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>7 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>87 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>47 nodes</small>")
     class SERVE_API_35EC8E86 module;
     SECURITY_GLOBAL_5B9C6A04("Security &amp; Global Graph<br/><small>5 nodes</small>")
     class SECURITY_GLOBAL_5B9C6A04 module;
@@ -104,14 +104,14 @@ flowchart LR
     class TESTS_FIXTURES_B84B1DCC module;
     EXPRESS_F3C62DE4("express<br/><small>44 nodes</small>")
     class EXPRESS_F3C62DE4 module;
+    ROADMAP_02ACF9BB("Roadmap<br/><small>17 nodes</small>")
+    class ROADMAP_02ACF9BB module;
     ERROR_MIDDLEWARE_TS_9FAB12AA("error.middleware.ts<br/><small>15 nodes</small>")
     class ERROR_MIDDLEWARE_TS_9FAB12AA module;
     ERROR_MIDDLEWARE_TS_E6A200_12C024CD("error.middleware.ts<br/><small>15 nodes</small>")
     class ERROR_MIDDLEWARE_TS_E6A200_12C024CD module;
     CONTRIBUTOR_COVENANT_CODE_OF_CONDUCT_29F81FD5("Contributor Covenant Code of Conduct<br/><small>13 nodes</small>")
     class CONTRIBUTOR_COVENANT_CODE_OF_CONDUCT_29F81FD5 module;
-    ROADMAP_02ACF9BB("Roadmap<br/><small>13 nodes</small>")
-    class ROADMAP_02ACF9BB module;
     AUTH_CONTROLLER_CLERK_TS_67EE83A2("auth.controller.clerk.ts<br/><small>4 nodes</small>")
     class AUTH_CONTROLLER_CLERK_TS_67EE83A2 module;
     AUTH_CONTROLLER_SUPABASE_TS_BE644981("auth.controller.supabase.ts<br/><small>4 nodes</small>")
@@ -122,7 +122,6 @@ flowchart LR
     BUILD_GRAPH_321CBB04 -->|calls x6| TESTS_FIXTURES_B84B1DCC
     BUILD_GRAPH_321CBB04 -->|extends| EXPRESS_F3C62DE4
     EXPRESS_F3C62DE4 -->|imports| BUILD_GRAPH_321CBB04
-    SERVE_API_35EC8E86 -->|imports| EXTRACT_PIPELINE_5F350230
     OUTPUTS_DOCS_ED82387C -->|contains| SERVE_API_35EC8E86
     OUTPUTS_DOCS_ED82387C -->|contains| ROADMAP_02ACF9BB
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -141,20 +140,20 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>89</td><td><code>0, 12, 16, 40, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>205</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>32</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>87</td><td><code>4, 71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>80</td><td><code>5, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>Roadmap</td><td>13</td><td><code>73</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>129</td><td><code>0, 4, 12, 16, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>205</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>34</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>47</td><td><code>71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>80</td><td><code>5, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Outputs &amp; Docs -&gt; Serving API -&gt; Extraction Pipeline -&gt; Graph Build -&gt; Tests &amp; Fixtures -&gt; CLI &amp; Skill Installers -&gt; Security &amp; Global Graph</div>
+    <div class="arrow-chain">Extraction Pipeline -&gt; Graph Build -&gt; Tests &amp; Fixtures -&gt; Outputs &amp; Docs -&gt; Serving API -&gt; CLI &amp; Skill Installers -&gt; Security &amp; Global Graph</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>719 nodes · 917 edges · 86 communities (53 shown, 33 thin omitted)</li>
-      <li>Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
+      <li>725 nodes · 923 edges · 85 communities (52 shown, 33 thin omitted)</li>
+      <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `compilerOptions` - 20 edges</li>
       <li>2. `readTemplate()` - 19 edges</li>
@@ -165,12 +164,12 @@ flowchart LR
 <hr>
 <!-- ====== 2. Extraction Pipeline ====== -->
 <h2 id="extract-pipeline">2. Extraction Pipeline</h2>
-<p>Extraction Pipeline groups implementation around templates, app, python, api, mostly in api/routes/auth.py, app/models/user.py, internal/handlers/auth.go. This section covers 89 nodes and 127 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Extraction Pipeline groups implementation around templates, api, app, python, mostly in api/handlers/auth.rs, api/routes/auth.py, app/models/user.py. This section covers 129 nodes and 207 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Extraction Pipeline (89 nodes, 127 edges)
+    %% Section: Extraction Pipeline (129 nodes, 207 edges)
     subgraph extract_pipeline_api_routes_auth_py_e85afa4a["api/routes/auth.py"]
         templates_python_app_api_routes_auth_87ce6811("auth.py")
         templates_python_app_api_routes_auth_authrespons_2215498c("AuthResponse<br/><small>api/routes/auth.py</small>")
@@ -178,60 +177,56 @@ flowchart LR
         templates_python_app_api_routes_auth_login_a04933b5("login()<br/><small>api/routes/auth.py</small>")
         templates_python_app_api_routes_auth_register_0e1d46a0("register()<br/><small>api/routes/auth.py</small>")
     end
-    subgraph extract_pipeline_External_generated_e23197dc["External / generated"]
-        fastapi_41a1373c("FastAPI")
-        sqlmodel_f2fa96ba("SQLModel")
-        datetime_89ffad08("DateTime")
+    subgraph extract_pipeline_src_api_middleware_rs_f1530025["src/api/middleware.rs"]
+        templates_rust_src_api_middleware_requireauth_b31625e5("RequireAuth<br/><small>src/api/middleware.rs</small>")
+        templates_rust_src_api_middleware_requireauth_fr_1cfd4015("from_request_parts()<br/><small>src/api/middleware.rs</small>")
+        templates_rust_src_api_middleware_requireadmin_90ad7a4e("RequireAdmin<br/><small>src/api/middleware.rs</small>")
+        templates_rust_src_api_middleware_requireadmin_f_eaaf25a6("from_request_parts()<br/><small>src/api/middleware.rs</small>")
+    end
+    subgraph extract_pipeline_api_handlers_auth_rs_e30e75a5["api/handlers/auth.rs"]
+        templates_rust_src_api_handlers_auth_register_92483a13("register()<br/><small>api/handlers/auth.rs</small>")
+        templates_rust_src_api_handlers_auth_generate_jw_bb11b645("generate_jwt()<br/><small>api/handlers/auth.rs</small>")
+        templates_rust_src_api_handlers_auth_login_c2733639("login()<br/><small>api/handlers/auth.rs</small>")
     end
     subgraph extract_pipeline_internal_models_user_go_7bdced01["internal/models/user.go"]
         models_user_dbb2e2bb("User<br/><small>internal/models/user.go</small>")
         models_user_beforecreate_a74a8d71("BeforeCreate()<br/><small>internal/models/user.go</small>")
     end
-    templates_python_app_api_routes_health_abbf86a4("health.py")
+    fastapi_41a1373c("FastAPI")
     templates_python_app_api_routes_users_17485238("users.py")
     templates_python_app_api_deps_340612be("deps.py")
-    templates_python_app_core_db_fbfcdc25("db.py")
-    templates_python_app_core_security_d2b98bd6("security.py")
-    templates_python_app_models_init_08850872("__init__.py")
     templates_python_app_models_user_214c59eb("user.py")
-    templates_python_app_main_36767d09("main.py")
     models_user_dbb2e2bb -->|method| models_user_beforecreate_a74a8d71
     templates_python_app_api_routes_auth_token_34d2666f -->|calls| templates_python_app_api_routes_auth_login_a04933b5
     templates_python_app_api_routes_auth_token_34d2666f -->|calls| templates_python_app_api_routes_auth_register_0e1d46a0
     templates_python_app_api_routes_auth_authrespons_2215498c -->|calls| templates_python_app_api_routes_auth_login_a04933b5
     templates_python_app_api_routes_auth_authrespons_2215498c -->|calls| templates_python_app_api_routes_auth_register_0e1d46a0
+    templates_rust_src_api_handlers_auth_register_92483a13 -->|calls| templates_rust_src_api_handlers_auth_generate_jw_bb11b645
+    templates_rust_src_api_handlers_auth_login_c2733639 -->|calls| templates_rust_src_api_handlers_auth_generate_jw_bb11b645
+    templates_rust_src_api_middleware_requireauth_b31625e5 -->|calls| templates_rust_src_api_middleware_requireauth_fr_1cfd4015
+    templates_rust_src_api_middleware_requireadmin_90ad7a4e -->|calls| templates_rust_src_api_middleware_requireadmin_f_eaaf25a6
     templates_python_app_api_deps_340612be -->|imports| fastapi_41a1373c
-    templates_python_app_api_deps_340612be -->|imports| sqlmodel_f2fa96ba
     templates_python_app_api_routes_auth_87ce6811 -->|imports| fastapi_41a1373c
-    templates_python_app_api_routes_auth_87ce6811 -->|imports| sqlmodel_f2fa96ba
-    templates_python_app_api_routes_health_abbf86a4 -->|imports| fastapi_41a1373c
     templates_python_app_api_routes_users_17485238 -->|imports| fastapi_41a1373c
-    templates_python_app_api_routes_users_17485238 -->|imports| sqlmodel_f2fa96ba
-    templates_python_app_core_db_fbfcdc25 -->|imports| sqlmodel_f2fa96ba
-    templates_python_app_core_security_d2b98bd6 -->|imports| datetime_89ffad08
-    templates_python_app_main_36767d09 -->|imports| fastapi_41a1373c
-    templates_python_app_models_init_08850872 -->|imports| sqlmodel_f2fa96ba
-    templates_python_app_models_user_214c59eb -->|imports| datetime_89ffad08
-    templates_python_app_models_user_214c59eb -->|imports| sqlmodel_f2fa96ba
-    %% Omitted for readability: 71 nodes, 0 edges
+    %% Omitted for readability: 111 nodes, 0 edges
     class templates_python_app_api_routes_auth_87ce6811 module;
     class templates_python_app_api_routes_auth_authrespons_2215498c klass;
     class templates_python_app_api_routes_auth_token_34d2666f klass;
     class templates_python_app_api_routes_auth_login_a04933b5 function;
     class templates_python_app_api_routes_auth_register_0e1d46a0 function;
-    class fastapi_41a1373c api;
-    class sqlmodel_f2fa96ba klass;
-    class datetime_89ffad08 klass;
+    class templates_rust_src_api_middleware_requireauth_b31625e5 klass;
+    class templates_rust_src_api_middleware_requireauth_fr_1cfd4015 function;
+    class templates_rust_src_api_middleware_requireadmin_90ad7a4e klass;
+    class templates_rust_src_api_middleware_requireadmin_f_eaaf25a6 function;
+    class templates_rust_src_api_handlers_auth_register_92483a13 function;
+    class templates_rust_src_api_handlers_auth_generate_jw_bb11b645 function;
+    class templates_rust_src_api_handlers_auth_login_c2733639 function;
     class models_user_dbb2e2bb klass;
     class models_user_beforecreate_a74a8d71 function;
-    class templates_python_app_api_routes_health_abbf86a4 module;
+    class fastapi_41a1373c api;
     class templates_python_app_api_routes_users_17485238 module;
     class templates_python_app_api_deps_340612be module;
-    class templates_python_app_core_db_fbfcdc25 module;
-    class templates_python_app_core_security_d2b98bd6 module;
-    class templates_python_app_models_init_08850872 module;
     class templates_python_app_models_user_214c59eb module;
-    class templates_python_app_main_36767d09 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -500,19 +495,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>api/routes/auth.py</code></td><td>6 nodes</td></tr>
+      <tr><td><code>api/handlers/auth.rs</code></td><td>8 nodes</td></tr>
+<tr><td><code>api/routes/auth.py</code></td><td>6 nodes</td></tr>
 <tr><td><code>app/models/user.py</code></td><td>6 nodes</td></tr>
 <tr><td><code>internal/handlers/auth.go</code></td><td>5 nodes</td></tr>
+<tr><td><code>src/api/middleware.rs</code></td><td>5 nodes</td></tr>
 <tr><td><code>internal/models/user.go</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/api/deps.py</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/core/security.py</code></td><td>4 nodes</td></tr>
-<tr><td><code>api/routes/users.py</code></td><td>3 nodes</td></tr>
-<tr><td><code>app/core/config.py</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x37, references x34, imports x16, inherits x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: references x88, contains x49, imports x24, inherits x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -873,20 +868,20 @@ flowchart LR
 
 <!-- ====== 4. Outputs & Docs ====== -->
 <h2 id="outputs-docs">4. Outputs &amp; Docs</h2>
-<p>Outputs &amp; Docs groups implementation around docs, readmemd, contributingmd, template, mostly in README.md, docs/contributing.md, docs/template-engine.md. This section covers 32 nodes and 36 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Outputs &amp; Docs groups implementation around docs, readmemd, contributingmd, template, mostly in README.md, docs/contributing.md, docs/template-engine.md. This section covers 34 nodes and 38 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Outputs &amp; Docs (32 nodes, 36 edges)
+    %% Section: Outputs &amp; Docs (34 nodes, 38 edges)
     subgraph outputs_docs_README_md_22466bb2["README.md"]
         readme_f78a71af("README.md")
         readme_qwykz_5a577cdd("⚡ qwykz ⚡<br/><small>README.md</small>")
-        readme_installation_230d4506("Installation<br/><small>README.md</small>")
         readme_usage_dda4020c("Usage<br/><small>README.md</small>")
+        readme_installation_230d4506("Installation<br/><small>README.md</small>")
+        readme_capability_matrix_c76ea02c("Capability matrix<br/><small>README.md</small>")
         readme_contributing_dc008134("Contributing<br/><small>README.md</small>")
-        readme_documentation_6e940365("Documentation<br/><small>README.md</small>")
-        readme_features_e6f786b1("Features<br/><small>README.md</small>")
+        readme_docker_resource_and_data_lifecycle_515dd2fa("Docker resource and data lifecycle<br/><small>README.md</small>")
     end
     subgraph outputs_docs_docs_contributing_md_100f7d44["docs/contributing.md"]
         docs_contributing_contributing_guide_83c7b50e("Contributing Guide<br/><small>docs/contributing.md</small>")
@@ -921,22 +916,22 @@ flowchart LR
     docs_home_d1721692 -->|references| docs_template_engine_6449bbd0
     readme_f78a71af -->|contains| readme_qwykz_5a577cdd
     readme_qwykz_5a577cdd -->|contains| readme_contributing_dc008134
-    readme_qwykz_5a577cdd -->|contains| readme_documentation_6e940365
-    readme_qwykz_5a577cdd -->|contains| readme_features_e6f786b1
     readme_qwykz_5a577cdd -->|contains| readme_installation_230d4506
     readme_qwykz_5a577cdd -->|contains| readme_usage_dda4020c
+    readme_usage_dda4020c -->|contains| readme_capability_matrix_c76ea02c
+    readme_usage_dda4020c -->|contains| readme_docker_resource_and_data_lifecycle_515dd2fa
     docs_contributing_b1aa771e -->|contains| docs_contributing_contributing_guide_83c7b50e
     docs_dependency_resolution_cb2ad25b -->|contains| docs_dependency_resolution_dependency_resolution_0084a6c0
     docs_home_d1721692 -->|contains| docs_home_qwykz_wiki_ca9205f6
     docs_template_engine_6449bbd0 -->|contains| docs_template_engine_the_template_engine_41d7d200
-    %% Omitted for readability: 14 nodes, 0 edges
+    %% Omitted for readability: 16 nodes, 0 edges
     class readme_f78a71af concept;
     class readme_qwykz_5a577cdd concept;
-    class readme_installation_230d4506 concept;
     class readme_usage_dda4020c concept;
+    class readme_installation_230d4506 concept;
+    class readme_capability_matrix_c76ea02c concept;
     class readme_contributing_dc008134 concept;
-    class readme_documentation_6e940365 concept;
-    class readme_features_e6f786b1 concept;
+    class readme_docker_resource_and_data_lifecycle_515dd2fa concept;
     class docs_contributing_contributing_guide_83c7b50e concept;
     class docs_contributing_b1aa771e concept;
     class docs_dependency_resolution_cb2ad25b concept;
@@ -1043,6 +1038,22 @@ flowchart LR
 </tr>
 <tr>
   <td>10</td>
+  <td><code>Capability matrix</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Capability matrix.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Docker resource and data lifecycle</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Docker resource and data lifecycle.</td>
+</tr>
+<tr>
+  <td>12</td>
   <td><code>Documentation</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1050,7 +1061,7 @@ flowchart LR
   <td>Documentation node describing Documentation.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>13</td>
   <td><code>Roadmap</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1058,7 +1069,7 @@ flowchart LR
   <td>Documentation node describing Roadmap.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>14</td>
   <td><code>Contributing</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1066,7 +1077,7 @@ flowchart LR
   <td>Documentation node describing Contributing.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>15</td>
   <td><code>architecture.md</code><br><small style="color:var(--muted)">docs/architecture.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1074,7 +1085,7 @@ flowchart LR
   <td>Documentation node describing architecture.md.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>16</td>
   <td><code>Architecture Overview</code><br><small style="color:var(--muted)">docs/architecture.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1082,7 +1093,7 @@ flowchart LR
   <td>Documentation node describing Architecture Overview.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>17</td>
   <td><code>contributing.md</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1090,7 +1101,7 @@ flowchart LR
   <td>Documentation node describing contributing.md.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>18</td>
   <td><code>Contributing Guide</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1098,7 +1109,7 @@ flowchart LR
   <td>Documentation node describing Contributing Guide.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>19</td>
   <td><code>Getting Started</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1106,7 +1117,7 @@ flowchart LR
   <td>Documentation node describing Getting Started.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>20</td>
   <td><code>Testing Your Changes</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1114,7 +1125,7 @@ flowchart LR
   <td>Documentation node describing Testing Your Changes.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>21</td>
   <td><code>Adding a New Template Feature</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1122,7 +1133,7 @@ flowchart LR
   <td>Documentation node describing Adding a New Template Feature.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>22</td>
   <td><code>Submitting a PR</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1130,7 +1141,7 @@ flowchart LR
   <td>Documentation node describing Submitting a PR.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>23</td>
   <td><code>dependency-resolution.md</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1138,7 +1149,7 @@ flowchart LR
   <td>Documentation node describing dependency-resolution.md.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>24</td>
   <td><code>Dependency Resolution</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1146,7 +1157,7 @@ flowchart LR
   <td>Documentation node describing Dependency Resolution.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>25</td>
   <td><code>The 3-Tier Fallback Strategy</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1154,7 +1165,7 @@ flowchart LR
   <td>Documentation node describing The 3-Tier Fallback Strategy.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>26</td>
   <td><code>fullstack-managed-auth-plan.md</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1162,7 +1173,7 @@ flowchart LR
   <td>Documentation node describing fullstack-managed-auth-plan.md.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>27</td>
   <td><code>home.md</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1170,7 +1181,7 @@ flowchart LR
   <td>Documentation node describing home.md.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>28</td>
   <td><code>qwykz Wiki</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1178,7 +1189,7 @@ flowchart LR
   <td>Documentation node describing qwykz Wiki.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>29</td>
   <td><code>Table of Contents</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1186,28 +1197,12 @@ flowchart LR
   <td>Documentation node describing Table of Contents.</td>
 </tr>
 <tr>
-  <td>28</td>
+  <td>30</td>
   <td><code>roadmap.md</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>Documentation node describing roadmap.md.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>template-engine.md</code><br><small style="color:var(--muted)">docs/template-engine.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing template-engine.md.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>The Template Engine</code><br><small style="color:var(--muted)">docs/template-engine.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing The Template Engine.</td>
 </tr>
 </table>
 
@@ -1216,7 +1211,7 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>README.md</code></td><td>12 nodes</td></tr>
+      <tr><td><code>README.md</code></td><td>14 nodes</td></tr>
 <tr><td><code>docs/contributing.md</code></td><td>6 nodes</td></tr>
 <tr><td><code>docs/template-engine.md</code></td><td>4 nodes</td></tr>
 <tr><td><code>docs/dependency-resolution.md</code></td><td>3 nodes</td></tr>
@@ -1228,7 +1223,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x24, references x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x26, references x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1361,12 +1356,12 @@ flowchart LR
 
 <!-- ====== 6. Serving API ====== -->
 <h2 id="serve-api">6. Serving API</h2>
-<p>Serving API groups implementation around templates, api, fullstack, managed, mostly in docs/fullstack-managed-auth-plan.md, api/handlers/auth.rs, src/api/middleware.rs. This section covers 87 nodes and 131 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around fullstack, managed, docs, auth, mostly in docs/fullstack-managed-auth-plan.md, Controllers/Api/AuthController.php, Controllers/Api/UserController.php. This section covers 47 nodes and 52 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (87 nodes, 131 edges)
+    %% Section: Serving API (47 nodes, 52 edges)
     subgraph serve_api_Controllers_Api_AuthController_php_f2873fa1["Controllers/Api/AuthController.php"]
         templates_laravel_app_http_controllers_api_authc_6ce507c3("AuthController.php")
         templates_laravel_app_http_controllers_api_authc_74e4dfef("AuthController<br/><small>Controllers/Api/AuthController.php</small>")
@@ -1391,8 +1386,10 @@ flowchart LR
         templates_laravel_app_services_userservice_users_505bee6d("createUser()<br/><small>app/Services/UserService.php</small>")
         templates_laravel_app_services_userservice_users_ec0708eb("getAllUsers()<br/><small>app/Services/UserService.php</small>")
     end
-    templates_rust_src_api_handlers_auth_register_92483a13("register()<br/><small>api/handlers/auth.rs</small>")
-    templates_rust_src_api_handlers_users_51f7f264("users.rs")
+    subgraph serve_api_External_generated_a71e9f44["External / generated"]
+        controller_f79a2222("Controller")
+        templates_laravel_app_http_controllers_api_authc_8d200429("Request")
+    end
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_04f960c8
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_66ee3322
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_546b0170
@@ -1403,9 +1400,12 @@ flowchart LR
     templates_laravel_app_services_authservice_auths_edd31810 -->|method| templates_laravel_app_services_authservice_auths_e75efd25
     templates_laravel_app_services_userservice_users_39bdfee4 -->|method| templates_laravel_app_services_userservice_users_505bee6d
     templates_laravel_app_services_userservice_users_39bdfee4 -->|method| templates_laravel_app_services_userservice_users_ec0708eb
+    templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| controller_f79a2222
+    templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| templates_laravel_app_http_controllers_api_authc_8d200429
     templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| templates_laravel_app_services_authservice_auths_edd31810
+    controller_f79a2222 -->|imports| templates_laravel_app_http_controllers_api_userc_f6c28c3c
     templates_laravel_app_http_controllers_api_userc_f6c28c3c -->|imports| templates_laravel_app_services_userservice_users_39bdfee4
-    %% Omitted for readability: 69 nodes, 0 edges
+    %% Omitted for readability: 29 nodes, 0 edges
     class templates_laravel_app_http_controllers_api_authc_6ce507c3 klass;
     class templates_laravel_app_http_controllers_api_authc_74e4dfef klass;
     class templates_laravel_app_http_controllers_api_authc_04f960c8 function;
@@ -1422,8 +1422,8 @@ flowchart LR
     class templates_laravel_app_services_userservice_users_39bdfee4 klass;
     class templates_laravel_app_services_userservice_users_505bee6d function;
     class templates_laravel_app_services_userservice_users_ec0708eb function;
-    class templates_rust_src_api_handlers_auth_register_92483a13 function;
-    class templates_rust_src_api_handlers_users_51f7f264 module;
+    class controller_f79a2222 klass;
+    class templates_laravel_app_http_controllers_api_authc_8d200429 klass;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1447,243 +1447,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>auth.rs</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Fullstack Managed Authentication Plan</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small></td>
-  <td>auth.rs node in api/handlers/auth.rs.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Fullstack Managed Authentication Plan.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>RegisterRequest</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Objective</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>RegisterRequest node in api/handlers/auth.rs.</td>
+  <td>Documentation node describing Objective.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>String</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Current State</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>String node in project.</td>
+  <td>Documentation node describing Current State.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>AuthResponse</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Product Decisions</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>AuthResponse node in api/handlers/auth.rs.</td>
+  <td>Documentation node describing Product Decisions.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>User</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Authentication and database choices are independent</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>User node in project.</td>
+  <td>Documentation node describing Authentication and database choices are independent.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>LoginRequest</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>The frontend owns provider authentication</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>LoginRequest node in api/handlers/auth.rs.</td>
+  <td>Documentation node describing The frontend owns provider authentication.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>Claims</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>The backend verifies every API request</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
-  <td>Claims node in api/handlers/auth.rs.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing The backend verifies every API request.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>Role</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Application profiles use provider identities</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
-  <td>Role node in project.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Application profiles use provider identities.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>register()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Supported-Combination Rollout</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td>register() node in api/handlers/auth.rs.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Supported-Combination Rollout.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>State</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Package Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>State node in project.</td>
+  <td>Documentation node describing Package Contract.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>Json</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Environment Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Json node in project.</td>
+  <td>Documentation node describing Environment Contract.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>Result</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Generated API Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Result node in project.</td>
+  <td>Documentation node describing Generated API Contract.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>StatusCode</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Implementation Phases</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>StatusCode node in project.</td>
+  <td>Documentation node describing Implementation Phases.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>login()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Phase 0: Freeze and audit the existing experimental path</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td>login() node in api/handlers/auth.rs.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 0: Freeze and audit the existing experimental path.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>login()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small><br><code>register()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><code>Phase 1: React/Vue with Express/Hono/Elysia</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>generate_jwt() node in api/handlers/auth.rs.</td>
+  <td>Documentation node describing Phase 1: React/Vue with Express/Hono/Elysia.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>users.rs</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
-  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Phase 2: Next.js review</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small><br><code>RequireAdmin</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
-  <td>users.rs node in api/handlers/users.rs.</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Phase 2: Next.js review.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>UserResponse</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Phase 3: FastAPI, Laravel, Go, and Rust</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>UserResponse node in api/handlers/users.rs.</td>
+  <td>Documentation node describing Phase 3: FastAPI, Laravel, Go, and Rust.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>Uuid</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Phase 4: Optional synchronization and organizations</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Uuid node in project.</td>
+  <td>Documentation node describing Phase 4: Optional synchronization and organizations.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>String</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Generator Work Breakdown</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>String node in project.</td>
+  <td>Documentation node describing Generator Work Breakdown.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>Option</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Types and prompts</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Option node in project.</td>
+  <td>Documentation node describing Types and prompts.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>get_users()</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>Dependency generation</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>get_users() node in api/handlers/users.rs.</td>
+  <td>Documentation node describing Dependency generation.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>State</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Templates and generator selection</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>State node in project.</td>
+  <td>Documentation node describing Templates and generator selection.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>Result</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Testing</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Result node in project.</td>
+  <td>Documentation node describing Testing.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>Json</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Release Gates</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Json node in project.</td>
+  <td>Documentation node describing Release Gates.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>Vec</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Risks and Mitigations</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Vec node in project.</td>
+  <td>Documentation node describing Risks and Mitigations.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>StatusCode</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>Recommended Delivery Order</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>StatusCode node in project.</td>
+  <td>Documentation node describing Recommended Delivery Order.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>Claims</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small><br><code>Role</code></td>
-  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small></td>
-  <td>middleware.rs node in src/api/middleware.rs.</td>
+  <td><code>AuthController.php</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>AuthService</code><br><small style="color:var(--muted)">app/Services/AuthService.php</small><br><code>Controller</code><br><code>Request</code></td>
+  <td>AuthController.php node in Controllers/Api/AuthController.php.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>RequireAuth</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td><code>AuthController</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>from_request_parts()</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
-  <td>RequireAuth node in src/api/middleware.rs.</td>
+  <td><code>__construct()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small><br><code>login()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small><br><code>register()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td>AuthController node in Controllers/Api/AuthController.php.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>FromRequestParts</code><br><small style="color:var(--muted)"></small></td>
+  <td><code>Controller</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>FromRequestParts node in project.</td>
+  <td><code>AuthController.php</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td><code>UserController.php</code><br><small style="color:var(--muted)">Controllers/Api/UserController.php</small></td>
+  <td>Controller node in project.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>.from_request_parts()</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td><code>.__construct()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>RequireAuth</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td><code>AuthController</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
   <td>No direct outbound edge</td>
-  <td>.from_request_parts() node in src/api/middleware.rs.</td>
+  <td>.__construct() node in Controllers/Api/AuthController.php.</td>
 </tr>
 </table>
 
@@ -1693,18 +1693,15 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>docs/fullstack-managed-auth-plan.md</code></td><td>26 nodes</td></tr>
-<tr><td><code>api/handlers/auth.rs</code></td><td>8 nodes</td></tr>
 <tr><td><code>Controllers/Api/AuthController.php</code></td><td>5 nodes</td></tr>
 <tr><td><code>Controllers/Api/UserController.php</code></td><td>5 nodes</td></tr>
-<tr><td><code>src/api/middleware.rs</code></td><td>5 nodes</td></tr>
 <tr><td><code>app/Services/AuthService.php</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/Services/UserService.php</code></td><td>4 nodes</td></tr>
-<tr><td><code>api/handlers/users.rs</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: references x59, contains x41, method x10, imports x7. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x29, method x10, imports x6, references x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2523,8 +2520,240 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. error.middleware.ts ====== -->
-<h2 id="error-middleware-ts">10. error.middleware.ts</h2>
+<!-- ====== 10. Roadmap ====== -->
+<h2 id="roadmap">10. Roadmap</h2>
+<p>Roadmap groups implementation around docs, roadmapmd, priority, mode, mostly in docs/roadmap.md. This section covers 17 nodes and 16 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Roadmap (17 nodes, 16 edges)
+    docs_roadmap_roadmap_4c9fb305("Roadmap<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b("Priority 1: Trust And Predictability<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_4_reliability_automation_70909c8c("Priority 4: Reliability Automation<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42("Priority 5: AI-Assisted Developer Exper...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_2_managed_fullstack_authen_b6855538("Priority 2: Managed Fullstack Authentic...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_3_extensibility_1403c5db("Priority 3: Extensibility<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_1_dry_run_and_diff_mode_7edd17b2("1. Dry-run and diff mode<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_2_scaffold_manifest_a0a95f89("2. Scaffold manifest<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_3_strict_package_policy_mode_ce12b20c("3. Strict package policy mode<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6("4. Production-ready Supabase Auth and C...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_5_plugin_system_45b0ebec("5. Plugin system<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_6_template_validation_ci_21f253d1("6. Template validation CI<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_7_generated_app_smoke_tests_45da8a3a("7. Generated app smoke tests<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_8_ai_context_pack_ac76d97c("8. AI context pack<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_9_public_capability_matrix_458e1255("9. Public capability matrix<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_notes_for_contributors_a016db4e("Notes For Contributors<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_recommended_implementation_order_243ddbca("Recommended Implementation Order<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_notes_for_contributors_a016db4e
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_1_trust_and_predictability_9f074a1b
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_2_managed_fullstack_authen_b6855538
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_3_extensibility_1403c5db
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_4_reliability_automation_70909c8c
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_recommended_implementation_order_243ddbca
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_1_dry_run_and_diff_mode_7edd17b2
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_2_scaffold_manifest_a0a95f89
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_3_strict_package_policy_mode_ce12b20c
+    docs_roadmap_priority_2_managed_fullstack_authen_b6855538 -->|contains| docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6
+    docs_roadmap_priority_3_extensibility_1403c5db -->|contains| docs_roadmap_5_plugin_system_45b0ebec
+    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_6_template_validation_ci_21f253d1
+    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_7_generated_app_smoke_tests_45da8a3a
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 -->|contains| docs_roadmap_8_ai_context_pack_ac76d97c
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 -->|contains| docs_roadmap_9_public_capability_matrix_458e1255
+    class docs_roadmap_roadmap_4c9fb305 concept;
+    class docs_roadmap_priority_1_trust_and_predictability_9f074a1b concept;
+    class docs_roadmap_priority_4_reliability_automation_70909c8c concept;
+    class docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 concept;
+    class docs_roadmap_priority_2_managed_fullstack_authen_b6855538 concept;
+    class docs_roadmap_priority_3_extensibility_1403c5db concept;
+    class docs_roadmap_1_dry_run_and_diff_mode_7edd17b2 concept;
+    class docs_roadmap_2_scaffold_manifest_a0a95f89 concept;
+    class docs_roadmap_3_strict_package_policy_mode_ce12b20c concept;
+    class docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6 concept;
+    class docs_roadmap_5_plugin_system_45b0ebec concept;
+    class docs_roadmap_6_template_validation_ci_21f253d1 concept;
+    class docs_roadmap_7_generated_app_smoke_tests_45da8a3a concept;
+    class docs_roadmap_8_ai_context_pack_ac76d97c concept;
+    class docs_roadmap_9_public_capability_matrix_458e1255 concept;
+    class docs_roadmap_notes_for_contributors_a016db4e concept;
+    class docs_roadmap_recommended_implementation_order_243ddbca concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Roadmap</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Roadmap.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Priority 1: Trust And Predictability</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 1: Trust And Predictability.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>1. Dry-run and diff mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 1. Dry-run and diff mode.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>2. Scaffold manifest</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2. Scaffold manifest.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>3. Strict package policy mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 3. Strict package policy mode.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Priority 2: Managed Fullstack Authentication</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 2: Managed Fullstack Authentication.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>4. Production-ready Supabase Auth and Clerk</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 4. Production-ready Supabase Auth and Clerk.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Priority 3: Extensibility</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 3: Extensibility.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>5. Plugin system</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 5. Plugin system.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Priority 4: Reliability Automation</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 4: Reliability Automation.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>6. Template validation CI</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 6. Template validation CI.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>7. Generated app smoke tests</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 7. Generated app smoke tests.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Priority 5: AI-Assisted Developer Experience</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 5: AI-Assisted Developer Experience.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>8. AI context pack</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 8. AI context pack.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>9. Public capability matrix</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 9. Public capability matrix.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Recommended Implementation Order</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Recommended Implementation Order.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Notes For Contributors</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Notes For Contributors.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>docs/roadmap.md</code></td><td>17 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. error.middleware.ts ====== -->
+<h2 id="error-middleware-ts">11. error.middleware.ts</h2>
 <p>error.middleware.ts groups implementation around templates, elysia, errormiddlewarets, authmiddlewaresupabasets, mostly in templates/elysia/error.middleware.ts, templates/elysia/auth.middleware.supabase.ts, templates/elysia/auth.middleware.clerk.ts. This section covers 15 nodes and 17 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2737,8 +2966,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 11. error.middleware.ts ====== -->
-<h2 id="error-middleware-ts-e6a200">11. error.middleware.ts</h2>
+<!-- ====== 12. error.middleware.ts ====== -->
+<h2 id="error-middleware-ts-e6a200">12. error.middleware.ts</h2>
 <p>error.middleware.ts groups implementation around templates, hono, errormiddlewarets, authmiddlewaresupabasets, mostly in templates/hono/error.middleware.ts, templates/hono/auth.middleware.supabase.ts, templates/hono/auth.middleware.clerk.ts. This section covers 15 nodes and 17 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2951,8 +3180,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Contributor Covenant Code of Conduct ====== -->
-<h2 id="contributor-covenant-code-of-conduct">12. Contributor Covenant Code of Conduct</h2>
+<!-- ====== 13. Contributor Covenant Code of Conduct ====== -->
+<h2 id="contributor-covenant-code-of-conduct">13. Contributor Covenant Code of Conduct</h2>
 <p>Contributor Covenant Code of Conduct groups implementation around code, conductmd, enforcement, our, mostly in CODE_OF_CONDUCT.md. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3130,194 +3359,6 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>CODE_OF_CONDUCT.md</code></td><td>13 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 13. Roadmap ====== -->
-<h2 id="roadmap">13. Roadmap</h2>
-<p>Roadmap groups implementation around docs, roadmapmd, priority, mode, mostly in docs/roadmap.md. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Roadmap (13 nodes, 12 edges)
-    docs_roadmap_roadmap_4c9fb305("Roadmap<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b("Priority 1: Trust And Predictability<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_2_managed_fullstack_authen_b6855538("Priority 2: Managed Fullstack Authentic...<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_3_extensibility_1403c5db("Priority 3: Extensibility<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_4_reliability_automation_70909c8c("Priority 4: Reliability Automation<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_notes_for_contributors_a016db4e("Notes For Contributors<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_1_dry_run_and_diff_mode_7edd17b2("1. Dry-run and diff mode<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_2_scaffold_manifest_a0a95f89("2. Scaffold manifest<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_3_strict_package_policy_mode_ce12b20c("3. Strict package policy mode<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6("4. Production-ready Supabase Auth and C...<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_5_plugin_system_45b0ebec("5. Plugin system<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_6_template_validation_ci_21f253d1("6. Template validation CI<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_recommended_implementation_order_243ddbca("Recommended Implementation Order<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_notes_for_contributors_a016db4e
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_1_trust_and_predictability_9f074a1b
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_2_managed_fullstack_authen_b6855538
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_3_extensibility_1403c5db
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_4_reliability_automation_70909c8c
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_recommended_implementation_order_243ddbca
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_1_dry_run_and_diff_mode_7edd17b2
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_2_scaffold_manifest_a0a95f89
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_3_strict_package_policy_mode_ce12b20c
-    docs_roadmap_priority_2_managed_fullstack_authen_b6855538 -->|contains| docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6
-    docs_roadmap_priority_3_extensibility_1403c5db -->|contains| docs_roadmap_5_plugin_system_45b0ebec
-    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_6_template_validation_ci_21f253d1
-    class docs_roadmap_roadmap_4c9fb305 concept;
-    class docs_roadmap_priority_1_trust_and_predictability_9f074a1b concept;
-    class docs_roadmap_priority_2_managed_fullstack_authen_b6855538 concept;
-    class docs_roadmap_priority_3_extensibility_1403c5db concept;
-    class docs_roadmap_priority_4_reliability_automation_70909c8c concept;
-    class docs_roadmap_notes_for_contributors_a016db4e concept;
-    class docs_roadmap_1_dry_run_and_diff_mode_7edd17b2 concept;
-    class docs_roadmap_2_scaffold_manifest_a0a95f89 concept;
-    class docs_roadmap_3_strict_package_policy_mode_ce12b20c concept;
-    class docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6 concept;
-    class docs_roadmap_5_plugin_system_45b0ebec concept;
-    class docs_roadmap_6_template_validation_ci_21f253d1 concept;
-    class docs_roadmap_recommended_implementation_order_243ddbca concept;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>Roadmap</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Roadmap.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>Priority 1: Trust And Predictability</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 1: Trust And Predictability.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>1. Dry-run and diff mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 1. Dry-run and diff mode.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>2. Scaffold manifest</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2. Scaffold manifest.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>3. Strict package policy mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 3. Strict package policy mode.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Priority 2: Managed Fullstack Authentication</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 2: Managed Fullstack Authentication.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>4. Production-ready Supabase Auth and Clerk</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 4. Production-ready Supabase Auth and Clerk.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Priority 3: Extensibility</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 3: Extensibility.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>5. Plugin system</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 5. Plugin system.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>Priority 4: Reliability Automation</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 4: Reliability Automation.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>6. Template validation CI</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 6. Template validation CI.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>Recommended Implementation Order</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Recommended Implementation Order.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Notes For Contributors</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Notes For Contributors.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>docs/roadmap.md</code></td><td>13 nodes</td></tr>
     </table>
   </div>
   <div class="card">
@@ -3861,17 +3902,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>719</td></tr>
-      <tr><td>Edges</td><td>917</td></tr>
+      <tr><td>Nodes</td><td>725</td></tr>
+      <tr><td>Edges</td><td>923</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>86</td></tr>
+      <tr><td>Communities</td><td>85</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>894</td></tr>
+      <tr><td>EXTRACTED</td><td>900</td></tr>
       <tr><td>INFERRED</td><td>23</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -3880,7 +3921,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>qwykz — Architecture Documentation</p>
-  <p>Generated: 2026-07-12 18:50 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-07-14 23:06 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->
