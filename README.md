@@ -91,6 +91,44 @@ Available flags:
 * `--db <supabase|neon|local|docker|clerk>`: Select database/auth environment
 * `--zod`, `--helmet`, `--cors`: Include extra middlewares
 
+### Capability matrix
+
+Legend: ✅ supported and covered by default scaffold tests, 🧪 available but experimental or external-bootstrap tested, 🗓 planned, — not applicable or unsupported.
+
+| Stack | Database targets | Auth targets | Redis/cache | App Dockerfile | Default CI coverage |
+| --- | --- | --- | --- | --- | --- |
+| Express | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Hono | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Elysia | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Laravel | 🧪 Local, Docker, Supabase | 🧪 Sanctum/local API auth | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
+| Next.js | 🧪 Local, Docker, Supabase | 🧪 Local, Supabase, Clerk | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
+| React | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
+| Vue | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
+| Python FastAPI | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Multi-user runtime image | ✅ Scaffold + Dockerfile checks |
+| Go Fiber | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
+| Rust Axum | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
+
+Unsupported combinations should be rejected before files are written. The matrix is meant to stay aligned with prompts, generated files, and CI coverage as qwykz evolves.
+
+### Docker resource and data lifecycle
+
+Generated Docker services use development-sized memory/CPU limits and bounded
+log files. PostgreSQL data is stored in a named volume so ordinary
+`docker compose down` preserves the database. Redis is generated as an
+ephemeral, memory-bounded cache and does not create a data volume.
+
+When a generated project is disposable, remove its containers and PostgreSQL
+volume from inside that project directory:
+
+```bash
+docker compose down -v
+```
+
+`-v` permanently deletes that project's local database. Omit it when the data
+must survive. qwykz-managed PostgreSQL volumes carry the
+`io.qwykz.managed=true` label so unused generator data can be inventoried and
+cleaned deliberately instead of using an unscoped system-wide prune.
+
 ## Documentation
 
 Check out the [Wiki Guides](docs/home.md) for deep dives into:
