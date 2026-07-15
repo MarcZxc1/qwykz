@@ -84,5 +84,6 @@
   "82": "run_test",
   "83": "run-all-maximized.ts",
   "84": "test-monorepo.ts",
-  "85": "test-rust-endpoints.sh"
+  "85": "test-rust-endpoints.sh",
+  "86": "managed-credentials.test.ts"
 }

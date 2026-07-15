@@ -5,8 +5,8 @@
     "semantic_hash": "4ef201b8425c1706513c395bb2bc4b9e"
   },
   "package.json": {
-    "mtime": 1784111482.2481005,
-    "ast_hash": "e8f994a3ac792d16e4ba44774a9bc8d7",
+    "mtime": 1784118842.9183974,
+    "ast_hash": "88a0b94891076700e299955a50505cfa",
     "semantic_hash": ""
   },
   "scripts/build-bin.ts": {
@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1784070352.5608468,
-    "ast_hash": "69f2a161a2c63784fa478e1b9026a0ee",
+    "mtime": 1784119014.6060433,
+    "ast_hash": "6134aca6676322f1fe942a5d0ef9d7ad",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -740,13 +740,13 @@
     "semantic_hash": ""
   },
   "tests/scripts/run-all-maximized.ts": {
-    "mtime": 1783312912.9128797,
-    "ast_hash": "abb6e3e3a804e81a8c35a8c47fd50ccd",
+    "mtime": 1784118945.7129822,
+    "ast_hash": "326bb94d03991aa6164f97288c703643",
     "semantic_hash": ""
   },
   "tests/scripts/test-matrix.sh": {
-    "mtime": 1783312912.9284792,
-    "ast_hash": "7c87a7e3983df9fb87dc7499c5ba5548",
+    "mtime": 1784118919.6325803,
+    "ast_hash": "77ca35619d641d76be6b2b85c0e43ffa",
     "semantic_hash": ""
   },
   "tests/scripts/test-monorepo.ts": {
@@ -755,18 +755,23 @@
     "semantic_hash": ""
   },
   "tests/scripts/test-qwykz.sh": {
-    "mtime": 1783312912.9284792,
-    "ast_hash": "30f53ab1943aee9811d97511083f4c55",
+    "mtime": 1784118934.0338023,
+    "ast_hash": "98df8d29755354ec5047e97aad2f7dbd",
     "semantic_hash": ""
   },
   "tests/scripts/test-rust-endpoints.sh": {
-    "mtime": 1783312912.9284792,
-    "ast_hash": "89679914b7ba9cabf8dfcf4a67f4e110",
+    "mtime": 1784118955.888139,
+    "ast_hash": "f010576edda15b0d0076795822993230",
     "semantic_hash": ""
   },
   "tests/runtime-smoke.test.ts": {
     "mtime": 1784117992.4661224,
     "ast_hash": "5b8ac1d6f2387f63842133ee71d3cdfb",
+    "semantic_hash": ""
+  },
+  "tests/managed-credentials.test.ts": {
+    "mtime": 1784118978.5664883,
+    "ast_hash": "f6c67c37cf5ea291a28f0e99704911d3",
     "semantic_hash": ""
   }
 }
