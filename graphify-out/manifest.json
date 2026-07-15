@@ -5,8 +5,8 @@
     "semantic_hash": "4ef201b8425c1706513c395bb2bc4b9e"
   },
   "package.json": {
-    "mtime": 1784118842.9183974,
-    "ast_hash": "88a0b94891076700e299955a50505cfa",
+    "mtime": 1784120794.6591508,
+    "ast_hash": "e7981e3e3af96bb2d8479ed84b33221e",
     "semantic_hash": ""
   },
   "scripts/build-bin.ts": {
@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "docs/roadmap.md": {
-    "mtime": 1784112449.602887,
-    "ast_hash": "7c3568a0417fea04b6b993179e73ef09",
+    "mtime": 1784120836.4398077,
+    "ast_hash": "be91dcc37c26c94d819d8c0e0e1d1424",
     "semantic_hash": ""
   },
   "docs/template-engine.md": {
@@ -765,13 +765,18 @@
     "semantic_hash": ""
   },
   "tests/runtime-smoke.test.ts": {
-    "mtime": 1784117992.4661224,
-    "ast_hash": "5b8ac1d6f2387f63842133ee71d3cdfb",
+    "mtime": 1784120800.3582404,
+    "ast_hash": "bed367945b42f2512f330aeafd56af6e",
     "semantic_hash": ""
   },
   "tests/managed-credentials.test.ts": {
     "mtime": 1784119328.7505004,
     "ast_hash": "23b9a5073320ddac14ceb3c14e635510",
+    "semantic_hash": ""
+  },
+  "docs/runtime-smoke-report-2026-07-15.md": {
+    "mtime": 1784120824.313617,
+    "ast_hash": "c180721ca0eab1a0e9c12fd6618389df",
     "semantic_hash": ""
   }
 }

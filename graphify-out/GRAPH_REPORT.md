@@ -1,16 +1,16 @@
 # Graph Report - qwykz  (2026-07-15)
 
 ## Corpus Check
-- 139 files · ~36,118 words
+- 140 files · ~36,649 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 792 nodes · 1030 edges · 87 communities (54 shown, 33 thin omitted)
+- 801 nodes · 1039 edges · 88 communities (55 shown, 33 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8d9ab4d1`
+- Built from commit: `6d99989f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -84,6 +84,7 @@
 - run-all-maximized.ts
 - test-rust-endpoints.sh
 - managed-credentials.test.ts
+- User
 
 ## God Nodes (most connected - your core abstractions)
 1. `compilerOptions` - 20 edges
@@ -112,11 +113,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (87 total, 33 thin omitted)
+## Communities (88 total, 33 thin omitted)
 
 ### Community 0 - "User"
-Cohesion: 0.07
-Nodes (42): BaseModel, DateTime, Enum, FastAPI, SQLModel, str, get_current_user(), get_db() (+34 more)
+Cohesion: 0.08
+Nodes (37): BaseModel, DateTime, Enum, FastAPI, SQLModel, str, get_current_user(), get_db() (+29 more)
 
 ### Community 1 - "package-json.ts"
 Cohesion: 0.08
@@ -124,7 +125,7 @@ Nodes (43): ensureBunTmpDir(), ensureLocalPostgresDatabase(), formatCommandFailu
 
 ### Community 2 - "package.json"
 Cohesion: 0.06
-Nodes (33): @clack/prompts, cors, bin, qwykz, dependencies, @clack/prompts, cors, picocolors (+25 more)
+Nodes (34): @clack/prompts, cors, bin, qwykz, dependencies, @clack/prompts, cors, picocolors (+26 more)
 
 ### Community 3 - "express"
 Cohesion: 0.05
@@ -179,8 +180,8 @@ Cohesion: 0.40
 Nodes (5): LoginRequest, RegisterRequest, Ctx, Login(), Register()
 
 ### Community 17 - "README.md"
-Cohesion: 0.07
-Nodes (27): Architecture Overview, Adding a New Template Feature, Contributing Guide, Getting Started, Submitting a PR, Testing Your Changes, Dependency Resolution, The 3-Tier Fallback Strategy (+19 more)
+Cohesion: 0.05
+Nodes (34): Architecture Overview, Adding a New Template Feature, Contributing Guide, Getting Started, Submitting a PR, Testing Your Changes, Dependency Resolution, The 3-Tier Fallback Strategy (+26 more)
 
 ### Community 18 - "config.py"
 Cohesion: 0.50
@@ -258,8 +259,12 @@ Nodes (3): inject_credentials(), run_test(), test-qwykz.sh script
 Cohesion: 0.19
 Nodes (9): BUN_TMPDIR, childEnv(), CLI_PATH, expectOk(), MANAGED_ENV_KEYS, redact(), ROOT, runCommand() (+1 more)
 
+### Community 87 - "User"
+Cohesion: 0.47
+Nodes (5): Role, String, Uuid, User, Utc
+
 ## Knowledge Gaps
-- **297 isolated node(s):** `name`, `version`, `description`, `type`, `url` (+292 more)
+- **304 isolated node(s):** `name`, `version`, `description`, `type`, `url` (+299 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -271,12 +276,12 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `express` connect `express` to `keywords`?**
   _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
-  _298 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _305 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
-  _Cohesion score 0.06894049346879536 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08048103607770583 - nodes in this community are weakly interconnected._
 - **Should `package-json.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.07673469387755102 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
-  _Cohesion score 0.058823529411764705 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
 - **Should `express` be split into smaller, more focused modules?**
   _Cohesion score 0.052854122621564484 - nodes in this community are weakly interconnected._
