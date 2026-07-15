@@ -1,6 +1,6 @@
 {
   "name": "qwykz",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Fast Express + TypeScript + Prisma boilerplate generator built with Bun",
   "repository": {
     "type": "git",
@@ -30,6 +30,19 @@
   "bin": {
     "qwykz": "src/index.ts"
   },
+  "files": [
+    "src/",
+    "templates/",
+    "scripts/",
+    "skills/",
+    "docs/",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "tsconfig.json",
+    "bun.lock"
+  ],
   "scripts": {
     "build:bin": "bun run scripts/build-bin.ts",
     "test": "bun test --timeout 180000 tests/template-engine.test.ts && bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts",
