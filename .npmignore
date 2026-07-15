@@ -2,3 +2,11 @@ qwykz-linux-x64
 .test-tmp/
 .github/
 tests/
+.cache/
+.codex/
+.env
+.env.*
+.python-version
+AGENTS.md
+graphify-out/
+*.tgz
