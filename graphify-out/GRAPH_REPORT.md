@@ -1,16 +1,16 @@
 # Graph Report - qwykz  (2026-07-15)
 
 ## Corpus Check
-- 139 files · ~35,783 words
+- 139 files · ~36,118 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 788 nodes · 1026 edges · 87 communities (54 shown, 33 thin omitted)
+- 792 nodes · 1030 edges · 87 communities (54 shown, 33 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ac176114`
+- Built from commit: `8d9ab4d1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -115,8 +115,8 @@
 ## Communities (87 total, 33 thin omitted)
 
 ### Community 0 - "User"
-Cohesion: 0.08
-Nodes (37): BaseModel, DateTime, Enum, FastAPI, SQLModel, str, get_current_user(), get_db() (+29 more)
+Cohesion: 0.07
+Nodes (42): BaseModel, DateTime, Enum, FastAPI, SQLModel, str, get_current_user(), get_db() (+34 more)
 
 ### Community 1 - "package-json.ts"
 Cohesion: 0.08
@@ -131,8 +131,8 @@ Cohesion: 0.05
 Nodes (15): express, supabase, AuthRequest, authMiddleware(), AuthRequest, clerkMiddleware, AuthRequest, supabase (+7 more)
 
 ### Community 4 - "AppState"
-Cohesion: 0.08
-Nodes (39): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+31 more)
+Cohesion: 0.10
+Nodes (34): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+26 more)
 
 ### Community 5 - "generator.ts"
 Cohesion: 0.16
@@ -247,11 +247,11 @@ Cohesion: 0.50
 Nodes (3): BUN_TMPDIR, CLI_PATH, TMP_BASE
 
 ### Community 81 - "test-matrix.sh"
-Cohesion: 0.70
+Cohesion: 0.43
 Nodes (4): inject_credentials(), run_matrix_test(), test-matrix.sh script, test_endpoints()
 
 ### Community 82 - "run_test"
-Cohesion: 0.60
+Cohesion: 0.38
 Nodes (3): inject_credentials(), run_test(), test-qwykz.sh script
 
 ### Community 86 - "managed-credentials.test.ts"
@@ -267,13 +267,13 @@ Nodes (9): BUN_TMPDIR, childEnv(), CLI_PATH, expectOk(), MANAGED_ENV_KEYS, redac
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `keywords` connect `keywords` to `package.json`, `express`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `express` connect `express` to `keywords`?**
   _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
   _298 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
-  _Cohesion score 0.08048103607770583 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06894049346879536 - nodes in this community are weakly interconnected._
 - **Should `package-json.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.07673469387755102 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
