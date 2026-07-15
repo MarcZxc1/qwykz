@@ -88,8 +88,69 @@ Available flags:
 * `--yes` or `-y`: Skip all prompts and use defaults/flags
 * `--name <string>`: Name of your project directory
 * `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
-* `--db <supabase|neon|local|docker|clerk>`: Select database/auth environment
+* `--db <supabase|neon|local|docker>`: Select database environment
 * `--zod`, `--helmet`, `--cors`: Include extra middlewares
+
+### Capability matrix
+
+Legend: ✅ supported and covered by default scaffold tests, 🧪 available but experimental or external-bootstrap tested, 🗓 planned, — not applicable or unsupported.
+
+| Stack | Database targets | Auth targets | Redis/cache | App Dockerfile | Default CI coverage |
+| --- | --- | --- | --- | --- | --- |
+| Express | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Hono | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Elysia | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
+| Laravel | 🧪 Local, Docker, Supabase | 🧪 Sanctum/local API auth | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
+| Next.js | 🧪 Local, Docker, Supabase | 🧪 Local, Supabase, Clerk | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
+| React | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
+| Vue | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
+| Python FastAPI | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Multi-user runtime image | ✅ Scaffold + Dockerfile checks |
+| Go Fiber | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
+| Rust Axum | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
+
+Unsupported combinations should be rejected before files are written. The matrix is meant to stay aligned with prompts, generated files, and CI coverage as qwykz evolves.
+
+### Managed credential smoke tests
+
+Managed provider checks are opt-in and read credentials from environment variables only. Do not commit `.env` files or paste real provider tokens into test scripts.
+
+```bash
+SUPABASE_URL="..." \
+SUPABASE_ANON_KEY="..." \
+CLERK_SECRET_KEY="..." \
+UPSTASH_REDIS_REST_URL="..." \
+UPSTASH_REDIS_REST_TOKEN="..." \
+bun run test:managed
+```
+
+Laravel uses Laravel-style split database variables and Predis Redis settings, so helper scripts derive `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` from `SUPABASE_DB_URL`. For Laravel + Upstash Redis, provide Redis protocol credentials too:
+
+```bash
+UPSTASH_REDIS_HOST="..." \
+UPSTASH_REDIS_PASSWORD="..." \
+UPSTASH_REDIS_PORT="6379"
+```
+
+Missing provider env vars skip only that provider's live check. The default safety checks still verify that generated scaffolds keep managed credentials as placeholders and that helper scripts do not contain committed provider credentials.
+
+### Docker resource and data lifecycle
+
+Generated Docker services use development-sized memory/CPU limits and bounded
+log files. PostgreSQL data is stored in a named volume so ordinary
+`docker compose down` preserves the database. Redis is generated as an
+ephemeral, memory-bounded cache and does not create a data volume.
+
+When a generated project is disposable, remove its containers and PostgreSQL
+volume from inside that project directory:
+
+```bash
+docker compose down -v
+```
+
+`-v` permanently deletes that project's local database. Omit it when the data
+must survive. qwykz-managed PostgreSQL volumes carry the
+`io.qwykz.managed=true` label so unused generator data can be inventoried and
+cleaned deliberately instead of using an unscoped system-wide prune.
 
 ## Documentation
 

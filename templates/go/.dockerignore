@@ -1,0 +1,11 @@
+.git
+.gitignore
+.env*
+!.env.example
+bin/
+build/
+dist/
+coverage/
+*.out
+*.test
+qwykz-api

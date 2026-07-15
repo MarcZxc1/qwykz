@@ -2,7 +2,11 @@ services:
   qwykz-db:
     image: postgres:17-alpine
     container_name: {{PROJECT_NAME}}-postgres
-    command: postgres -c synchronous_commit=off
+    command: postgres -c synchronous_commit=off -c max_connections=50
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 1.0
+    pids_limit: 200
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: {{DB_PASSWORD}}
@@ -15,13 +19,22 @@ services:
       timeout: 5s
       retries: 12
       start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - qwykz_data:/var/lib/postgresql/data
 
   qwykz-redis:
     image: redis:7-alpine
     container_name: {{PROJECT_NAME}}-redis
-    command: redis-server --appendonly yes
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "96mb", "--maxmemory-policy", "allkeys-lru"]
+    mem_limit: 128m
+    mem_reservation: 32m
+    cpus: 0.5
+    pids_limit: 100
     ports:
       - "127.0.0.1:63790:6379"
     healthcheck:
@@ -29,9 +42,14 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    volumes:
-      - qwykz_redis_data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   qwykz_data:
-  qwykz_redis_data:
+    labels:
+      io.qwykz.managed: "true"
+      io.qwykz.kind: "postgres"

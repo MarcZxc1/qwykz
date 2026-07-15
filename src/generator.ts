@@ -341,7 +341,7 @@ async function resolveEnvFile(
     return injectVariables(raw, { JWT_SECRET: jwtSecret }) + authVars + cachingVars;
   }
 
-  const dbName = projectName.replace(/\//g, "-");
+  const dbName = projectName.replace(/[\\/]/g, "-");
 
   if (dbTarget === "docker") {
     return injectVariables(raw, {
@@ -368,14 +368,18 @@ async function resolveDockerCompose(
   redisPort: number = 63790
 ): Promise<string> {
   let compose = `services:\n`;
-  let volumes = `volumes:\n`;
-  const containerPrefix = projectName.replace(/\//g, "-");
+  let volumes = "";
+  const containerPrefix = projectName.replace(/[\\/]/g, "-");
 
   if (dbTarget === "docker") {
     compose += `  qwykz-db:
     image: postgres:17-alpine
     container_name: ${containerPrefix}-postgres
-    command: postgres -c synchronous_commit=off
+    command: postgres -c synchronous_commit=off -c max_connections=50
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 1.0
+    pids_limit: 200
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${dbPassword}
@@ -388,16 +392,37 @@ async function resolveDockerCompose(
       timeout: 5s
       retries: 12
       start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - ${containerPrefix}_data:/var/lib/postgresql/data\n\n`;
-    volumes += `  ${containerPrefix}_data:\n`;
+    volumes += `  ${containerPrefix}_data:
+    labels:
+      io.qwykz.managed: "true"
+      io.qwykz.kind: "postgres"\n`;
   }
 
   if (cachingTarget === "docker") {
     compose += `  qwykz-redis:
     image: redis:7-alpine
     container_name: ${containerPrefix}-redis
-    command: redis-server --appendonly yes
+    command:
+      - redis-server
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+      - --maxmemory
+      - 96mb
+      - --maxmemory-policy
+      - allkeys-lru
+    mem_limit: 128m
+    mem_reservation: 32m
+    cpus: 0.5
+    pids_limit: 100
     ports:
       - "127.0.0.1:${redisPort}:6379"
     healthcheck:
@@ -405,12 +430,14 @@ async function resolveDockerCompose(
       interval: 5s
       timeout: 5s
       retries: 10
-    volumes:
-      - ${containerPrefix}_redis_data:/data\n\n`;
-    volumes += `  ${containerPrefix}_redis_data:\n`;
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"\n\n`;
   }
 
-  return compose + volumes;
+  return volumes ? `${compose}volumes:\n${volumes}` : compose;
 }
 
 async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
@@ -733,7 +760,7 @@ async function generateLaravelProject(options: ProjectOptions) {
       "# DB_PORT=3306",
       `DB_PORT=${options.dbTarget === "docker" ? options.dbPort : "5432"}`,
     );
-    const dbName = options.projectName.replace(/\//g, "-");
+    const dbName = options.projectName.replace(/[\\/]/g, "-");
     envContent = envContent.replace(
       "# DB_DATABASE=laravel",
       `DB_DATABASE=${dbName}`,
@@ -821,51 +848,63 @@ async function generateNextJsProject(options: ProjectOptions) {
 
   console.log(`\n🚀 Scaffolding Next.js App Router...`);
 
-  const nextProc = Bun.spawn(
-    [
-      "bunx",
-      "create-next-app@latest",
-      options.projectName,
-      "--typescript",
-      "--tailwind",
-      "--eslint",
-      "--app",
-      "--import-alias",
-      "@/*",
-      "--use-bun",
-      "--yes",
-    ],
-    {
-      cwd: process.cwd(),
-      stdout: "ignore",
-      stderr: "inherit",
-      env: { ...process.env },
-    },
-  );
+  await mkdir(join(targetDir, "app"), { recursive: true });
 
-  const nextProcCode = await nextProc.exited;
-  if (nextProcCode !== 0) {
-    throw new Error("Failed to scaffold Next.js. Ensure you have network connectivity.");
-  }
-
-  const nextDependencies = ["@prisma/client", "pg", "@prisma/adapter-pg"];
-  const nextDevDependencies = ["prisma", "@prisma/config", "@types/node", "@types/pg"];
+  const nextDependencies: PackageMap = {
+    "@prisma/adapter-pg": packageVersions.dependencies["@prisma/adapter-pg"],
+    "@prisma/client": packageVersions.dependencies["@prisma/client"],
+    next: "^16.2.10",
+    pg: packageVersions.dependencies.pg,
+    react: "^19.2.7",
+    "react-dom": "^19.2.7",
+  };
+  const nextDevDependencies: PackageMap = {
+    "@prisma/config": packageVersions.devDependencies["@prisma/config"],
+    "@types/node": packageVersions.devDependencies["@types/node"],
+    "@types/pg": packageVersions.devDependencies["@types/pg"],
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    eslint: "^9.0.0",
+    "eslint-config-next": "^16.2.10",
+    prisma: packageVersions.devDependencies.prisma,
+    typescript: packageVersions.devDependencies.typescript,
+  };
   if (options.authTarget === "local") {
-    nextDependencies.push("zod", "bcryptjs", "jsonwebtoken");
-    nextDevDependencies.push("@types/jsonwebtoken", "@types/bcryptjs");
+    nextDependencies.zod = "^3.23.0";
+    nextDependencies.bcryptjs = "^2.4.3";
+    nextDependencies.jsonwebtoken = packageVersions.dependencies.jsonwebtoken;
+    nextDevDependencies["@types/jsonwebtoken"] = packageVersions.devDependencies["@types/jsonwebtoken"];
+    nextDevDependencies["@types/bcryptjs"] = "^2.4.6";
   } else if (options.authTarget === "supabase") {
-    nextDependencies.push("zod");
+    nextDependencies.zod = "^3.23.0";
+    nextDependencies["@supabase/supabase-js"] = "^2.43.0";
+  } else if (options.authTarget === "clerk") {
+    nextDependencies["@clerk/nextjs"] = "^7.0.0";
   }
 
-  console.log(`\n📦 Installing generated application dependencies...`);
-  await Bun.spawn(["bun", "add", ...nextDependencies], {
-    cwd: targetDir,
-    env: { ...process.env },
-  }).exited;
-  await Bun.spawn(["bun", "add", "-d", ...nextDevDependencies], {
-    cwd: targetDir,
-    env: { ...process.env },
-  }).exited;
+  if (options.cachingTarget === "docker") {
+    nextDependencies.ioredis = "^5.4.1";
+  } else if (options.cachingTarget === "upstash") {
+    nextDependencies["@upstash/redis"] = "^1.31.5";
+  }
+
+  const pkgJson = {
+    name: options.projectName.split("/").pop() || "nextjs-app",
+    version: "0.1.0",
+    private: true,
+    scripts: {
+      dev: "next dev",
+      build: "next build",
+      start: "next start",
+      test: "bun test",
+      postinstall: "prisma generate",
+      "db:generate": "bunx --bun prisma generate",
+      "db:push": "bunx --bun prisma db push",
+      "db:studio": "bunx --bun prisma studio",
+    },
+    dependencies: nextDependencies,
+    devDependencies: nextDevDependencies,
+  };
 
   console.log(
     `\n🔒 Configuring Security Headers (Helmet & CORS) & Database...`,
@@ -879,7 +918,7 @@ async function generateNextJsProject(options: ProjectOptions) {
   } else {
     const port = options.dbTarget === "docker" ? (options.dbPort ?? 54320).toString() : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
-    const dbName = options.projectName.replace(/\//g, "-");
+    const dbName = options.projectName.replace(/[\\/]/g, "-");
     envContent = `DATABASE_URL="postgresql://postgres:${pass}@localhost:${port}/${dbName}?schema=public"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   }
   if (options.authTarget === "clerk") {
@@ -894,7 +933,32 @@ async function generateNextJsProject(options: ProjectOptions) {
     : await readTemplate("express/prisma-client.default.ts");
 
   const files: Array<[string, string | undefined]> = [
+    ["package.json", JSON.stringify(pkgJson, null, 2)],
+    ["next-env.d.ts", "/// <reference types=\"next\" />\n/// <reference types=\"next/image-types/global\" />\n\n// This file is generated by Next.js. Do not edit it directly.\n"],
     ["next.config.mjs", await readTemplate("nextjs/next.config.mjs")],
+    ["tsconfig.json", JSON.stringify({
+      compilerOptions: {
+        target: "ES2017",
+        lib: ["dom", "dom.iterable", "esnext"],
+        allowJs: true,
+        skipLibCheck: true,
+        strict: true,
+        noEmit: true,
+        esModuleInterop: true,
+        module: "esnext",
+        moduleResolution: "bundler",
+        resolveJsonModule: true,
+        isolatedModules: true,
+        jsx: "react-jsx",
+        incremental: true,
+        plugins: [{ name: "next" }],
+        paths: { "@/*": ["./*"] },
+      },
+      include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
+      exclude: ["node_modules"],
+    }, null, 2)],
+    ["app/layout.tsx", "import type { ReactNode } from \"react\";\nimport \"./globals.css\";\n\nexport const metadata = {\n  title: \"Qwykz Next App\",\n  description: \"Generated by qwykz\",\n};\n\nexport default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  );\n}\n"],
+    ["app/globals.css", ":root {\n  color-scheme: light;\n}\n\n* {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n  background: #f8fafc;\n  color: #111827;\n  font-family: Arial, Helvetica, sans-serif;\n}\n\nbutton,\ninput {\n  font: inherit;\n}\n"],
     ["prisma/schema.prisma", await readTemplate("express/schema.prisma")],
     ["prisma.config.ts", await readTemplate("express/prisma.config.ts")],
     ["lib/prisma.ts", prismaClientStub],
@@ -932,7 +996,7 @@ async function generateNextJsProject(options: ProjectOptions) {
   await Promise.all(
     files.map(async ([path, content]) => {
       const fullPath = join(targetDir, path);
-      await Bun.spawn(["mkdir", "-p", fullPath.split('/').slice(0, -1).join('/')]).exited;
+      await mkdir(dirname(fullPath), { recursive: true });
       await Bun.write(fullPath, content || "");
     })
   );
@@ -945,44 +1009,12 @@ async function generateNextJsProject(options: ProjectOptions) {
       "import \"./globals.css\";\nimport { ClerkProvider } from \"@clerk/nextjs\";"
     );
     layoutContent = layoutContent.replace(
-      "<html",
-      "<ClerkProvider>\n    <html"
-    );
-    layoutContent = layoutContent.replace(
-      "</html>",
-      "</html>\n    </ClerkProvider>"
+      "<body>{children}</body>",
+      "<body><ClerkProvider>{children}</ClerkProvider></body>"
     );
     await Bun.write(layoutPath, layoutContent);
   }
 
-  // Inject Prisma and Test scripts into Next.js package.json
-  const pkgPath = join(targetDir, "package.json");
-  const pkgContent = await Bun.file(pkgPath).text();
-  const pkgJson = JSON.parse(pkgContent);
-  pkgJson.scripts = {
-    ...pkgJson.scripts,
-    "test": "bun test",
-    "postinstall": "prisma generate",
-    "db:generate": "bunx --bun prisma generate",
-    "db:push": "bunx --bun prisma db push",
-    "db:studio": "bunx --bun prisma studio",
-  };
-  if (options.cachingTarget === "docker") {
-    pkgJson.dependencies["ioredis"] = "^5.4.1";
-  } else if (options.cachingTarget === "upstash") {
-    pkgJson.dependencies["@upstash/redis"] = "^1.31.5";
-  }
-  
-  if (options.authTarget === "clerk") {
-    pkgJson.dependencies["@clerk/nextjs"] = "^7.0.0";
-  } else if (options.authTarget === "supabase") {
-    pkgJson.dependencies["@supabase/supabase-js"] = "^2.43.0";
-    pkgJson.dependencies["zod"] = "^3.23.0";
-  } else {
-    pkgJson.dependencies["zod"] = "^3.23.0";
-  }
-  
-  await Bun.write(pkgPath, JSON.stringify(pkgJson, null, 2));
 }
 
 function stripBackendStatus(content: string): string {
@@ -1463,7 +1495,7 @@ export async function generateProject(options: ProjectOptions) {
     // Generate root orchestration
     let backendCmd = "bun dev";
     if (options.backendFramework === "laravel") backendCmd = "php artisan serve";
-    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\fastapi dev app/main.py" : "venv/bin/fastapi dev app/main.py";
+    if (options.backendFramework === "python") backendCmd = process.platform === "win32" ? "venv\\\\Scripts\\\\uvicorn app.main:app --reload" : "venv/bin/uvicorn app.main:app --reload";
     if (options.backendFramework === "go") backendCmd = "go run cmd/api/main.go";
     if (options.backendFramework === "rust") backendCmd = "cargo run";
 

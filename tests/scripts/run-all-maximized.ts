@@ -2,10 +2,21 @@ import { execSync } from "child_process";
 import { readFileSync, writeFileSync, rmSync, existsSync } from "fs";
 import { join } from "path";
 
-const SUPABASE_DB = 'postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?pgbouncer=true';
-const SUPABASE_DIRECT = 'postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres';
-const CLERK_PUB = 'pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk';
-const CLERK_SEC = 'sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo';
+const SUPABASE_DB = process.env.SUPABASE_DB_URL ?? "";
+const SUPABASE_DIRECT = process.env.SUPABASE_DIRECT_URL ?? "";
+const CLERK_PUB = process.env.CLERK_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
+const CLERK_SEC = process.env.CLERK_SECRET_KEY ?? "";
+
+for (const [name, value] of Object.entries({
+  SUPABASE_DB_URL: SUPABASE_DB,
+  SUPABASE_DIRECT_URL: SUPABASE_DIRECT,
+  CLERK_PUBLISHABLE_KEY: CLERK_PUB,
+  CLERK_SECRET_KEY: CLERK_SEC,
+})) {
+  if (!value) {
+    throw new Error(`Missing ${name}. Managed-provider test scripts read credentials from env only.`);
+  }
+}
 
 const tests = [
   { name: "t-go", args: "--framework go --db supabase --caching docker", type: "go" },

@@ -115,15 +115,86 @@ Why this matters:
 * It makes releases safer.
 * It gives open-source contributors a clear quality bar.
 
+### 7. Generated app smoke tests
+
+Goal: prove that generated projects do more than contain the expected files.
+
+Scope:
+
+* Maintain an opt-in runtime smoke matrix through `bun run test:runtime`.
+* Cover Backend API projects across Express, Hono, Elysia, Laravel, FastAPI, Go, and Rust.
+* Cover fullstack React/Vue monorepos across every supported backend.
+* Exercise Docker PostgreSQL, local PostgreSQL, no cache, and Docker Redis combinations.
+* Install dependencies for each supported generated stack in CI.
+* Run framework-level validation such as typecheck, build, `go test`, `cargo check`, or Python import checks.
+* Start generated APIs where practical and verify `/api/health` with `curl`.
+* Send JSON payloads to `/api/auth/register` and `/api/auth/login` and assert successful HTTP responses.
+* Validate generated Docker Compose files with `docker compose config`.
+* Keep heavier Laravel and full-matrix runtime runs opt-in locally, but run them in scheduled or release CI.
+
+Why this matters:
+
+* It catches broken setup instructions and missing runtime dependencies.
+* It catches route, payload, migration, local database, Docker, and Redis wiring regressions.
+* It makes qwykz more trustworthy for beginners who may not know how to debug scaffold failures.
+* It turns generated output into a tested product surface, not just copied files.
+
+Current status:
+
+* Added a generated runtime smoke matrix covering 28 Backend API combinations, 56 fullstack combinations, and 4 Next.js combinations.
+* Runtime smoke tests are opt-in and filterable with `QWYKZ_RUN_RUNTIME_SMOKE=1` and `QWYKZ_SMOKE_FILTER`.
+* Representative Docker, local PostgreSQL, Redis, and fullstack cases have been verified locally.
+* Recorded the first full default runtime report in [Runtime Smoke Test Report - 2026-07-15](runtime-smoke-report-2026-07-15.md): 77 passed, 12 Laravel external cases skipped, 0 failed.
+* Laravel external runtime cases can be run separately with `bun run test:runtime:laravel`.
+
+## Priority 5: AI-Assisted Developer Experience
+
+### 8. AI context pack
+
+Goal: make every generated project easier for AI tools, skills, and agents to understand without spending tokens rediscovering the scaffold.
+
+Scope:
+
+* Generate an `AGENTS.md` or `AI_CONTEXT.md` file in each scaffold.
+* Document the selected stack, folder structure, core commands, routes, auth model, database target, and cache target.
+* Include concise instructions for where to add routes, services, models, migrations, and tests.
+* Keep the content factual and generated from the same metadata used by the scaffold manifest.
+
+Why this matters:
+
+* It directly supports qwykz's token-saving goal.
+* It reduces AI hallucination around database, ORM, auth, and folder conventions.
+* It helps beginners work with AI from a known project structure instead of a blank prompt.
+
+### 9. Public capability matrix
+
+Goal: make supported combinations explicit before users generate a project.
+
+Scope:
+
+* Add a README/docs matrix for stack, database target, auth target, Redis support, Dockerfile support, and test coverage.
+* Mark combinations as supported, experimental, planned, or unsupported.
+* Keep the matrix aligned with prompts and CI coverage.
+* Reject unsupported combinations before writing files.
+
+Why this matters:
+
+* It prevents overpromising.
+* It helps users choose the right stack quickly.
+* It makes qwykz's enterprise-inspired positioning more credible by showing exactly what is verified.
+
 ## Recommended Implementation Order
 
 1. `--dry-run` and diff output.
 2. Scaffold manifest.
 3. Strict package policy mode.
-4. Managed fullstack auth Phase 0 and Phase 1.
-5. Template validation CI.
-6. Plugin system.
-7. Managed fullstack auth Phases 2 through 4.
+4. AI context pack.
+5. Public capability matrix.
+6. Generated app smoke tests.
+7. Managed fullstack auth Phase 0 and Phase 1.
+8. Template validation CI.
+9. Plugin system.
+10. Managed fullstack auth Phases 2 through 4.
 
 ## Notes For Contributors
 
@@ -131,3 +202,4 @@ Why this matters:
 * Prefer explicit package reasons over implicit behavior.
 * Treat generated output as a public API.
 * Add or update tests whenever a feature changes what gets scaffolded.
+* Keep AI-facing generated docs short, factual, and synchronized with the scaffold manifest.

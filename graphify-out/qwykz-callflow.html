@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>qwykz — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 719 nodes, 917 edges, 86 communities. Commit: 108004e</p>
+<p class="subtitle">Generated from graphify knowledge graph: 801 nodes, 1039 edges, 88 communities. Commit: 6d99989</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -72,10 +72,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#security-global">Security &amp; Global Graph</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#express">express</a>
+    <a href="#roadmap">Roadmap</a>
     <a href="#error-middleware-ts">error.middleware.ts</a>
     <a href="#error-middleware-ts-e6a200">error.middleware.ts</a>
     <a href="#contributor-covenant-code-of-conduct">Contributor Covenant Code of Conduct</a>
-    <a href="#roadmap">Roadmap</a>
     <a href="#auth-controller-clerk-ts">auth.controller.clerk.ts</a>
     <a href="#auth-controller-supabase-ts">auth.controller.supabase.ts</a>
     <a href="#other">Other</a>
@@ -90,9 +90,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>89 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>205 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>211 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>32 nodes</small>")
+    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>43 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
     CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>7 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
@@ -100,18 +100,18 @@ flowchart LR
     class SERVE_API_35EC8E86 module;
     SECURITY_GLOBAL_5B9C6A04("Security &amp; Global Graph<br/><small>5 nodes</small>")
     class SECURITY_GLOBAL_5B9C6A04 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>80 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>141 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
     EXPRESS_F3C62DE4("express<br/><small>44 nodes</small>")
     class EXPRESS_F3C62DE4 module;
+    ROADMAP_02ACF9BB("Roadmap<br/><small>17 nodes</small>")
+    class ROADMAP_02ACF9BB module;
     ERROR_MIDDLEWARE_TS_9FAB12AA("error.middleware.ts<br/><small>15 nodes</small>")
     class ERROR_MIDDLEWARE_TS_9FAB12AA module;
     ERROR_MIDDLEWARE_TS_E6A200_12C024CD("error.middleware.ts<br/><small>15 nodes</small>")
     class ERROR_MIDDLEWARE_TS_E6A200_12C024CD module;
     CONTRIBUTOR_COVENANT_CODE_OF_CONDUCT_29F81FD5("Contributor Covenant Code of Conduct<br/><small>13 nodes</small>")
     class CONTRIBUTOR_COVENANT_CODE_OF_CONDUCT_29F81FD5 module;
-    ROADMAP_02ACF9BB("Roadmap<br/><small>13 nodes</small>")
-    class ROADMAP_02ACF9BB module;
     AUTH_CONTROLLER_CLERK_TS_67EE83A2("auth.controller.clerk.ts<br/><small>4 nodes</small>")
     class AUTH_CONTROLLER_CLERK_TS_67EE83A2 module;
     AUTH_CONTROLLER_SUPABASE_TS_BE644981("auth.controller.supabase.ts<br/><small>4 nodes</small>")
@@ -141,7 +141,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>89</td><td><code>0, 12, 16, 40, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>205</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>32</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>87</td><td><code>4, 71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>80</td><td><code>5, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>Roadmap</td><td>13</td><td><code>73</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>89</td><td><code>0, 12, 16, 87, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>211</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>43</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>87</td><td><code>4, 71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>141</td><td><code>40, 5, 86, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -153,8 +153,8 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>719 nodes · 917 edges · 86 communities (53 shown, 33 thin omitted)</li>
-      <li>Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
+      <li>801 nodes · 1039 edges · 88 communities (55 shown, 33 thin omitted)</li>
+      <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `compilerOptions` - 20 edges</li>
       <li>2. `readTemplate()` - 19 edges</li>
@@ -519,27 +519,23 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around tsconfigjson, templates, packagejson, elysia, mostly in package.json, tsconfig.json, templates/hono/tsconfig.json. This section covers 205 nodes and 240 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around tsconfigjson, templates, packagejson, elysia, mostly in package.json, tsconfig.json, templates/hono/tsconfig.json. This section covers 211 nodes and 250 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (205 nodes, 240 edges)
+    %% Section: Graph Build (211 nodes, 250 edges)
     subgraph build_graph_src_cli_ts_f3a9be8f["src/cli.ts"]
         src_cli_d851751d("cli.ts")
         src_cli_runcli_0b3c55d8("runCli()<br/><small>src/cli.ts</small>")
         src_cli_outputfrom_28902e6c("outputFrom()<br/><small>src/cli.ts</small>")
         src_cli_runcommand_2bf83bb1("runCommand()<br/><small>src/cli.ts</small>")
         src_cli_formatcommandfailure_20df676e("formatCommandFailure()<br/><small>src/cli.ts</small>")
+        src_cli_projectdatabasename_dc8ebf14("projectDatabaseName()<br/><small>src/cli.ts</small>")
+        src_cli_ensurelocalpostgresdatabase_060b07b8("ensureLocalPostgresDatabase()<br/><small>src/cli.ts</small>")
+        src_cli_sqlliteral_4f7a3811("sqlLiteral()<br/><small>src/cli.ts</small>")
         src_cli_runsetupcommands_4c45a416("runSetupCommands()<br/><small>src/cli.ts</small>")
         src_cli_ensurebuntmpdir_38141082("ensureBunTmpDir()<br/><small>src/cli.ts</small>")
-    end
-    subgraph build_graph_src_npm_registry_ts_0829e239["src/npm-registry.ts"]
-        src_npm_registry_2f331e90("npm-registry.ts")
-        src_npm_registry_todaykey_b49d9eb0("todayKey()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_resolvelatestversions_c33fa827("resolveLatestVersions()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_writecache_b4421d31("writeCache()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_readcache_c41504f2("readCache()<br/><small>src/npm-registry.ts</small>")
     end
     subgraph build_graph_src_prompts_ts_389e6220["src/prompts.ts"]
         src_prompts_655275ec("prompts.ts")
@@ -547,43 +543,46 @@ flowchart LR
         src_prompts_promptforprojectoptions_4bd7a0d7("promptForProjectOptions()<br/><small>src/prompts.ts</small>")
         src_prompts_showsuccess_89483a46("showSuccess()<br/><small>src/prompts.ts</small>")
     end
+    subgraph build_graph_src_npm_registry_ts_0829e239["src/npm-registry.ts"]
+        src_npm_registry_2f331e90("npm-registry.ts")
+        src_npm_registry_todaykey_b49d9eb0("todayKey()<br/><small>src/npm-registry.ts</small>")
+    end
     ref_argon2_eb09cf11("argon2<br/><small>package.json</small>")
     src_package_json_24610089("package-json.ts")
     src_cli_outputfrom_28902e6c -->|calls| src_cli_runcommand_2bf83bb1
     src_cli_formatcommandfailure_20df676e -->|calls| src_cli_runcommand_2bf83bb1
+    src_cli_projectdatabasename_dc8ebf14 -->|calls| src_cli_ensurelocalpostgresdatabase_060b07b8
+    src_cli_sqlliteral_4f7a3811 -->|calls| src_cli_ensurelocalpostgresdatabase_060b07b8
+    src_cli_ensurelocalpostgresdatabase_060b07b8 -->|calls| src_cli_runcommand_2bf83bb1
+    src_cli_ensurelocalpostgresdatabase_060b07b8 -->|calls| src_cli_runsetupcommands_4c45a416
     src_cli_runcommand_2bf83bb1 -->|calls| src_cli_runsetupcommands_4c45a416
     src_cli_runsetupcommands_4c45a416 -->|calls| src_cli_runcli_0b3c55d8
     src_cli_ensurebuntmpdir_38141082 -->|calls| src_cli_runcli_0b3c55d8
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_promptforautomaticsetup_fd8fffef
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_promptforprojectoptions_4bd7a0d7
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_showsuccess_89483a46
-    src_npm_registry_todaykey_b49d9eb0 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
-    src_npm_registry_todaykey_b49d9eb0 -->|calls| src_npm_registry_writecache_b4421d31
-    src_npm_registry_readcache_c41504f2 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
-    src_npm_registry_writecache_b4421d31 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
     src_cli_d851751d -->|imports| src_prompts_655275ec
     src_cli_d851751d -->|imports| src_prompts_promptforautomaticsetup_fd8fffef
     src_cli_d851751d -->|imports| src_prompts_promptforprojectoptions_4bd7a0d7
     src_cli_d851751d -->|imports| src_prompts_showsuccess_89483a46
     src_npm_registry_2f331e90 -->|imports| src_package_json_24610089
-    src_npm_registry_resolvelatestversions_c33fa827 -->|imports| src_package_json_24610089
-    %% Omitted for readability: 187 nodes, 0 edges
+    %% Omitted for readability: 193 nodes, 0 edges
     class src_cli_d851751d entry;
     class src_cli_runcli_0b3c55d8 entry;
     class src_cli_outputfrom_28902e6c function;
     class src_cli_runcommand_2bf83bb1 entry;
     class src_cli_formatcommandfailure_20df676e entry;
+    class src_cli_projectdatabasename_dc8ebf14 function;
+    class src_cli_ensurelocalpostgresdatabase_060b07b8 function;
+    class src_cli_sqlliteral_4f7a3811 function;
     class src_cli_runsetupcommands_4c45a416 entry;
     class src_cli_ensurebuntmpdir_38141082 function;
-    class src_npm_registry_2f331e90 module;
-    class src_npm_registry_todaykey_b49d9eb0 function;
-    class src_npm_registry_resolvelatestversions_c33fa827 function;
-    class src_npm_registry_writecache_b4421d31 function;
-    class src_npm_registry_readcache_c41504f2 function;
     class src_prompts_655275ec module;
     class src_prompts_promptforautomaticsetup_fd8fffef function;
     class src_prompts_promptforprojectoptions_4bd7a0d7 function;
     class src_prompts_showsuccess_89483a46 function;
+    class src_npm_registry_2f331e90 module;
+    class src_npm_registry_todaykey_b49d9eb0 function;
     class ref_argon2_eb09cf11 function;
     class src_package_json_24610089 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -641,22 +640,46 @@ flowchart LR
 </tr>
 <tr>
   <td>5</td>
+  <td><code>projectDatabaseName()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>projectDatabaseName() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>sqlLiteral()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>sqlLiteral() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>projectDatabaseName()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>sqlLiteral()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>ensureLocalPostgresDatabase() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>8</td>
   <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
-  <td><code>formatCommandFailure()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>outputFrom()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>formatCommandFailure()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>outputFrom()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td>runCommand() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>6</td>
+  <td>9</td>
   <td><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
-  <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td>runSetupCommands() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>7</td>
+  <td>10</td>
   <td><code>ensureBunTmpDir()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -664,7 +687,7 @@ flowchart LR
   <td>ensureBunTmpDir() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>8</td>
+  <td>11</td>
   <td><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
   <td><code>ensureBunTmpDir()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
@@ -672,7 +695,7 @@ flowchart LR
   <td>runCli() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>9</td>
+  <td>12</td>
   <td><code>index.ts</code><br><small style="color:var(--muted)">src/index.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td><code>cli.ts</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
@@ -680,7 +703,7 @@ flowchart LR
   <td>Module file in src/index.ts.</td>
 </tr>
 <tr>
-  <td>10</td>
+  <td>13</td>
   <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
@@ -688,7 +711,7 @@ flowchart LR
   <td>Module file in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>14</td>
   <td><code>__filename</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -696,7 +719,7 @@ flowchart LR
   <td>__filename node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>15</td>
   <td><code>__dirname</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -704,7 +727,7 @@ flowchart LR
   <td>__dirname node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>16</td>
   <td><code>CACHE_DIR</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -712,7 +735,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>17</td>
   <td><code>CACHE_FILE</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -720,7 +743,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>18</td>
   <td><code>CacheData</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -728,7 +751,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>19</td>
   <td><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -736,7 +759,7 @@ flowchart LR
   <td>todayKey() node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>20</td>
   <td><code>readCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -744,7 +767,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>21</td>
   <td><code>writeCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
@@ -752,7 +775,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>22</td>
   <td><code>fetchLatestVersion()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -760,7 +783,7 @@ flowchart LR
   <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>23</td>
   <td><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>fetchLatestVersion()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>readCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br>+1 more</td>
@@ -768,7 +791,7 @@ flowchart LR
   <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>24</td>
   <td><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
@@ -776,7 +799,7 @@ flowchart LR
   <td>Module file in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>25</td>
   <td><code>CORE_DEPS</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -784,7 +807,7 @@ flowchart LR
   <td>CORE_DEPS node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>26</td>
   <td><code>CORE_DEV_DEPS</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -792,7 +815,7 @@ flowchart LR
   <td>CORE_DEV_DEPS node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>27</td>
   <td><code>NodeFramework</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -800,7 +823,7 @@ flowchart LR
   <td>NodeFramework node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>28</td>
   <td><code>OPTIONAL_PACKAGES</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -808,7 +831,7 @@ flowchart LR
   <td>OPTIONAL_PACKAGES node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>29</td>
   <td><code>getCoreDevDependencies()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -816,36 +839,12 @@ flowchart LR
   <td>getCoreDevDependencies() node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>30</td>
   <td><code>collectAllPackageNames()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>getCoreDevDependencies()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><code>resolveVersionMap()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td>collectAllPackageNames() node in src/package-json.ts.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>resolveVersionMap()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>collectAllPackageNames()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>resolveVersionMap() node in src/package-json.ts.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>package-versions.ts</code><br><small style="color:var(--muted)">src/package-versions.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>Module file in src/package-versions.ts.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>packageVersions</code><br><small style="color:var(--muted)">src/package-versions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>packageVersions node in src/package-versions.ts.</td>
 </tr>
 </table>
 
@@ -854,39 +853,37 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>package.json</code></td><td>48 nodes</td></tr>
+      <tr><td><code>package.json</code></td><td>51 nodes</td></tr>
 <tr><td><code>tsconfig.json</code></td><td>26 nodes</td></tr>
 <tr><td><code>templates/elysia/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>templates/express/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>templates/hono/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>scripts/build-bin.ts</code></td><td>12 nodes</td></tr>
+<tr><td><code>src/cli.ts</code></td><td>11 nodes</td></tr>
 <tr><td><code>src/npm-registry.ts</code></td><td>11 nodes</td></tr>
-<tr><td><code>src/types.ts</code></td><td>9 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x147, extends x34, imports x26, calls x21. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x153, extends x34, imports x26, calls x25. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 4. Outputs & Docs ====== -->
 <h2 id="outputs-docs">4. Outputs &amp; Docs</h2>
-<p>Outputs &amp; Docs groups implementation around docs, readmemd, contributingmd, template, mostly in README.md, docs/contributing.md, docs/template-engine.md. This section covers 32 nodes and 36 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Outputs &amp; Docs groups implementation around docs, readmemd, runtime, smoke, mostly in README.md, docs/runtime-smoke-report-2026-07-15.md, docs/contributing.md. This section covers 43 nodes and 47 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Outputs &amp; Docs (32 nodes, 36 edges)
+    %% Section: Outputs &amp; Docs (43 nodes, 47 edges)
     subgraph outputs_docs_README_md_22466bb2["README.md"]
         readme_f78a71af("README.md")
         readme_qwykz_5a577cdd("⚡ qwykz ⚡<br/><small>README.md</small>")
-        readme_installation_230d4506("Installation<br/><small>README.md</small>")
         readme_usage_dda4020c("Usage<br/><small>README.md</small>")
-        readme_contributing_dc008134("Contributing<br/><small>README.md</small>")
-        readme_documentation_6e940365("Documentation<br/><small>README.md</small>")
-        readme_features_e6f786b1("Features<br/><small>README.md</small>")
+        readme_installation_230d4506("Installation<br/><small>README.md</small>")
+        readme_capability_matrix_c76ea02c("Capability matrix<br/><small>README.md</small>")
     end
     subgraph outputs_docs_docs_contributing_md_100f7d44["docs/contributing.md"]
         docs_contributing_contributing_guide_83c7b50e("Contributing Guide<br/><small>docs/contributing.md</small>")
@@ -899,6 +896,10 @@ flowchart LR
     subgraph outputs_docs_docs_home_md_205efa7a["docs/home.md"]
         docs_home_d1721692("home.md")
         docs_home_qwykz_wiki_ca9205f6("qwykz Wiki<br/><small>docs/home.md</small>")
+    end
+    subgraph outputs_docs_docs_runtime_smoke_report_2026_07_1_ebe8bb75["docs/runtime-smoke-report-2026-07-15.md"]
+        docs_runtime_smoke_report_2026_07_15_runtime_smo_ae8b8339("Runtime Smoke Test Report - 2026-07-15<br/><small>docs/runtime-smoke-report-2026-07-15.md</small>")
+        docs_runtime_smoke_report_2026_07_15_f5fb6b25("runtime-smoke-report-2026-07-15.md")
     end
     subgraph outputs_docs_docs_template_engine_md_a7806ad0["docs/template-engine.md"]
         docs_template_engine_6449bbd0("template-engine.md")
@@ -919,30 +920,30 @@ flowchart LR
     docs_dependency_resolution_cb2ad25b -->|references| docs_home_d1721692
     docs_fullstack_managed_auth_plan_c1df5912 -->|references| docs_roadmap_86a395b0
     docs_home_d1721692 -->|references| docs_template_engine_6449bbd0
+    docs_roadmap_86a395b0 -->|references| docs_runtime_smoke_report_2026_07_15_f5fb6b25
     readme_f78a71af -->|contains| readme_qwykz_5a577cdd
-    readme_qwykz_5a577cdd -->|contains| readme_contributing_dc008134
-    readme_qwykz_5a577cdd -->|contains| readme_documentation_6e940365
-    readme_qwykz_5a577cdd -->|contains| readme_features_e6f786b1
     readme_qwykz_5a577cdd -->|contains| readme_installation_230d4506
     readme_qwykz_5a577cdd -->|contains| readme_usage_dda4020c
+    readme_usage_dda4020c -->|contains| readme_capability_matrix_c76ea02c
     docs_contributing_b1aa771e -->|contains| docs_contributing_contributing_guide_83c7b50e
     docs_dependency_resolution_cb2ad25b -->|contains| docs_dependency_resolution_dependency_resolution_0084a6c0
     docs_home_d1721692 -->|contains| docs_home_qwykz_wiki_ca9205f6
+    docs_runtime_smoke_report_2026_07_15_f5fb6b25 -->|contains| docs_runtime_smoke_report_2026_07_15_runtime_smo_ae8b8339
     docs_template_engine_6449bbd0 -->|contains| docs_template_engine_the_template_engine_41d7d200
-    %% Omitted for readability: 14 nodes, 0 edges
+    %% Omitted for readability: 25 nodes, 0 edges
     class readme_f78a71af concept;
     class readme_qwykz_5a577cdd concept;
-    class readme_installation_230d4506 concept;
     class readme_usage_dda4020c concept;
-    class readme_contributing_dc008134 concept;
-    class readme_documentation_6e940365 concept;
-    class readme_features_e6f786b1 concept;
+    class readme_installation_230d4506 concept;
+    class readme_capability_matrix_c76ea02c concept;
     class docs_contributing_contributing_guide_83c7b50e concept;
     class docs_contributing_b1aa771e concept;
     class docs_dependency_resolution_cb2ad25b concept;
     class docs_dependency_resolution_dependency_resolution_0084a6c0 concept;
     class docs_home_d1721692 concept;
     class docs_home_qwykz_wiki_ca9205f6 concept;
+    class docs_runtime_smoke_report_2026_07_15_runtime_smo_ae8b8339 concept;
+    class docs_runtime_smoke_report_2026_07_15_f5fb6b25 concept;
     class docs_template_engine_6449bbd0 concept;
     class docs_template_engine_the_template_engine_41d7d200 concept;
     class docs_architecture_60c309cf concept;
@@ -1043,6 +1044,30 @@ flowchart LR
 </tr>
 <tr>
   <td>10</td>
+  <td><code>Capability matrix</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Capability matrix.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>Managed credential smoke tests</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Managed credential smoke tests.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>Docker resource and data lifecycle</code><br><small style="color:var(--muted)">README.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Docker resource and data lifecycle.</td>
+</tr>
+<tr>
+  <td>13</td>
   <td><code>Documentation</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1050,7 +1075,7 @@ flowchart LR
   <td>Documentation node describing Documentation.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>14</td>
   <td><code>Roadmap</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1058,7 +1083,7 @@ flowchart LR
   <td>Documentation node describing Roadmap.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>15</td>
   <td><code>Contributing</code><br><small style="color:var(--muted)">README.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1066,7 +1091,7 @@ flowchart LR
   <td>Documentation node describing Contributing.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>16</td>
   <td><code>architecture.md</code><br><small style="color:var(--muted)">docs/architecture.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1074,7 +1099,7 @@ flowchart LR
   <td>Documentation node describing architecture.md.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>17</td>
   <td><code>Architecture Overview</code><br><small style="color:var(--muted)">docs/architecture.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1082,7 +1107,7 @@ flowchart LR
   <td>Documentation node describing Architecture Overview.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>18</td>
   <td><code>contributing.md</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1090,7 +1115,7 @@ flowchart LR
   <td>Documentation node describing contributing.md.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>19</td>
   <td><code>Contributing Guide</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1098,7 +1123,7 @@ flowchart LR
   <td>Documentation node describing Contributing Guide.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>20</td>
   <td><code>Getting Started</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1106,7 +1131,7 @@ flowchart LR
   <td>Documentation node describing Getting Started.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>21</td>
   <td><code>Testing Your Changes</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1114,7 +1139,7 @@ flowchart LR
   <td>Documentation node describing Testing Your Changes.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>22</td>
   <td><code>Adding a New Template Feature</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1122,7 +1147,7 @@ flowchart LR
   <td>Documentation node describing Adding a New Template Feature.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>23</td>
   <td><code>Submitting a PR</code><br><small style="color:var(--muted)">docs/contributing.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1130,7 +1155,7 @@ flowchart LR
   <td>Documentation node describing Submitting a PR.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>24</td>
   <td><code>dependency-resolution.md</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1138,7 +1163,7 @@ flowchart LR
   <td>Documentation node describing dependency-resolution.md.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>25</td>
   <td><code>Dependency Resolution</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1146,7 +1171,7 @@ flowchart LR
   <td>Documentation node describing Dependency Resolution.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>26</td>
   <td><code>The 3-Tier Fallback Strategy</code><br><small style="color:var(--muted)">docs/dependency-resolution.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1154,7 +1179,7 @@ flowchart LR
   <td>Documentation node describing The 3-Tier Fallback Strategy.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>27</td>
   <td><code>fullstack-managed-auth-plan.md</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1162,7 +1187,7 @@ flowchart LR
   <td>Documentation node describing fullstack-managed-auth-plan.md.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>28</td>
   <td><code>home.md</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1170,7 +1195,7 @@ flowchart LR
   <td>Documentation node describing home.md.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>29</td>
   <td><code>qwykz Wiki</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1178,36 +1203,12 @@ flowchart LR
   <td>Documentation node describing qwykz Wiki.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>30</td>
   <td><code>Table of Contents</code><br><small style="color:var(--muted)">docs/home.md</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
   <td>Documentation node describing Table of Contents.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>roadmap.md</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing roadmap.md.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>template-engine.md</code><br><small style="color:var(--muted)">docs/template-engine.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing template-engine.md.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>The Template Engine</code><br><small style="color:var(--muted)">docs/template-engine.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing The Template Engine.</td>
 </tr>
 </table>
 
@@ -1216,19 +1217,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>README.md</code></td><td>12 nodes</td></tr>
+      <tr><td><code>README.md</code></td><td>15 nodes</td></tr>
+<tr><td><code>docs/runtime-smoke-report-2026-07-15.md</code></td><td>8 nodes</td></tr>
 <tr><td><code>docs/contributing.md</code></td><td>6 nodes</td></tr>
 <tr><td><code>docs/template-engine.md</code></td><td>4 nodes</td></tr>
 <tr><td><code>docs/dependency-resolution.md</code></td><td>3 nodes</td></tr>
 <tr><td><code>docs/home.md</code></td><td>3 nodes</td></tr>
 <tr><td><code>docs/architecture.md</code></td><td>2 nodes</td></tr>
 <tr><td><code>docs/fullstack-managed-auth-plan.md</code></td><td>1 nodes</td></tr>
-<tr><td><code>docs/roadmap.md</code></td><td>1 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x24, references x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x34, references x13. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1811,12 +1812,12 @@ flowchart LR
 
 <!-- ====== 8. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">8. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around tests, generatorts, test, scripts, mostly in src/generator.ts, src/template-engine.ts, tests/full-matrix.test.ts. This section covers 80 nodes and 171 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around tests, runtime, smoketestts, generatorts, mostly in tests/runtime-smoke.test.ts, src/generator.ts, tests/managed-credentials.test.ts. This section covers 141 nodes and 268 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (80 nodes, 171 edges)
+    %% Section: Tests &amp; Fixtures (141 nodes, 268 edges)
     subgraph tests_fixtures_src_generator_ts_554b2d86["src/generator.ts"]
         src_generator_generatedbpassword_409f08e0("generateDbPassword()<br/><small>src/generator.ts</small>")
         src_generator_resolvedockercompose_75848839("resolveDockerCompose()<br/><small>src/generator.ts</small>")
@@ -1863,7 +1864,7 @@ flowchart LR
     src_generator_writejson_f3181f46 -->|calls| src_generator_generateexpressproject_dc4f5904
     src_generator_writejson_f3181f46 -->|calls| src_generator_generatehonoproject_5f49f869
     src_generator_writejson_f3181f46 -->|calls| src_generator_generatereactproject_bd002de7
-    %% Omitted for readability: 62 nodes, 26 edges
+    %% Omitted for readability: 123 nodes, 26 edges
     class src_generator_generatedbpassword_409f08e0 function;
     class src_generator_resolvedockercompose_75848839 function;
     class src_generator_resolveenvfile_e8338f4c function;
@@ -1905,243 +1906,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>generator.ts</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
+  <td><code>runtime-smoke.test.ts</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>createPackageJson()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>full-matrix.test.ts</code><br><small style="color:var(--muted)">tests/full-matrix.test.ts</small><br><code>getTemplatesInDirectory()</code><br><small style="color:var(--muted)">src/template-engine.ts</small><br>+3 more</td>
-  <td>Module file in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>copyDirectoryRecursive()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>ROOT</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generatePythonProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateRustProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td>copyDirectoryRecursive() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>ROOT node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CLI_PATH</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+4 more</td>
-  <td>generateJwtSecret() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>CLI_PATH node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>TMP_ROOT</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+5 more</td>
-  <td>generateDbPassword() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>TMP_ROOT node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>PROJECT_FOLDERS</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>BUN_TMPDIR</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>PROJECT_FOLDERS node in src/generator.ts.</td>
+  <td>BUN_TMPDIR node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>writeJson()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BACKENDS</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateHonoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td>writeJson() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>BACKENDS node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>resolveViteVersions()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>FRONTENDS</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>createVitePackageJson()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>resolveViteVersions() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>FRONTENDS node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>writeViteIndexHtml()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>DB_TARGETS</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>writeReactScaffold()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>writeVueScaffold()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>Exports documentation data to a target format.</td>
+  <td>No direct outbound edge</td>
+  <td>DB_TARGETS node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>resolveFrontendApiUrl()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>CACHE_TARGETS</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>full-matrix.test.ts</code><br><small style="color:var(--muted)">tests/full-matrix.test.ts</small><br><code>generateReactProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateVueProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>resolveFrontendApiUrl() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>writeReactScaffold()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>writeViteIndexHtml()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><code>generateReactProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>writeReactScaffold() node in src/generator.ts.</td>
+  <td><code>BackendFramework</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>BackendFramework node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>writeVueScaffold()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>writeViteIndexHtml()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><code>generateVueProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>writeVueScaffold() node in src/generator.ts.</td>
+  <td><code>FrontendFramework</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>FrontendFramework node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>createVitePackageJson()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>resolveViteVersions()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><code>generateReactProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateVueProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>createVitePackageJson() node in src/generator.ts.</td>
+  <td><code>DbTarget</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DbTarget node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>resolveEnvFile()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CacheTarget</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+5 more</td>
-  <td>resolveEnvFile() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>SmokeKind</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+5 more</td>
-  <td>resolveDockerCompose() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>SmokeKind node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>resolvePrismaClient()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-cmd">Entry</span></td>
+  <td><code>SmokeSpec</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateHonoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+1 more</td>
-  <td>resolvePrismaClient() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>SmokeSpec node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>resolveServerSource()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>CurlResult</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateHonoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td>resolveServerSource() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>CurlResult node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>resolveUserController()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>GENERATED_ENV_KEYS</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>resolveUserController() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>GENERATED_ENV_KEYS node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>resolveUserService()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>smokeSpecs</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateHonoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td>resolveUserService() node in src/generator.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>smokeSpecs node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+6 more</td>
-  <td><code>createPackageJson()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateExpressProject() node in src/generator.ts.</td>
+  <td><code>selectedSpecs</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>selectedSpecs node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>generateLaravelProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateLaravelProject() node in src/generator.ts.</td>
+  <td><code>buildSmokeSpecs()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>createSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td>buildSmokeSpecs() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>generateNextJsProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateNextJsProject() node in src/generator.ts.</td>
+  <td><code>createSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>buildSmokeSpecs()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><code>runtimeFor()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td>createSpec() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>stripBackendStatus()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>generateReactProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateVueProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td>stripBackendStatus() node in src/generator.ts.</td>
+  <td><code>runtimeFor()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>createSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td>No direct outbound edge</td>
+  <td>runtimeFor() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>generateReactProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>createVitePackageJson()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveFrontendApiUrl()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>stripBackendStatus()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateReactProject() node in src/generator.ts.</td>
+  <td><code>findSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>findSpec() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>generateVueProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>createVitePackageJson()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveFrontendApiUrl()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>stripBackendStatus()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateVueProject() node in src/generator.ts.</td>
+  <td><code>specProjectName()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>assertAuthFlow()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>generateProject()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>specDatabaseName()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br>+1 more</td>
+  <td>specProjectName() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>generatePythonProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>copyDirectoryRecursive()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generatePythonProject() node in src/generator.ts.</td>
+  <td><code>specRootDir()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>specProjectName()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><code>generateProject()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>runSetup()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>specWorkingDir()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br>+1 more</td>
+  <td>specRootDir() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>copyDirectoryRecursive()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateGoProject() node in src/generator.ts.</td>
+  <td><code>specWorkingDir()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>specRootDir()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><code>cleanupSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>runSetup()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br>+1 more</td>
+  <td>specWorkingDir() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>generateRustProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>copyDirectoryRecursive()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+2 more</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateRustProject() node in src/generator.ts.</td>
+  <td><code>specDatabaseName()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>specProjectName()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><code>cleanupSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td>specDatabaseName() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>generateHonoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+5 more</td>
-  <td><code>createPackageJson()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateHonoProject() node in src/generator.ts.</td>
+  <td><code>shouldSkip()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>shouldSkip() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateDbPassword()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateJwtSecret()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>resolveDockerCompose()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+5 more</td>
-  <td><code>createPackageJson()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>readTemplate()</code><br><small style="color:var(--muted)">src/template-engine.ts</small></td>
-  <td>generateElysiaProject() node in src/generator.ts.</td>
+  <td><code>needsCompose()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cleanupSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>runSetup()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td>needsCompose() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>generateProject()</code><br><small style="color:var(--muted)">src/generator.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>generateElysiaProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateExpressProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br><code>generateGoProject()</code><br><small style="color:var(--muted)">src/generator.ts</small><br>+7 more</td>
-  <td>No direct outbound edge</td>
-  <td>generateProject() node in src/generator.ts.</td>
+  <td><code>runCommand()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>childEnv()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>cleanupSpec()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br><code>commandTimeoutSeconds()</code><br><small style="color:var(--muted)">tests/runtime-smoke.test.ts</small><br>+2 more</td>
+  <td>runCommand() node in tests/runtime-smoke.test.ts.</td>
 </tr>
 </table>
 
@@ -2150,19 +2151,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/generator.ts</code></td><td>30 nodes</td></tr>
+      <tr><td><code>tests/runtime-smoke.test.ts</code></td><td>44 nodes</td></tr>
+<tr><td><code>src/generator.ts</code></td><td>30 nodes</td></tr>
+<tr><td><code>tests/managed-credentials.test.ts</code></td><td>13 nodes</td></tr>
 <tr><td><code>src/template-engine.ts</code></td><td>10 nodes</td></tr>
 <tr><td><code>tests/full-matrix.test.ts</code></td><td>8 nodes</td></tr>
-<tr><td><code>tests/scripts/test-matrix.sh</code></td><td>5 nodes</td></tr>
-<tr><td><code>tests/scripts/test-qwykz.sh</code></td><td>5 nodes</td></tr>
+<tr><td><code>tests/scripts/test-matrix.sh</code></td><td>7 nodes</td></tr>
+<tr><td><code>tests/scripts/test-qwykz.sh</code></td><td>7 nodes</td></tr>
 <tr><td><code>tests/cli.test.ts</code></td><td>4 nodes</td></tr>
-<tr><td><code>tests/e2e.test.ts</code></td><td>4 nodes</td></tr>
-<tr><td><code>tests/e2e.old.test.ts</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: calls x98, contains x58, imports x6, defines x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x136, contains x113, defines x10, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2523,8 +2524,240 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. error.middleware.ts ====== -->
-<h2 id="error-middleware-ts">10. error.middleware.ts</h2>
+<!-- ====== 10. Roadmap ====== -->
+<h2 id="roadmap">10. Roadmap</h2>
+<p>Roadmap groups implementation around docs, roadmapmd, priority, mode, mostly in docs/roadmap.md. This section covers 17 nodes and 16 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Roadmap (17 nodes, 16 edges)
+    docs_roadmap_roadmap_4c9fb305("Roadmap<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b("Priority 1: Trust And Predictability<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_4_reliability_automation_70909c8c("Priority 4: Reliability Automation<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42("Priority 5: AI-Assisted Developer Exper...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_2_managed_fullstack_authen_b6855538("Priority 2: Managed Fullstack Authentic...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_priority_3_extensibility_1403c5db("Priority 3: Extensibility<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_1_dry_run_and_diff_mode_7edd17b2("1. Dry-run and diff mode<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_2_scaffold_manifest_a0a95f89("2. Scaffold manifest<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_3_strict_package_policy_mode_ce12b20c("3. Strict package policy mode<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6("4. Production-ready Supabase Auth and C...<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_5_plugin_system_45b0ebec("5. Plugin system<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_6_template_validation_ci_21f253d1("6. Template validation CI<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_7_generated_app_smoke_tests_45da8a3a("7. Generated app smoke tests<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_8_ai_context_pack_ac76d97c("8. AI context pack<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_9_public_capability_matrix_458e1255("9. Public capability matrix<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_notes_for_contributors_a016db4e("Notes For Contributors<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_recommended_implementation_order_243ddbca("Recommended Implementation Order<br/><small>docs/roadmap.md</small>")
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_notes_for_contributors_a016db4e
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_1_trust_and_predictability_9f074a1b
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_2_managed_fullstack_authen_b6855538
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_3_extensibility_1403c5db
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_4_reliability_automation_70909c8c
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42
+    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_recommended_implementation_order_243ddbca
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_1_dry_run_and_diff_mode_7edd17b2
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_2_scaffold_manifest_a0a95f89
+    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_3_strict_package_policy_mode_ce12b20c
+    docs_roadmap_priority_2_managed_fullstack_authen_b6855538 -->|contains| docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6
+    docs_roadmap_priority_3_extensibility_1403c5db -->|contains| docs_roadmap_5_plugin_system_45b0ebec
+    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_6_template_validation_ci_21f253d1
+    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_7_generated_app_smoke_tests_45da8a3a
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 -->|contains| docs_roadmap_8_ai_context_pack_ac76d97c
+    docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 -->|contains| docs_roadmap_9_public_capability_matrix_458e1255
+    class docs_roadmap_roadmap_4c9fb305 concept;
+    class docs_roadmap_priority_1_trust_and_predictability_9f074a1b concept;
+    class docs_roadmap_priority_4_reliability_automation_70909c8c concept;
+    class docs_roadmap_priority_5_ai_assisted_developer_ex_7c2f3f42 concept;
+    class docs_roadmap_priority_2_managed_fullstack_authen_b6855538 concept;
+    class docs_roadmap_priority_3_extensibility_1403c5db concept;
+    class docs_roadmap_1_dry_run_and_diff_mode_7edd17b2 concept;
+    class docs_roadmap_2_scaffold_manifest_a0a95f89 concept;
+    class docs_roadmap_3_strict_package_policy_mode_ce12b20c concept;
+    class docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6 concept;
+    class docs_roadmap_5_plugin_system_45b0ebec concept;
+    class docs_roadmap_6_template_validation_ci_21f253d1 concept;
+    class docs_roadmap_7_generated_app_smoke_tests_45da8a3a concept;
+    class docs_roadmap_8_ai_context_pack_ac76d97c concept;
+    class docs_roadmap_9_public_capability_matrix_458e1255 concept;
+    class docs_roadmap_notes_for_contributors_a016db4e concept;
+    class docs_roadmap_recommended_implementation_order_243ddbca concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Roadmap</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Roadmap.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Priority 1: Trust And Predictability</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 1: Trust And Predictability.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>1. Dry-run and diff mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 1. Dry-run and diff mode.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>2. Scaffold manifest</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 2. Scaffold manifest.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>3. Strict package policy mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 3. Strict package policy mode.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Priority 2: Managed Fullstack Authentication</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 2: Managed Fullstack Authentication.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>4. Production-ready Supabase Auth and Clerk</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 4. Production-ready Supabase Auth and Clerk.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Priority 3: Extensibility</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 3: Extensibility.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>5. Plugin system</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 5. Plugin system.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Priority 4: Reliability Automation</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 4: Reliability Automation.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>6. Template validation CI</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 6. Template validation CI.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>7. Generated app smoke tests</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 7. Generated app smoke tests.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>Priority 5: AI-Assisted Developer Experience</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Priority 5: AI-Assisted Developer Experience.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>8. AI context pack</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 8. AI context pack.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>9. Public capability matrix</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing 9. Public capability matrix.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Recommended Implementation Order</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Recommended Implementation Order.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Notes For Contributors</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Notes For Contributors.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>docs/roadmap.md</code></td><td>17 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. error.middleware.ts ====== -->
+<h2 id="error-middleware-ts">11. error.middleware.ts</h2>
 <p>error.middleware.ts groups implementation around templates, elysia, errormiddlewarets, authmiddlewaresupabasets, mostly in templates/elysia/error.middleware.ts, templates/elysia/auth.middleware.supabase.ts, templates/elysia/auth.middleware.clerk.ts. This section covers 15 nodes and 17 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2737,8 +2970,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 11. error.middleware.ts ====== -->
-<h2 id="error-middleware-ts-e6a200">11. error.middleware.ts</h2>
+<!-- ====== 12. error.middleware.ts ====== -->
+<h2 id="error-middleware-ts-e6a200">12. error.middleware.ts</h2>
 <p>error.middleware.ts groups implementation around templates, hono, errormiddlewarets, authmiddlewaresupabasets, mostly in templates/hono/error.middleware.ts, templates/hono/auth.middleware.supabase.ts, templates/hono/auth.middleware.clerk.ts. This section covers 15 nodes and 17 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2951,8 +3184,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Contributor Covenant Code of Conduct ====== -->
-<h2 id="contributor-covenant-code-of-conduct">12. Contributor Covenant Code of Conduct</h2>
+<!-- ====== 13. Contributor Covenant Code of Conduct ====== -->
+<h2 id="contributor-covenant-code-of-conduct">13. Contributor Covenant Code of Conduct</h2>
 <p>Contributor Covenant Code of Conduct groups implementation around code, conductmd, enforcement, our, mostly in CODE_OF_CONDUCT.md. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -3130,194 +3363,6 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>CODE_OF_CONDUCT.md</code></td><td>13 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 13. Roadmap ====== -->
-<h2 id="roadmap">13. Roadmap</h2>
-<p>Roadmap groups implementation around docs, roadmapmd, priority, mode, mostly in docs/roadmap.md. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Roadmap (13 nodes, 12 edges)
-    docs_roadmap_roadmap_4c9fb305("Roadmap<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b("Priority 1: Trust And Predictability<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_2_managed_fullstack_authen_b6855538("Priority 2: Managed Fullstack Authentic...<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_3_extensibility_1403c5db("Priority 3: Extensibility<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_priority_4_reliability_automation_70909c8c("Priority 4: Reliability Automation<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_notes_for_contributors_a016db4e("Notes For Contributors<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_1_dry_run_and_diff_mode_7edd17b2("1. Dry-run and diff mode<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_2_scaffold_manifest_a0a95f89("2. Scaffold manifest<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_3_strict_package_policy_mode_ce12b20c("3. Strict package policy mode<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6("4. Production-ready Supabase Auth and C...<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_5_plugin_system_45b0ebec("5. Plugin system<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_6_template_validation_ci_21f253d1("6. Template validation CI<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_recommended_implementation_order_243ddbca("Recommended Implementation Order<br/><small>docs/roadmap.md</small>")
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_notes_for_contributors_a016db4e
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_1_trust_and_predictability_9f074a1b
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_2_managed_fullstack_authen_b6855538
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_3_extensibility_1403c5db
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_priority_4_reliability_automation_70909c8c
-    docs_roadmap_roadmap_4c9fb305 -->|contains| docs_roadmap_recommended_implementation_order_243ddbca
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_1_dry_run_and_diff_mode_7edd17b2
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_2_scaffold_manifest_a0a95f89
-    docs_roadmap_priority_1_trust_and_predictability_9f074a1b -->|contains| docs_roadmap_3_strict_package_policy_mode_ce12b20c
-    docs_roadmap_priority_2_managed_fullstack_authen_b6855538 -->|contains| docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6
-    docs_roadmap_priority_3_extensibility_1403c5db -->|contains| docs_roadmap_5_plugin_system_45b0ebec
-    docs_roadmap_priority_4_reliability_automation_70909c8c -->|contains| docs_roadmap_6_template_validation_ci_21f253d1
-    class docs_roadmap_roadmap_4c9fb305 concept;
-    class docs_roadmap_priority_1_trust_and_predictability_9f074a1b concept;
-    class docs_roadmap_priority_2_managed_fullstack_authen_b6855538 concept;
-    class docs_roadmap_priority_3_extensibility_1403c5db concept;
-    class docs_roadmap_priority_4_reliability_automation_70909c8c concept;
-    class docs_roadmap_notes_for_contributors_a016db4e concept;
-    class docs_roadmap_1_dry_run_and_diff_mode_7edd17b2 concept;
-    class docs_roadmap_2_scaffold_manifest_a0a95f89 concept;
-    class docs_roadmap_3_strict_package_policy_mode_ce12b20c concept;
-    class docs_roadmap_4_production_ready_supabase_auth_an_e2dfe1d6 concept;
-    class docs_roadmap_5_plugin_system_45b0ebec concept;
-    class docs_roadmap_6_template_validation_ci_21f253d1 concept;
-    class docs_roadmap_recommended_implementation_order_243ddbca concept;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>Roadmap</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Roadmap.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>Priority 1: Trust And Predictability</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 1: Trust And Predictability.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>1. Dry-run and diff mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 1. Dry-run and diff mode.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>2. Scaffold manifest</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 2. Scaffold manifest.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>3. Strict package policy mode</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 3. Strict package policy mode.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Priority 2: Managed Fullstack Authentication</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 2: Managed Fullstack Authentication.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>4. Production-ready Supabase Auth and Clerk</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 4. Production-ready Supabase Auth and Clerk.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Priority 3: Extensibility</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 3: Extensibility.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>5. Plugin system</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 5. Plugin system.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>Priority 4: Reliability Automation</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Priority 4: Reliability Automation.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>6. Template validation CI</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing 6. Template validation CI.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>Recommended Implementation Order</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Recommended Implementation Order.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>Notes For Contributors</code><br><small style="color:var(--muted)">docs/roadmap.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Notes For Contributors.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>docs/roadmap.md</code></td><td>13 nodes</td></tr>
     </table>
   </div>
   <div class="card">
@@ -3861,17 +3906,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>719</td></tr>
-      <tr><td>Edges</td><td>917</td></tr>
+      <tr><td>Nodes</td><td>801</td></tr>
+      <tr><td>Edges</td><td>1039</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>86</td></tr>
+      <tr><td>Communities</td><td>88</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>894</td></tr>
+      <tr><td>EXTRACTED</td><td>1016</td></tr>
       <tr><td>INFERRED</td><td>23</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -3880,7 +3925,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>qwykz — Architecture Documentation</p>
-  <p>Generated: 2026-07-12 18:50 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-07-15 13:07 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

@@ -105,6 +105,39 @@ describe("qwykz CLI integration", () => {
     const dockerContent = await Bun.file(join(projectDir, "docker-compose.yml")).text();
     expect(dockerContent).toContain(projectName);
     expect(dockerContent).not.toContain("{{");
+    expect(dockerContent).toContain("mem_limit: 512m");
+    expect(dockerContent).toContain("max_connections=50");
+    expect(dockerContent).toContain('max-size: "10m"');
+    expect(dockerContent).toContain('io.qwykz.managed: "true"');
+  });
+
+  test("generates a bounded ephemeral Docker Redis cache", async () => {
+    const projectName = "docker-cache-app";
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun", "run", CLI_PATH,
+        "--yes", "--name", projectName,
+        "--db", "local", "--caching", "docker",
+      ],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    const exitCode = await proc.exited;
+    expect(exitCode).toBe(0);
+
+    const dockerContent = await Bun.file(
+      join(testDir, projectName, "docker-compose.yml"),
+    ).text();
+    expect(dockerContent).toContain("mem_limit: 128m");
+    expect(dockerContent).toContain("- 96mb");
+    expect(dockerContent).toContain("- allkeys-lru");
+    expect(dockerContent).toContain('- "no"');
+    expect(dockerContent).not.toContain("redis_data:/data");
+    expect(dockerContent).not.toContain("volumes:\n");
   });
 
   test("includes zod in controller when --zod is specified", async () => {
@@ -178,6 +211,29 @@ describe("qwykz CLI integration", () => {
 
     // Supabase should NOT have docker-compose
     expect(existsSync(join(projectDir, "docker-compose.yml"))).toBe(false);
+  });
+
+  test("generates Next.js app without external create-next-app bootstrap", async () => {
+    const projectName = "next-local";
+
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    const exitCode = await proc.exited;
+    expect(exitCode).toBe(0);
+
+    const projectDir = join(testDir, projectName);
+    expect(existsSync(join(projectDir, "package.json"))).toBe(true);
+    expect(existsSync(join(projectDir, "app", "layout.tsx"))).toBe(true);
+    expect(existsSync(join(projectDir, "app", "api", "auth", "register", "route.ts"))).toBe(true);
+    const pkgJson = JSON.parse(await Bun.file(join(projectDir, "package.json")).text());
+    expect(pkgJson.dependencies.next).toBeDefined();
+    expect(pkgJson.scripts.dev).toBe("next dev");
   });
 
   test("generates auth module files with correct content", async () => {
@@ -295,10 +351,13 @@ describe("qwykz CLI integration", () => {
     expect(await proc.exited).toBe(0);
 
     const rootPackage = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
-    expect(rootPackage.scripts.dev).toContain("venv/bin/fastapi dev app/main.py");
+    expect(rootPackage.scripts.dev).toContain("venv/bin/uvicorn app.main:app --reload");
     expect(rootPackage.devDependencies.concurrently).toBeDefined();
     expect(rootPackage.scripts["db:generate"]).toBeUndefined();
     expect(rootPackage.scripts["db:push"]).toBeUndefined();
     expect(rootPackage.scripts["db:studio"]).toBeUndefined();
+
+    const backendEnv = await Bun.file(join(testDir, projectName, "backend", ".env")).text();
+    expect(backendEnv).toContain("python-monorepo-backend");
   });
 });
