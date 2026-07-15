@@ -650,8 +650,8 @@
     "semantic_hash": ""
   },
   "docs/roadmap.md": {
-    "mtime": 1784120836.4398077,
-    "ast_hash": "be91dcc37c26c94d819d8c0e0e1d1424",
+    "mtime": 1784121819.5995119,
+    "ast_hash": "b23b73066c116692cd8da3de804b5f1b",
     "semantic_hash": ""
   },
   "docs/template-engine.md": {
@@ -775,8 +775,8 @@
     "semantic_hash": ""
   },
   "docs/runtime-smoke-report-2026-07-15.md": {
-    "mtime": 1784120824.313617,
-    "ast_hash": "c180721ca0eab1a0e9c12fd6618389df",
+    "mtime": 1784121819.5995119,
+    "ast_hash": "98d70df000faa829111a493509475aca",
     "semantic_hash": ""
   }
 }
