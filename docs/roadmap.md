@@ -121,17 +121,29 @@ Goal: prove that generated projects do more than contain the expected files.
 
 Scope:
 
+* Maintain an opt-in runtime smoke matrix through `bun run test:runtime`.
+* Cover Backend API projects across Express, Hono, Elysia, Laravel, FastAPI, Go, and Rust.
+* Cover fullstack React/Vue monorepos across every supported backend.
+* Exercise Docker PostgreSQL, local PostgreSQL, no cache, and Docker Redis combinations.
 * Install dependencies for each supported generated stack in CI.
 * Run framework-level validation such as typecheck, build, `go test`, `cargo check`, or Python import checks.
-* Start generated APIs where practical and verify `/api/health`.
+* Start generated APIs where practical and verify `/api/health` with `curl`.
+* Send JSON payloads to `/api/auth/register` and `/api/auth/login` and assert successful HTTP responses.
 * Validate generated Docker Compose files with `docker compose config`.
-* Keep Laravel and Next.js external bootstrap tests opt-in locally, but run them in scheduled or release CI.
+* Keep heavier Laravel and full-matrix runtime runs opt-in locally, but run them in scheduled or release CI.
 
 Why this matters:
 
 * It catches broken setup instructions and missing runtime dependencies.
+* It catches route, payload, migration, local database, Docker, and Redis wiring regressions.
 * It makes qwykz more trustworthy for beginners who may not know how to debug scaffold failures.
 * It turns generated output into a tested product surface, not just copied files.
+
+Current status:
+
+* Added a generated runtime smoke matrix covering 28 Backend API combinations, 56 fullstack combinations, and 4 Next.js combinations.
+* Runtime smoke tests are opt-in and filterable with `QWYKZ_RUN_RUNTIME_SMOKE=1` and `QWYKZ_SMOKE_FILTER`.
+* Representative Docker, local PostgreSQL, Redis, and fullstack cases have been verified locally.
 
 ## Priority 5: AI-Assisted Developer Experience
 
