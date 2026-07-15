@@ -1,16 +1,16 @@
 # Graph Report - qwykz  (2026-07-15)
 
 ## Corpus Check
-- 138 files · ~34,823 words
+- 138 files · ~34,977 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 770 nodes · 1002 edges · 87 communities (54 shown, 33 thin omitted)
+- 773 nodes · 1009 edges · 86 communities (53 shown, 33 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d0bc3107`
+- Built from commit: `09b5123b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -83,7 +83,6 @@
 - run_test
 - run-all-maximized.ts
 - test-rust-endpoints.sh
-- User
 
 ## God Nodes (most connected - your core abstractions)
 1. `compilerOptions` - 20 edges
@@ -112,7 +111,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (87 total, 33 thin omitted)
+## Communities (86 total, 33 thin omitted)
 
 ### Community 0 - "User"
 Cohesion: 0.08
@@ -131,8 +130,8 @@ Cohesion: 0.05
 Nodes (15): express, supabase, AuthRequest, authMiddleware(), AuthRequest, clerkMiddleware, AuthRequest, supabase (+7 more)
 
 ### Community 4 - "AppState"
-Cohesion: 0.10
-Nodes (34): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+26 more)
+Cohesion: 0.08
+Nodes (39): FromRequestParts, Option, Parts, PgPool, Rejection, Role, Self, AuthResponse (+31 more)
 
 ### Community 5 - "generator.ts"
 Cohesion: 0.16
@@ -215,8 +214,8 @@ Cohesion: 0.67
 Nodes (3): health_check(), Json, Value
 
 ### Community 40 - "auth.controller.ts"
-Cohesion: 0.09
-Nodes (38): assertAuthFlow(), BackendFramework, BACKENDS, buildSmokeSpecs(), BUN_TMPDIR, CACHE_TARGETS, CacheTarget, childEnv() (+30 more)
+Cohesion: 0.08
+Nodes (41): assertAuthFlow(), BackendFramework, BACKENDS, buildSmokeSpecs(), BUN_TMPDIR, CACHE_TARGETS, CacheTarget, childEnv() (+33 more)
 
 ### Community 71 - "Fullstack Managed Authentication Plan"
 Cohesion: 0.08
@@ -254,10 +253,6 @@ Nodes (4): inject_credentials(), run_matrix_test(), test-matrix.sh script, test_
 Cohesion: 0.60
 Nodes (3): inject_credentials(), run_test(), test-qwykz.sh script
 
-### Community 86 - "User"
-Cohesion: 0.47
-Nodes (5): Role, String, Uuid, User, Utc
-
 ## Knowledge Gaps
 - **290 isolated node(s):** `name`, `version`, `description`, `type`, `url` (+285 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -269,7 +264,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `keywords` connect `keywords` to `package.json`, `express`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `express` connect `express` to `keywords`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+  _High betweenness centrality (0.027) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `description` to the rest of the system?**
   _291 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
