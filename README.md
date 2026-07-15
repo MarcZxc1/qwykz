@@ -123,6 +123,14 @@ UPSTASH_REDIS_REST_TOKEN="..." \
 bun run test:managed
 ```
 
+Laravel uses Laravel-style split database variables and Predis Redis settings, so helper scripts derive `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD` from `SUPABASE_DB_URL`. For Laravel + Upstash Redis, provide Redis protocol credentials too:
+
+```bash
+UPSTASH_REDIS_HOST="..." \
+UPSTASH_REDIS_PASSWORD="..." \
+UPSTASH_REDIS_PORT="6379"
+```
+
 Missing provider env vars skip only that provider's live check. The default safety checks still verify that generated scaffolds keep managed credentials as placeholders and that helper scripts do not contain committed provider credentials.
 
 ### Docker resource and data lifecycle

@@ -14,8 +14,26 @@ SUPABASE_DB_URL="${SUPABASE_DB_URL:-}"
 SUPABASE_DIRECT_URL="${SUPABASE_DIRECT_URL:-}"
 UPSTASH_URL="${UPSTASH_REDIS_REST_URL:-${UPSTASH_URL:-}}"
 UPSTASH_TOKEN="${UPSTASH_REDIS_REST_TOKEN:-${UPSTASH_TOKEN:-}}"
+UPSTASH_REDIS_HOST="${UPSTASH_REDIS_HOST:-}"
+UPSTASH_REDIS_PASSWORD="${UPSTASH_REDIS_PASSWORD:-}"
+UPSTASH_REDIS_PORT="${UPSTASH_REDIS_PORT:-6379}"
 CLERK_PUB_KEY="${CLERK_PUBLISHABLE_KEY:-${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-${CLERK_PUB_KEY:-}}}"
 CLERK_SECRET_KEY="${CLERK_SECRET_KEY:-}"
+
+pg_url_field() {
+  local field=$1
+  bun -e 'const u = new URL(process.argv[1]); const value = {
+    host: u.hostname,
+    port: u.port || "5432",
+    database: u.pathname.replace(/^\//, "") || "postgres",
+    username: decodeURIComponent(u.username),
+    password: decodeURIComponent(u.password),
+  }[process.argv[2]] || ""; console.log(value);' "$SUPABASE_DB_URL" "$field"
+}
+
+sed_escape() {
+  printf '%s' "$1" | sed 's/[&|\\]/\\&/g'
+}
 
 inject_credentials() {
   local env_file=$1
@@ -32,6 +50,20 @@ inject_credentials() {
     sed -i "s|CLERK_PUBLISHABLE_KEY=.*|CLERK_PUBLISHABLE_KEY=\"$CLERK_PUB_KEY\"|g" "$env_file"
     sed -i "s|CLERK_SECRET_KEY=.*|CLERK_SECRET_KEY=\"$CLERK_SECRET_KEY\"|g" "$env_file"
     sed -i "s|NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=.*|NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=\"$CLERK_PUB_KEY\"|g" "$env_file"
+
+    if grep -q "^DB_CONNECTION=pgsql" "$env_file" && [ -n "$SUPABASE_DB_URL" ]; then
+      sed -i "s|^DB_HOST=.*|DB_HOST=$(sed_escape "$(pg_url_field host)")|g" "$env_file"
+      sed -i "s|^DB_PORT=.*|DB_PORT=$(sed_escape "$(pg_url_field port)")|g" "$env_file"
+      sed -i "s|^DB_DATABASE=.*|DB_DATABASE=$(sed_escape "$(pg_url_field database)")|g" "$env_file"
+      sed -i "s|^DB_USERNAME=.*|DB_USERNAME=$(sed_escape "$(pg_url_field username)")|g" "$env_file"
+      sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(sed_escape "$(pg_url_field password)")|g" "$env_file"
+    fi
+
+    if grep -q "^REDIS_CLIENT=predis" "$env_file" && [ -n "$UPSTASH_REDIS_HOST" ]; then
+      sed -i "s|^REDIS_HOST=.*|REDIS_HOST=$(sed_escape "$UPSTASH_REDIS_HOST")|g" "$env_file"
+      sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=$(sed_escape "$UPSTASH_REDIS_PASSWORD")|g" "$env_file"
+      sed -i "s|^REDIS_PORT=.*|REDIS_PORT=$(sed_escape "$UPSTASH_REDIS_PORT")|g" "$env_file"
+    fi
   fi
 }
 

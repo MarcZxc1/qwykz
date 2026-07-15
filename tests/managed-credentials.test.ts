@@ -21,6 +21,9 @@ const MANAGED_ENV_KEYS = [
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "UPSTASH_REDIS_REST_URL",
   "UPSTASH_REDIS_REST_TOKEN",
+  "UPSTASH_REDIS_HOST",
+  "UPSTASH_REDIS_PASSWORD",
+  "UPSTASH_REDIS_PORT",
 ] as const;
 
 mkdirSync(BUN_TMPDIR, { recursive: true });
@@ -91,6 +94,29 @@ describe("managed provider credential safety", () => {
       for (const pattern of forbiddenPatterns) {
         expect(content, `${scriptPath} contains a hardcoded provider credential`).not.toMatch(pattern);
       }
+    }
+  });
+
+  test("legacy helper scripts handle Laravel split database and Predis env keys", () => {
+    const scriptPaths = [
+      "tests/scripts/test-matrix.sh",
+      "tests/scripts/test-qwykz.sh",
+    ];
+
+    for (const scriptPath of scriptPaths) {
+      const content = readFileSync(join(ROOT, scriptPath), "utf-8");
+      expect(content).toContain("pg_url_field");
+      expect(content).toContain("sed_escape");
+      expect(content).toContain("DB_CONNECTION=pgsql");
+      expect(content).toContain('DB_HOST=$(sed_escape "$(pg_url_field host)")');
+      expect(content).toContain('DB_PORT=$(sed_escape "$(pg_url_field port)")');
+      expect(content).toContain('DB_DATABASE=$(sed_escape "$(pg_url_field database)")');
+      expect(content).toContain('DB_USERNAME=$(sed_escape "$(pg_url_field username)")');
+      expect(content).toContain('DB_PASSWORD=$(sed_escape "$(pg_url_field password)")');
+      expect(content).toContain("REDIS_CLIENT=predis");
+      expect(content).toContain("UPSTASH_REDIS_HOST");
+      expect(content).toContain("UPSTASH_REDIS_PASSWORD");
+      expect(content).toContain("UPSTASH_REDIS_PORT");
     }
   });
 });
