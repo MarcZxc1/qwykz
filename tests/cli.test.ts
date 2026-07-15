@@ -213,6 +213,29 @@ describe("qwykz CLI integration", () => {
     expect(existsSync(join(projectDir, "docker-compose.yml"))).toBe(false);
   });
 
+  test("generates Next.js app without external create-next-app bootstrap", async () => {
+    const projectName = "next-local";
+
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    const exitCode = await proc.exited;
+    expect(exitCode).toBe(0);
+
+    const projectDir = join(testDir, projectName);
+    expect(existsSync(join(projectDir, "package.json"))).toBe(true);
+    expect(existsSync(join(projectDir, "app", "layout.tsx"))).toBe(true);
+    expect(existsSync(join(projectDir, "app", "api", "auth", "register", "route.ts"))).toBe(true);
+    const pkgJson = JSON.parse(await Bun.file(join(projectDir, "package.json")).text());
+    expect(pkgJson.dependencies.next).toBeDefined();
+    expect(pkgJson.scripts.dev).toBe("next dev");
+  });
+
   test("generates auth module files with correct content", async () => {
     const projectName = "auth-app";
 
@@ -333,5 +356,8 @@ describe("qwykz CLI integration", () => {
     expect(rootPackage.scripts["db:generate"]).toBeUndefined();
     expect(rootPackage.scripts["db:push"]).toBeUndefined();
     expect(rootPackage.scripts["db:studio"]).toBeUndefined();
+
+    const backendEnv = await Bun.file(join(testDir, projectName, "backend", ".env")).text();
+    expect(backendEnv).toContain("python-monorepo-backend");
   });
 });
