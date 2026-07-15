@@ -37,7 +37,19 @@ function formatCommandFailure(command: string[], exitCode: number, output: strin
     );
   }
   if (cmdStr.includes("docker")) {
-    suggestions.push("    • Ensure Docker Desktop is running");
+    suggestions.push(
+      "    • Ensure the Docker daemon or Docker Desktop is running",
+      "    • On Linux, restart Docker if the error mentions iptables, nftables, or DOCKER-FORWARD",
+    );
+  }
+  if (cmdStr.startsWith("go ")) {
+    suggestions.push("    • Ensure Go can reach the module proxy and checksum database");
+    if (details.includes("checksum mismatch")) {
+      suggestions.push("    • Clear the local Go module cache with: go clean -modcache");
+    }
+  }
+  if (cmdStr.startsWith("psql ") || cmdStr.startsWith("createdb ")) {
+    suggestions.push("    • Ensure local PostgreSQL is running and the postgres user can create databases");
   }
   if (cmdStr.includes("prisma")) {
     suggestions.push("    • Ensure your DATABASE_URL is correct in .env");
@@ -51,7 +63,33 @@ function formatCommandFailure(command: string[], exitCode: number, output: strin
   ].join("\n");
 }
 
-export async function runCommand(command: string[], cwd: string, ignoreFailure = false) {
+function projectDatabaseName(projectName: string) {
+  return projectName.replace(/[\\/]/g, "-");
+}
+
+function sqlLiteral(value: string) {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+async function ensureLocalPostgresDatabase(projectName: string, cwd: string) {
+  const databaseName = projectDatabaseName(projectName);
+  const exists = await runCommand([
+    "psql",
+    "-U",
+    "postgres",
+    "-d",
+    "postgres",
+    "-v",
+    "ON_ERROR_STOP=1",
+    "-tAc",
+    `SELECT 1 FROM pg_database WHERE datname = ${sqlLiteral(databaseName)}`,
+  ], cwd);
+  if (exists.trim() !== "1") {
+    await runCommand(["createdb", "-U", "postgres", databaseName], cwd);
+  }
+}
+
+export async function runCommand(command: string[], cwd: string, ignoreFailure = false): Promise<string> {
   try {
     const proc = Bun.spawn({
       // Pass arguments directly instead of re-parsing them through a shell. This
@@ -67,23 +105,22 @@ export async function runCommand(command: string[], cwd: string, ignoreFailure =
     const stdout = outputFrom(proc.stdout);
     const stderr = outputFrom(proc.stderr);
     const exitCode = await proc.exited;
+    const [stdoutText, stderrText] = await Promise.all([stdout, stderr]);
     if (exitCode !== 0) {
-      const [stdoutText, stderrText] = await Promise.all([stdout, stderr]);
       throw new Error(formatCommandFailure(command, exitCode, `${stderrText}\n${stdoutText}`));
     }
 
-    await Promise.all([stdout, stderr]);
+    return `${stdoutText}\n${stderrText}`;
   } catch (error) {
     if (ignoreFailure) {
       console.error(pc.yellow(`  ⚠️  Warning: Could not execute "${command.join(" ")}". Skipping...`));
       if (error instanceof Error) console.error(pc.dim(error.message));
       console.error("");
-      return false;
+      return "";
     }
 
     throw error;
   }
-  return true;
 }
 
 async function runSetupCommands(
@@ -95,6 +132,11 @@ async function runSetupCommands(
   if (options.framework === "express" || options.framework === "nextjs" || options.framework === "hono" || options.framework === "elysia") {
     s.message("📦 Installing NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
+
+    if (options.dbTarget === "local") {
+      s.message("📦 Ensuring local PostgreSQL database exists...");
+      await ensureLocalPostgresDatabase(options.projectName, targetDir);
+    }
 
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Cleaning stale Docker volumes...");
@@ -119,13 +161,16 @@ async function runSetupCommands(
     s.message("📦 Installing Monorepo NPM dependencies...");
     await runCommand(["bun", "install"], targetDir);
     const backendDir = join(targetDir, "backend");
+
+    if (options.dbTarget === "local") {
+      s.message("📦 Ensuring backend PostgreSQL database exists...");
+      await ensureLocalPostgresDatabase(`${options.projectName}/backend`, backendDir);
+    }
     
     if (["express", "hono", "elysia"].includes(options.backendFramework as string)) {
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
-        try {
-          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
-        } catch (e) {}
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
       }
       s.message("◓ Generating Prisma Client...");
       await runCommand(["bun", "run", "db:generate"], backendDir);
@@ -134,9 +179,7 @@ async function runSetupCommands(
     } else if (options.backendFramework === "laravel") {
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
-        try {
-          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
-        } catch (e) {}
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
       }
       s.message("🔑 Generating Laravel app key...");
       await runCommand(["php", "artisan", "key:generate", "--force", "-n"], backendDir, true);
@@ -145,13 +188,7 @@ async function runSetupCommands(
     } else if (options.backendFramework === "python") {
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
-        try {
-          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
-        } catch (e) {}
-      }
-      if (options.dbTarget === "local") {
-        s.message("📦 Creating local PostgreSQL database...");
-        await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], backendDir, true);
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
       }
       s.message("📦 Creating Python virtual environment...");
       await runCommand(["python3", "-m", "venv", "venv"], backendDir);
@@ -161,23 +198,24 @@ async function runSetupCommands(
     } else if (options.backendFramework === "go") {
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
-        try {
-          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
-        } catch (e) {}
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
       }
       s.message("📦 Installing Go modules...");
       await runCommand(["go", "mod", "tidy"], backendDir);
     } else if (options.backendFramework === "rust") {
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
-        try {
-          await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
-        } catch (e) {}
+        await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
       }
       s.message("🚀 Running database migrations (sqlx)...");
-      await runCommand(["cargo", "sqlx", "migrate", "run"], backendDir, true);
+      await runCommand(["cargo", "sqlx", "migrate", "run"], backendDir);
     }
   } else if (options.framework === "laravel") {
+    if (options.dbTarget === "local") {
+      s.message("📦 Ensuring local PostgreSQL database exists...");
+      await ensureLocalPostgresDatabase(options.projectName, targetDir);
+    }
+
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Cleaning stale Docker volumes...");
       try {
@@ -190,7 +228,8 @@ async function runSetupCommands(
         throw new Error(
           `Command "docker compose up -d --wait" exited with code 1\n\n` +
           `  Suggestions:\n` +
-          `    • Ensure Docker Desktop is running\n` +
+          `    • Ensure the Docker daemon or Docker Desktop is running\n` +
+          `    • On Linux, restart Docker if the error mentions iptables, nftables, or DOCKER-FORWARD\n` +
           `    • Check if ports 54320 or 63790 are already occupied by previous boilerplate containers!\n` +
           `    • Re-run with --verbose for full output`
         );
@@ -207,13 +246,11 @@ async function runSetupCommands(
   } else if (options.framework === "python") {
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Booting up Docker containers...");
-      try {
-        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
-      } catch (e) {}
+      await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
     }
     if (options.dbTarget === "local") {
-      s.message("📦 Creating local PostgreSQL database...");
-      await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], targetDir, true);
+      s.message("📦 Ensuring local PostgreSQL database exists...");
+      await ensureLocalPostgresDatabase(options.projectName, targetDir);
     }
     s.message("📦 Creating Python virtual environment...");
     await runCommand(["python", "-m", "venv", "venv"], targetDir, true);
@@ -223,27 +260,23 @@ async function runSetupCommands(
   } else if (options.framework === "go") {
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Booting up Docker containers...");
-      try {
-        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
-      } catch (e) {}
+      await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
     }
     if (options.dbTarget === "local") {
-      s.message("📦 Creating local PostgreSQL database...");
-      await runCommand(["createdb", "-U", "postgres", options.projectName.replace(/\//g, "-")], targetDir, true);
+      s.message("📦 Ensuring local PostgreSQL database exists...");
+      await ensureLocalPostgresDatabase(options.projectName, targetDir);
     }
     s.message("📦 Installing Go modules...");
-    await runCommand(["go", "mod", "tidy"], targetDir, true);
+    await runCommand(["go", "mod", "tidy"], targetDir);
   } else if (options.framework === "rust") {
     if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
       s.message("🐳 Booting up Docker containers...");
-      try {
-        await runCommand(["docker", "compose", "up", "-d", "--wait"], targetDir);
-      } catch (e) {}
+      await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], targetDir);
     }
     s.message("📦 Setting up Database & Migrations (this may take a minute)...");
     await runCommand(["cargo", "install", "sqlx-cli"], targetDir, true);
     await runCommand(["sqlx", "database", "create"], targetDir, true);
-    await runCommand(["sqlx", "migrate", "run"], targetDir, true);
+    await runCommand(["sqlx", "migrate", "run"], targetDir);
   }
 }
 
