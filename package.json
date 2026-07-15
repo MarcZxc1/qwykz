@@ -32,7 +32,8 @@
   },
   "scripts": {
     "build:bin": "bun run scripts/build-bin.ts",
-    "test": "bun test --timeout 180000 tests/template-engine.test.ts && bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts"
+    "test": "bun test --timeout 180000 tests/template-engine.test.ts && bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts",
+    "test:runtime": "QWYKZ_RUN_RUNTIME_SMOKE=1 bun test --timeout 900000 tests/runtime-smoke.test.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
