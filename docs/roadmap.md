@@ -144,8 +144,8 @@ Current status:
 * Added a generated runtime smoke matrix covering 28 Backend API combinations, 56 fullstack combinations, and 4 Next.js combinations.
 * Runtime smoke tests are opt-in and filterable with `QWYKZ_RUN_RUNTIME_SMOKE=1` and `QWYKZ_SMOKE_FILTER`.
 * Representative Docker, local PostgreSQL, Redis, and fullstack cases have been verified locally.
-* Recorded the first full default runtime report in [Runtime Smoke Test Report - 2026-07-15](runtime-smoke-report-2026-07-15.md): 77 passed, 12 Laravel external cases skipped, 0 failed.
-* Laravel external runtime cases can be run separately with `bun run test:runtime:laravel`.
+* Recorded the first runtime report in [Runtime Smoke Test Report - 2026-07-15](runtime-smoke-report-2026-07-15.md): default run 77 passed / 12 Laravel external skipped / 0 failed, dedicated Laravel run 13 passed / 0 failed.
+* Combined default plus Laravel runtime evidence covers all 88 generated runtime cases.
 
 ## Priority 5: AI-Assisted Developer Experience
 
