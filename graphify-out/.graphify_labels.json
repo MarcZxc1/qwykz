@@ -39,6 +39,7 @@
   "37": "user.controller.default.ts",
   "38": "auth.route.ts",
   "39": "login.route.ts",
+  "40": "auth.controller.ts",
   "41": "auth.routes.ts",
   "42": "health.routes.ts",
   "43": "user.routes.ts",
@@ -83,5 +84,6 @@
   "82": "run_test",
   "83": "run-all-maximized.ts",
   "84": "test-monorepo.ts",
-  "85": "test-rust-endpoints.sh"
+  "85": "test-rust-endpoints.sh",
+  "86": "User"
 }
