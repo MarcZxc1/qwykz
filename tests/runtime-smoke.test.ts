@@ -107,14 +107,14 @@ describe("generated app runtime smoke tests", () => {
     const runner = skipReason ? test.skip : test;
 
     runner(`${spec.kind}: ${spec.name} responds through health and auth endpoints`, async () => {
+      await cleanupSpec(spec);
       await mkdir(BUN_TMPDIR, { recursive: true });
       await generateProject(spec);
       expect(existsSync(specRootDir(spec))).toBe(true);
 
       try {
         await runSetup(spec);
-        await withServer(spec, async () => {
-          const health = await waitForHealthy(spec);
+        await withServer(spec, async (health) => {
           expect(health.status).toBeGreaterThanOrEqual(200);
           expect(health.status).toBeLessThan(300);
           if (spec.auth) await assertAuthFlow(spec);
@@ -291,8 +291,10 @@ function needsCompose(spec: SmokeSpec) {
 }
 
 async function runCommand(command: string[], cwd: string, allowFailure = false) {
+  const timeoutSeconds = commandTimeoutSeconds();
+  const timedCommand = ["timeout", "--kill-after=5s", `${timeoutSeconds}s`, ...command];
   const proc = Bun.spawn({
-    cmd: command,
+    cmd: timedCommand,
     cwd,
     stdout: "pipe",
     stderr: "pipe",
@@ -304,10 +306,18 @@ async function runCommand(command: string[], cwd: string, allowFailure = false) 
     proc.stderr ? new Response(proc.stderr).text() : "",
     proc.exited,
   ]);
+  if (code === 124 && !allowFailure) {
+    throw new Error(`Command timed out after ${timeoutSeconds}s: ${command.join(" ")}\n${stderr}\n${stdout}`);
+  }
   if (code !== 0 && !allowFailure) {
     throw new Error(`Command failed (${code}): ${command.join(" ")}\n${stderr}\n${stdout}`);
   }
   return { stdout, stderr, code };
+}
+
+function commandTimeoutSeconds() {
+  const override = Number(process.env.QWYKZ_SMOKE_COMMAND_TIMEOUT_SECONDS);
+  return Number.isFinite(override) && override > 0 ? override : 300;
 }
 
 function childEnv() {
@@ -335,7 +345,7 @@ async function curl(args: string[]): Promise<CurlResult> {
 async function waitForHealthy(spec: SmokeSpec) {
   const url = `http://127.0.0.1:${spec.port}${spec.healthPath}`;
   let lastError = "";
-  for (let i = 0; i < 45; i++) {
+  for (let i = 0; i < healthTimeoutSeconds(spec); i++) {
     try {
       const result = await curl([url]);
       if (result.status >= 200 && result.status < 300) return result;
@@ -346,6 +356,12 @@ async function waitForHealthy(spec: SmokeSpec) {
     await Bun.sleep(1000);
   }
   throw new Error(`Health check failed for ${url}: ${lastError}`);
+}
+
+function healthTimeoutSeconds(spec: SmokeSpec) {
+  const override = Number(process.env.QWYKZ_SMOKE_HEALTH_TIMEOUT_SECONDS);
+  if (Number.isFinite(override) && override > 0) return override;
+  return spec.backend === "rust" ? 180 : 45;
 }
 
 async function postJson(url: string, payload: Record<string, string>) {
@@ -442,33 +458,62 @@ async function cleanupSpec(spec: SmokeSpec) {
   if (existsSync(specWorkingDir(spec)) && needsCompose(spec)) {
     await runShell("docker compose down -v --remove-orphans", specWorkingDir(spec), true).catch(() => {});
   }
+  if (needsCompose(spec)) {
+    const prefix = specDatabaseName(spec);
+    if (spec.dbTarget === "docker") {
+      await runCommand(["docker", "rm", "-f", `${prefix}-postgres`], ROOT, true).catch(() => {});
+      await runCommand(["docker", "volume", "rm", "-f", `${prefix}_data`], ROOT, true).catch(() => {});
+    }
+    if (spec.cacheTarget === "docker") {
+      await runCommand(["docker", "rm", "-f", `${prefix}-redis`], ROOT, true).catch(() => {});
+    }
+  }
   if (spec.dbTarget === "local") {
     await runShell(`dropdb -U postgres --if-exists "${specDatabaseName(spec).replace(/"/g, '""')}"`, ROOT, true).catch(() => {});
   }
 }
 
-async function withServer(spec: SmokeSpec, fn: () => Promise<void>) {
+async function withServer(spec: SmokeSpec, fn: (health: CurlResult) => Promise<void>) {
   const cwd = spec.kind === "fullstack" ? specRootDir(spec) : specWorkingDir(spec);
+  const verbose = process.env.QWYKZ_SMOKE_VERBOSE === "1";
   const server = Bun.spawn({
     cmd: ["bash", "-lc", spec.start],
     cwd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: verbose ? "inherit" : "ignore",
+    stderr: verbose ? "inherit" : "ignore",
     stdin: "ignore",
     env: childEnv(),
+    detached: true,
   });
 
   try {
-    await waitForHealthy(spec);
-    await fn();
+    const health = await waitForHealthy(spec);
+    await fn(health);
   } finally {
-    server.kill();
-    await server.exited.catch(() => {});
-    const stdout = server.stdout ? await new Response(server.stdout).text() : "";
-    const stderr = server.stderr ? await new Response(server.stderr).text() : "";
-    if (process.env.QWYKZ_SMOKE_VERBOSE === "1") {
-      console.log(stdout);
-      console.error(stderr);
-    }
+    await stopServer(server);
   }
+}
+
+async function stopServer(server: ReturnType<typeof Bun.spawn>) {
+  try {
+    process.kill(-server.pid, "SIGTERM");
+  } catch {
+    server.kill("SIGTERM");
+  }
+
+  const exited = await Promise.race([
+    server.exited.then(() => true).catch(() => true),
+    Bun.sleep(5000).then(() => false),
+  ]);
+  if (exited) return;
+
+  try {
+    process.kill(-server.pid, "SIGKILL");
+  } catch {
+    server.kill("SIGKILL");
+  }
+  await Promise.race([
+    server.exited.catch(() => {}),
+    Bun.sleep(2000),
+  ]);
 }
