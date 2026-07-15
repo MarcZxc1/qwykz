@@ -80,6 +80,7 @@ describe("runtime smoke matrix definition", () => {
     expect(smokeSpecs.filter((spec) => spec.kind === "backend")).toHaveLength(28);
     expect(smokeSpecs.filter((spec) => spec.kind === "fullstack")).toHaveLength(56);
     expect(smokeSpecs.filter((spec) => spec.kind === "nextjs")).toHaveLength(4);
+    expect(smokeSpecs.filter((spec) => spec.backend === "laravel" && spec.external)).toHaveLength(12);
 
     for (const backend of BACKENDS) {
       for (const dbTarget of DB_TARGETS) {
