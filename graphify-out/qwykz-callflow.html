@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>qwykz — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 725 nodes, 923 edges, 85 communities. Commit: 9bbbe36</p>
+<p class="subtitle">Generated from graphify knowledge graph: 770 nodes, 1002 edges, 87 communities. Commit: 9a7a3e7</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -88,19 +88,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>129 nodes</small>")
+    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>89 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>205 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>209 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>34 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
     CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>7 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>47 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>87 nodes</small>")
     class SERVE_API_35EC8E86 module;
     SECURITY_GLOBAL_5B9C6A04("Security &amp; Global Graph<br/><small>5 nodes</small>")
     class SECURITY_GLOBAL_5B9C6A04 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>80 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>121 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
     EXPRESS_F3C62DE4("express<br/><small>44 nodes</small>")
     class EXPRESS_F3C62DE4 module;
@@ -122,6 +122,7 @@ flowchart LR
     BUILD_GRAPH_321CBB04 -->|calls x6| TESTS_FIXTURES_B84B1DCC
     BUILD_GRAPH_321CBB04 -->|extends| EXPRESS_F3C62DE4
     EXPRESS_F3C62DE4 -->|imports| BUILD_GRAPH_321CBB04
+    SERVE_API_35EC8E86 -->|imports| EXTRACT_PIPELINE_5F350230
     OUTPUTS_DOCS_ED82387C -->|contains| SERVE_API_35EC8E86
     OUTPUTS_DOCS_ED82387C -->|contains| ROADMAP_02ACF9BB
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -140,19 +141,19 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>129</td><td><code>0, 4, 12, 16, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>205</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>34</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>47</td><td><code>71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>80</td><td><code>5, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>89</td><td><code>0, 12, 16, 86, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>209</td><td><code>1, 2, 11, 6, 10, 8, 9, 15</code></td></tr><tr><td>Outputs &amp; Docs</td><td>34</td><td><code>17</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Serving API</td><td>87</td><td><code>4, 71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>121</td><td><code>5, 40, 74, 81, 82, 77, 78, 79, 83, 84, 85, 59, 61, 63</code></td></tr><tr><td>express</td><td>44</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Contributor Covenant Code of Conduct</td><td>13</td><td><code>72</code></td></tr><tr><td>auth.controller.clerk.ts</td><td>4</td><td><code>19</code></td></tr><tr><td>auth.controller.supabase.ts</td><td>4</td><td><code>20</code></td></tr><tr><td>Other</td><td>106</td><td><code>21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Extraction Pipeline -&gt; Graph Build -&gt; Tests &amp; Fixtures -&gt; Outputs &amp; Docs -&gt; Serving API -&gt; CLI &amp; Skill Installers -&gt; Security &amp; Global Graph</div>
+    <div class="arrow-chain">Outputs &amp; Docs -&gt; Serving API -&gt; Extraction Pipeline -&gt; Graph Build -&gt; Tests &amp; Fixtures -&gt; CLI &amp; Skill Installers -&gt; Security &amp; Global Graph</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>725 nodes · 923 edges · 85 communities (52 shown, 33 thin omitted)</li>
+      <li>770 nodes · 1002 edges · 87 communities (54 shown, 33 thin omitted)</li>
       <li>Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `compilerOptions` - 20 edges</li>
@@ -164,12 +165,12 @@ flowchart LR
 <hr>
 <!-- ====== 2. Extraction Pipeline ====== -->
 <h2 id="extract-pipeline">2. Extraction Pipeline</h2>
-<p>Extraction Pipeline groups implementation around templates, api, app, python, mostly in api/handlers/auth.rs, api/routes/auth.py, app/models/user.py. This section covers 129 nodes and 207 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Extraction Pipeline groups implementation around templates, app, python, api, mostly in api/routes/auth.py, app/models/user.py, internal/handlers/auth.go. This section covers 89 nodes and 127 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Extraction Pipeline (129 nodes, 207 edges)
+    %% Section: Extraction Pipeline (89 nodes, 127 edges)
     subgraph extract_pipeline_api_routes_auth_py_e85afa4a["api/routes/auth.py"]
         templates_python_app_api_routes_auth_87ce6811("auth.py")
         templates_python_app_api_routes_auth_authrespons_2215498c("AuthResponse<br/><small>api/routes/auth.py</small>")
@@ -177,56 +178,60 @@ flowchart LR
         templates_python_app_api_routes_auth_login_a04933b5("login()<br/><small>api/routes/auth.py</small>")
         templates_python_app_api_routes_auth_register_0e1d46a0("register()<br/><small>api/routes/auth.py</small>")
     end
-    subgraph extract_pipeline_src_api_middleware_rs_f1530025["src/api/middleware.rs"]
-        templates_rust_src_api_middleware_requireauth_b31625e5("RequireAuth<br/><small>src/api/middleware.rs</small>")
-        templates_rust_src_api_middleware_requireauth_fr_1cfd4015("from_request_parts()<br/><small>src/api/middleware.rs</small>")
-        templates_rust_src_api_middleware_requireadmin_90ad7a4e("RequireAdmin<br/><small>src/api/middleware.rs</small>")
-        templates_rust_src_api_middleware_requireadmin_f_eaaf25a6("from_request_parts()<br/><small>src/api/middleware.rs</small>")
-    end
-    subgraph extract_pipeline_api_handlers_auth_rs_e30e75a5["api/handlers/auth.rs"]
-        templates_rust_src_api_handlers_auth_register_92483a13("register()<br/><small>api/handlers/auth.rs</small>")
-        templates_rust_src_api_handlers_auth_generate_jw_bb11b645("generate_jwt()<br/><small>api/handlers/auth.rs</small>")
-        templates_rust_src_api_handlers_auth_login_c2733639("login()<br/><small>api/handlers/auth.rs</small>")
+    subgraph extract_pipeline_External_generated_e23197dc["External / generated"]
+        fastapi_41a1373c("FastAPI")
+        sqlmodel_f2fa96ba("SQLModel")
+        datetime_89ffad08("DateTime")
     end
     subgraph extract_pipeline_internal_models_user_go_7bdced01["internal/models/user.go"]
         models_user_dbb2e2bb("User<br/><small>internal/models/user.go</small>")
         models_user_beforecreate_a74a8d71("BeforeCreate()<br/><small>internal/models/user.go</small>")
     end
-    fastapi_41a1373c("FastAPI")
+    templates_python_app_api_routes_health_abbf86a4("health.py")
     templates_python_app_api_routes_users_17485238("users.py")
     templates_python_app_api_deps_340612be("deps.py")
+    templates_python_app_core_db_fbfcdc25("db.py")
+    templates_python_app_core_security_d2b98bd6("security.py")
+    templates_python_app_models_init_08850872("__init__.py")
     templates_python_app_models_user_214c59eb("user.py")
+    templates_python_app_main_36767d09("main.py")
     models_user_dbb2e2bb -->|method| models_user_beforecreate_a74a8d71
     templates_python_app_api_routes_auth_token_34d2666f -->|calls| templates_python_app_api_routes_auth_login_a04933b5
     templates_python_app_api_routes_auth_token_34d2666f -->|calls| templates_python_app_api_routes_auth_register_0e1d46a0
     templates_python_app_api_routes_auth_authrespons_2215498c -->|calls| templates_python_app_api_routes_auth_login_a04933b5
     templates_python_app_api_routes_auth_authrespons_2215498c -->|calls| templates_python_app_api_routes_auth_register_0e1d46a0
-    templates_rust_src_api_handlers_auth_register_92483a13 -->|calls| templates_rust_src_api_handlers_auth_generate_jw_bb11b645
-    templates_rust_src_api_handlers_auth_login_c2733639 -->|calls| templates_rust_src_api_handlers_auth_generate_jw_bb11b645
-    templates_rust_src_api_middleware_requireauth_b31625e5 -->|calls| templates_rust_src_api_middleware_requireauth_fr_1cfd4015
-    templates_rust_src_api_middleware_requireadmin_90ad7a4e -->|calls| templates_rust_src_api_middleware_requireadmin_f_eaaf25a6
     templates_python_app_api_deps_340612be -->|imports| fastapi_41a1373c
+    templates_python_app_api_deps_340612be -->|imports| sqlmodel_f2fa96ba
     templates_python_app_api_routes_auth_87ce6811 -->|imports| fastapi_41a1373c
+    templates_python_app_api_routes_auth_87ce6811 -->|imports| sqlmodel_f2fa96ba
+    templates_python_app_api_routes_health_abbf86a4 -->|imports| fastapi_41a1373c
     templates_python_app_api_routes_users_17485238 -->|imports| fastapi_41a1373c
-    %% Omitted for readability: 111 nodes, 0 edges
+    templates_python_app_api_routes_users_17485238 -->|imports| sqlmodel_f2fa96ba
+    templates_python_app_core_db_fbfcdc25 -->|imports| sqlmodel_f2fa96ba
+    templates_python_app_core_security_d2b98bd6 -->|imports| datetime_89ffad08
+    templates_python_app_main_36767d09 -->|imports| fastapi_41a1373c
+    templates_python_app_models_init_08850872 -->|imports| sqlmodel_f2fa96ba
+    templates_python_app_models_user_214c59eb -->|imports| datetime_89ffad08
+    templates_python_app_models_user_214c59eb -->|imports| sqlmodel_f2fa96ba
+    %% Omitted for readability: 71 nodes, 0 edges
     class templates_python_app_api_routes_auth_87ce6811 module;
     class templates_python_app_api_routes_auth_authrespons_2215498c klass;
     class templates_python_app_api_routes_auth_token_34d2666f klass;
     class templates_python_app_api_routes_auth_login_a04933b5 function;
     class templates_python_app_api_routes_auth_register_0e1d46a0 function;
-    class templates_rust_src_api_middleware_requireauth_b31625e5 klass;
-    class templates_rust_src_api_middleware_requireauth_fr_1cfd4015 function;
-    class templates_rust_src_api_middleware_requireadmin_90ad7a4e klass;
-    class templates_rust_src_api_middleware_requireadmin_f_eaaf25a6 function;
-    class templates_rust_src_api_handlers_auth_register_92483a13 function;
-    class templates_rust_src_api_handlers_auth_generate_jw_bb11b645 function;
-    class templates_rust_src_api_handlers_auth_login_c2733639 function;
+    class fastapi_41a1373c api;
+    class sqlmodel_f2fa96ba klass;
+    class datetime_89ffad08 klass;
     class models_user_dbb2e2bb klass;
     class models_user_beforecreate_a74a8d71 function;
-    class fastapi_41a1373c api;
+    class templates_python_app_api_routes_health_abbf86a4 module;
     class templates_python_app_api_routes_users_17485238 module;
     class templates_python_app_api_deps_340612be module;
+    class templates_python_app_core_db_fbfcdc25 module;
+    class templates_python_app_core_security_d2b98bd6 module;
+    class templates_python_app_models_init_08850872 module;
     class templates_python_app_models_user_214c59eb module;
+    class templates_python_app_main_36767d09 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -495,46 +500,42 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>api/handlers/auth.rs</code></td><td>8 nodes</td></tr>
-<tr><td><code>api/routes/auth.py</code></td><td>6 nodes</td></tr>
+      <tr><td><code>api/routes/auth.py</code></td><td>6 nodes</td></tr>
 <tr><td><code>app/models/user.py</code></td><td>6 nodes</td></tr>
 <tr><td><code>internal/handlers/auth.go</code></td><td>5 nodes</td></tr>
-<tr><td><code>src/api/middleware.rs</code></td><td>5 nodes</td></tr>
 <tr><td><code>internal/models/user.go</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/api/deps.py</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/core/security.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>api/routes/users.py</code></td><td>3 nodes</td></tr>
+<tr><td><code>app/core/config.py</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: references x88, contains x49, imports x24, inherits x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x37, references x34, imports x16, inherits x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around tsconfigjson, templates, packagejson, elysia, mostly in package.json, tsconfig.json, templates/hono/tsconfig.json. This section covers 205 nodes and 240 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around tsconfigjson, templates, packagejson, elysia, mostly in package.json, tsconfig.json, templates/hono/tsconfig.json. This section covers 209 nodes and 248 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (205 nodes, 240 edges)
+    %% Section: Graph Build (209 nodes, 248 edges)
     subgraph build_graph_src_cli_ts_f3a9be8f["src/cli.ts"]
         src_cli_d851751d("cli.ts")
         src_cli_runcli_0b3c55d8("runCli()<br/><small>src/cli.ts</small>")
         src_cli_outputfrom_28902e6c("outputFrom()<br/><small>src/cli.ts</small>")
         src_cli_runcommand_2bf83bb1("runCommand()<br/><small>src/cli.ts</small>")
         src_cli_formatcommandfailure_20df676e("formatCommandFailure()<br/><small>src/cli.ts</small>")
+        src_cli_projectdatabasename_dc8ebf14("projectDatabaseName()<br/><small>src/cli.ts</small>")
+        src_cli_ensurelocalpostgresdatabase_060b07b8("ensureLocalPostgresDatabase()<br/><small>src/cli.ts</small>")
+        src_cli_sqlliteral_4f7a3811("sqlLiteral()<br/><small>src/cli.ts</small>")
         src_cli_runsetupcommands_4c45a416("runSetupCommands()<br/><small>src/cli.ts</small>")
         src_cli_ensurebuntmpdir_38141082("ensureBunTmpDir()<br/><small>src/cli.ts</small>")
-    end
-    subgraph build_graph_src_npm_registry_ts_0829e239["src/npm-registry.ts"]
-        src_npm_registry_2f331e90("npm-registry.ts")
-        src_npm_registry_todaykey_b49d9eb0("todayKey()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_resolvelatestversions_c33fa827("resolveLatestVersions()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_writecache_b4421d31("writeCache()<br/><small>src/npm-registry.ts</small>")
-        src_npm_registry_readcache_c41504f2("readCache()<br/><small>src/npm-registry.ts</small>")
     end
     subgraph build_graph_src_prompts_ts_389e6220["src/prompts.ts"]
         src_prompts_655275ec("prompts.ts")
@@ -542,43 +543,46 @@ flowchart LR
         src_prompts_promptforprojectoptions_4bd7a0d7("promptForProjectOptions()<br/><small>src/prompts.ts</small>")
         src_prompts_showsuccess_89483a46("showSuccess()<br/><small>src/prompts.ts</small>")
     end
+    subgraph build_graph_src_npm_registry_ts_0829e239["src/npm-registry.ts"]
+        src_npm_registry_2f331e90("npm-registry.ts")
+        src_npm_registry_todaykey_b49d9eb0("todayKey()<br/><small>src/npm-registry.ts</small>")
+    end
     ref_argon2_eb09cf11("argon2<br/><small>package.json</small>")
     src_package_json_24610089("package-json.ts")
     src_cli_outputfrom_28902e6c -->|calls| src_cli_runcommand_2bf83bb1
     src_cli_formatcommandfailure_20df676e -->|calls| src_cli_runcommand_2bf83bb1
+    src_cli_projectdatabasename_dc8ebf14 -->|calls| src_cli_ensurelocalpostgresdatabase_060b07b8
+    src_cli_sqlliteral_4f7a3811 -->|calls| src_cli_ensurelocalpostgresdatabase_060b07b8
+    src_cli_ensurelocalpostgresdatabase_060b07b8 -->|calls| src_cli_runcommand_2bf83bb1
+    src_cli_ensurelocalpostgresdatabase_060b07b8 -->|calls| src_cli_runsetupcommands_4c45a416
     src_cli_runcommand_2bf83bb1 -->|calls| src_cli_runsetupcommands_4c45a416
     src_cli_runsetupcommands_4c45a416 -->|calls| src_cli_runcli_0b3c55d8
     src_cli_ensurebuntmpdir_38141082 -->|calls| src_cli_runcli_0b3c55d8
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_promptforautomaticsetup_fd8fffef
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_promptforprojectoptions_4bd7a0d7
     src_cli_runcli_0b3c55d8 -->|calls| src_prompts_showsuccess_89483a46
-    src_npm_registry_todaykey_b49d9eb0 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
-    src_npm_registry_todaykey_b49d9eb0 -->|calls| src_npm_registry_writecache_b4421d31
-    src_npm_registry_readcache_c41504f2 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
-    src_npm_registry_writecache_b4421d31 -->|calls| src_npm_registry_resolvelatestversions_c33fa827
     src_cli_d851751d -->|imports| src_prompts_655275ec
     src_cli_d851751d -->|imports| src_prompts_promptforautomaticsetup_fd8fffef
     src_cli_d851751d -->|imports| src_prompts_promptforprojectoptions_4bd7a0d7
     src_cli_d851751d -->|imports| src_prompts_showsuccess_89483a46
     src_npm_registry_2f331e90 -->|imports| src_package_json_24610089
-    src_npm_registry_resolvelatestversions_c33fa827 -->|imports| src_package_json_24610089
-    %% Omitted for readability: 187 nodes, 0 edges
+    %% Omitted for readability: 191 nodes, 0 edges
     class src_cli_d851751d entry;
     class src_cli_runcli_0b3c55d8 entry;
     class src_cli_outputfrom_28902e6c function;
     class src_cli_runcommand_2bf83bb1 entry;
     class src_cli_formatcommandfailure_20df676e entry;
+    class src_cli_projectdatabasename_dc8ebf14 function;
+    class src_cli_ensurelocalpostgresdatabase_060b07b8 function;
+    class src_cli_sqlliteral_4f7a3811 function;
     class src_cli_runsetupcommands_4c45a416 entry;
     class src_cli_ensurebuntmpdir_38141082 function;
-    class src_npm_registry_2f331e90 module;
-    class src_npm_registry_todaykey_b49d9eb0 function;
-    class src_npm_registry_resolvelatestversions_c33fa827 function;
-    class src_npm_registry_writecache_b4421d31 function;
-    class src_npm_registry_readcache_c41504f2 function;
     class src_prompts_655275ec module;
     class src_prompts_promptforautomaticsetup_fd8fffef function;
     class src_prompts_promptforprojectoptions_4bd7a0d7 function;
     class src_prompts_showsuccess_89483a46 function;
+    class src_npm_registry_2f331e90 module;
+    class src_npm_registry_todaykey_b49d9eb0 function;
     class ref_argon2_eb09cf11 function;
     class src_package_json_24610089 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -636,22 +640,46 @@ flowchart LR
 </tr>
 <tr>
   <td>5</td>
+  <td><code>projectDatabaseName()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>projectDatabaseName() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>sqlLiteral()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>sqlLiteral() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>projectDatabaseName()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>sqlLiteral()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td>ensureLocalPostgresDatabase() node in src/cli.ts.</td>
+</tr>
+<tr>
+  <td>8</td>
   <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
-  <td><code>formatCommandFailure()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>outputFrom()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>formatCommandFailure()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>outputFrom()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td>runCommand() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>6</td>
+  <td>9</td>
   <td><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
-  <td><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
+  <td><code>ensureLocalPostgresDatabase()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runCommand()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td>runSetupCommands() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>7</td>
+  <td>10</td>
   <td><code>ensureBunTmpDir()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -659,7 +687,7 @@ flowchart LR
   <td>ensureBunTmpDir() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>8</td>
+  <td>11</td>
   <td><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
   <td><span class="tag tag-cmd">Entry</span></td>
   <td><code>ensureBunTmpDir()</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runSetupCommands()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
@@ -667,7 +695,7 @@ flowchart LR
   <td>runCli() node in src/cli.ts.</td>
 </tr>
 <tr>
-  <td>9</td>
+  <td>12</td>
   <td><code>index.ts</code><br><small style="color:var(--muted)">src/index.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td><code>cli.ts</code><br><small style="color:var(--muted)">src/cli.ts</small><br><code>runCli()</code><br><small style="color:var(--muted)">src/cli.ts</small></td>
@@ -675,7 +703,7 @@ flowchart LR
   <td>Module file in src/index.ts.</td>
 </tr>
 <tr>
-  <td>10</td>
+  <td>13</td>
   <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
@@ -683,7 +711,7 @@ flowchart LR
   <td>Module file in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>11</td>
+  <td>14</td>
   <td><code>__filename</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -691,7 +719,7 @@ flowchart LR
   <td>__filename node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>15</td>
   <td><code>__dirname</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -699,7 +727,7 @@ flowchart LR
   <td>__dirname node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>16</td>
   <td><code>CACHE_DIR</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -707,7 +735,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>17</td>
   <td><code>CACHE_FILE</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -715,7 +743,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>18</td>
   <td><code>CacheData</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -723,7 +751,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>19</td>
   <td><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -731,7 +759,7 @@ flowchart LR
   <td>todayKey() node in src/npm-registry.ts.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>20</td>
   <td><code>readCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -739,7 +767,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>21</td>
   <td><code>writeCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
@@ -747,7 +775,7 @@ flowchart LR
   <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>22</td>
   <td><code>fetchLatestVersion()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -755,7 +783,7 @@ flowchart LR
   <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>23</td>
   <td><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>fetchLatestVersion()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>readCache()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>todayKey()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br>+1 more</td>
@@ -763,7 +791,7 @@ flowchart LR
   <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>24</td>
   <td><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
@@ -771,7 +799,7 @@ flowchart LR
   <td>Module file in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>25</td>
   <td><code>CORE_DEPS</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -779,7 +807,7 @@ flowchart LR
   <td>CORE_DEPS node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>26</td>
   <td><code>CORE_DEV_DEPS</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -787,7 +815,7 @@ flowchart LR
   <td>CORE_DEV_DEPS node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>27</td>
   <td><code>NodeFramework</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -795,7 +823,7 @@ flowchart LR
   <td>NodeFramework node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>28</td>
   <td><code>OPTIONAL_PACKAGES</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -803,7 +831,7 @@ flowchart LR
   <td>OPTIONAL_PACKAGES node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>29</td>
   <td><code>getCoreDevDependencies()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -811,36 +839,12 @@ flowchart LR
   <td>getCoreDevDependencies() node in src/package-json.ts.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>30</td>
   <td><code>collectAllPackageNames()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>getCoreDevDependencies()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td><code>resolveVersionMap()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
   <td>collectAllPackageNames() node in src/package-json.ts.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>resolveVersionMap()</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>collectAllPackageNames()</code><br><small style="color:var(--muted)">src/package-json.ts</small><br><code>resolveLatestVersions()</code><br><small style="color:var(--muted)">src/npm-registry.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>resolveVersionMap() node in src/package-json.ts.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>package-versions.ts</code><br><small style="color:var(--muted)">src/package-versions.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>Module file in src/package-versions.ts.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>packageVersions</code><br><small style="color:var(--muted)">src/package-versions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>npm-registry.ts</code><br><small style="color:var(--muted)">src/npm-registry.ts</small><br><code>package-json.ts</code><br><small style="color:var(--muted)">src/package-json.ts</small></td>
-  <td>No direct outbound edge</td>
-  <td>packageVersions node in src/package-versions.ts.</td>
 </tr>
 </table>
 
@@ -849,19 +853,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>package.json</code></td><td>48 nodes</td></tr>
+      <tr><td><code>package.json</code></td><td>49 nodes</td></tr>
 <tr><td><code>tsconfig.json</code></td><td>26 nodes</td></tr>
 <tr><td><code>templates/elysia/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>templates/express/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>templates/hono/tsconfig.json</code></td><td>19 nodes</td></tr>
 <tr><td><code>scripts/build-bin.ts</code></td><td>12 nodes</td></tr>
+<tr><td><code>src/cli.ts</code></td><td>11 nodes</td></tr>
 <tr><td><code>src/npm-registry.ts</code></td><td>11 nodes</td></tr>
-<tr><td><code>src/types.ts</code></td><td>9 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x147, extends x34, imports x26, calls x21. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x151, extends x34, imports x26, calls x25. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1356,12 +1360,12 @@ flowchart LR
 
 <!-- ====== 6. Serving API ====== -->
 <h2 id="serve-api">6. Serving API</h2>
-<p>Serving API groups implementation around fullstack, managed, docs, auth, mostly in docs/fullstack-managed-auth-plan.md, Controllers/Api/AuthController.php, Controllers/Api/UserController.php. This section covers 47 nodes and 52 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Serving API groups implementation around templates, api, fullstack, managed, mostly in docs/fullstack-managed-auth-plan.md, api/handlers/auth.rs, src/api/middleware.rs. This section covers 87 nodes and 131 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Serving API (47 nodes, 52 edges)
+    %% Section: Serving API (87 nodes, 131 edges)
     subgraph serve_api_Controllers_Api_AuthController_php_f2873fa1["Controllers/Api/AuthController.php"]
         templates_laravel_app_http_controllers_api_authc_6ce507c3("AuthController.php")
         templates_laravel_app_http_controllers_api_authc_74e4dfef("AuthController<br/><small>Controllers/Api/AuthController.php</small>")
@@ -1386,10 +1390,8 @@ flowchart LR
         templates_laravel_app_services_userservice_users_505bee6d("createUser()<br/><small>app/Services/UserService.php</small>")
         templates_laravel_app_services_userservice_users_ec0708eb("getAllUsers()<br/><small>app/Services/UserService.php</small>")
     end
-    subgraph serve_api_External_generated_a71e9f44["External / generated"]
-        controller_f79a2222("Controller")
-        templates_laravel_app_http_controllers_api_authc_8d200429("Request")
-    end
+    templates_rust_src_api_handlers_auth_register_92483a13("register()<br/><small>api/handlers/auth.rs</small>")
+    templates_rust_src_api_handlers_users_51f7f264("users.rs")
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_04f960c8
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_66ee3322
     templates_laravel_app_http_controllers_api_authc_74e4dfef -->|method| templates_laravel_app_http_controllers_api_authc_546b0170
@@ -1400,12 +1402,9 @@ flowchart LR
     templates_laravel_app_services_authservice_auths_edd31810 -->|method| templates_laravel_app_services_authservice_auths_e75efd25
     templates_laravel_app_services_userservice_users_39bdfee4 -->|method| templates_laravel_app_services_userservice_users_505bee6d
     templates_laravel_app_services_userservice_users_39bdfee4 -->|method| templates_laravel_app_services_userservice_users_ec0708eb
-    templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| controller_f79a2222
-    templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| templates_laravel_app_http_controllers_api_authc_8d200429
     templates_laravel_app_http_controllers_api_authc_6ce507c3 -->|imports| templates_laravel_app_services_authservice_auths_edd31810
-    controller_f79a2222 -->|imports| templates_laravel_app_http_controllers_api_userc_f6c28c3c
     templates_laravel_app_http_controllers_api_userc_f6c28c3c -->|imports| templates_laravel_app_services_userservice_users_39bdfee4
-    %% Omitted for readability: 29 nodes, 0 edges
+    %% Omitted for readability: 69 nodes, 0 edges
     class templates_laravel_app_http_controllers_api_authc_6ce507c3 klass;
     class templates_laravel_app_http_controllers_api_authc_74e4dfef klass;
     class templates_laravel_app_http_controllers_api_authc_04f960c8 function;
@@ -1422,8 +1421,8 @@ flowchart LR
     class templates_laravel_app_services_userservice_users_39bdfee4 klass;
     class templates_laravel_app_services_userservice_users_505bee6d function;
     class templates_laravel_app_services_userservice_users_ec0708eb function;
-    class controller_f79a2222 klass;
-    class templates_laravel_app_http_controllers_api_authc_8d200429 klass;
+    class templates_rust_src_api_handlers_auth_register_92483a13 function;
+    class templates_rust_src_api_handlers_users_51f7f264 module;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1447,243 +1446,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>Fullstack Managed Authentication Plan</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>auth.rs</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Fullstack Managed Authentication Plan.</td>
+  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small></td>
+  <td>auth.rs node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>Objective</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>RegisterRequest</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Objective.</td>
+  <td>RegisterRequest node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>Current State</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>String</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Current State.</td>
+  <td>String node in project.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>Product Decisions</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>AuthResponse</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Product Decisions.</td>
+  <td>AuthResponse node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>Authentication and database choices are independent</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>User</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Authentication and database choices are independent.</td>
+  <td>User node in project.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>The frontend owns provider authentication</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>LoginRequest</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing The frontend owns provider authentication.</td>
+  <td>LoginRequest node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>The backend verifies every API request</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Claims</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing The backend verifies every API request.</td>
+  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td>Claims node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>Application profiles use provider identities</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Role</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Application profiles use provider identities.</td>
+  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td>Role node in project.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>Supported-Combination Rollout</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>register()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Supported-Combination Rollout.</td>
+  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td>register() node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>Package Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>State</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Package Contract.</td>
+  <td>State node in project.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>Environment Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Json</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Environment Contract.</td>
+  <td>Json node in project.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>Generated API Contract</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Result</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Generated API Contract.</td>
+  <td>Result node in project.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>Implementation Phases</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>StatusCode</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Implementation Phases.</td>
+  <td>StatusCode node in project.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>Phase 0: Freeze and audit the existing experimental path</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>login()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Phase 0: Freeze and audit the existing experimental path.</td>
+  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td>login() node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>Phase 1: React/Vue with Express/Hono/Elysia</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>generate_jwt()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>login()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small><br><code>register()</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small></td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Phase 1: React/Vue with Express/Hono/Elysia.</td>
+  <td>generate_jwt() node in api/handlers/auth.rs.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>Phase 2: Next.js review</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>users.rs</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
+  <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing Phase 2: Next.js review.</td>
+  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small><br><code>RequireAdmin</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td>users.rs node in api/handlers/users.rs.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>Phase 3: FastAPI, Laravel, Go, and Rust</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>UserResponse</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Phase 3: FastAPI, Laravel, Go, and Rust.</td>
+  <td>UserResponse node in api/handlers/users.rs.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>Phase 4: Optional synchronization and organizations</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Uuid</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Phase 4: Optional synchronization and organizations.</td>
+  <td>Uuid node in project.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>Generator Work Breakdown</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>String</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Generator Work Breakdown.</td>
+  <td>String node in project.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>Types and prompts</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Option</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Types and prompts.</td>
+  <td>Option node in project.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>Dependency generation</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>get_users()</code><br><small style="color:var(--muted)">api/handlers/users.rs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Dependency generation.</td>
+  <td>get_users() node in api/handlers/users.rs.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>Templates and generator selection</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>State</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Templates and generator selection.</td>
+  <td>State node in project.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>Testing</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Result</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Testing.</td>
+  <td>Result node in project.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>Release Gates</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Json</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Release Gates.</td>
+  <td>Json node in project.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>Risks and Mitigations</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>Vec</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Risks and Mitigations.</td>
+  <td>Vec node in project.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>Recommended Delivery Order</code><br><small style="color:var(--muted)">docs/fullstack-managed-auth-plan.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>StatusCode</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Documentation node describing Recommended Delivery Order.</td>
+  <td>StatusCode node in project.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>AuthController.php</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">app/Services/AuthService.php</small><br><code>Controller</code><br><code>Request</code></td>
-  <td>AuthController.php node in Controllers/Api/AuthController.php.</td>
+  <td><code>middleware.rs</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>Claims</code><br><small style="color:var(--muted)">api/handlers/auth.rs</small><br><code>Role</code></td>
+  <td><code>AppState</code><br><small style="color:var(--muted)">src/api/mod.rs</small></td>
+  <td>middleware.rs node in src/api/middleware.rs.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td><code>RequireAuth</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>__construct()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small><br><code>login()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small><br><code>register()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
-  <td>AuthController node in Controllers/Api/AuthController.php.</td>
+  <td><code>from_request_parts()</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
+  <td>RequireAuth node in src/api/middleware.rs.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>Controller</code><br><small style="color:var(--muted)"></small></td>
+  <td><code>FromRequestParts</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-class">Class</span></td>
-  <td><code>AuthController.php</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
-  <td><code>UserController.php</code><br><small style="color:var(--muted)">Controllers/Api/UserController.php</small></td>
-  <td>Controller node in project.</td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>FromRequestParts node in project.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>.__construct()</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td><code>.from_request_parts()</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>AuthController</code><br><small style="color:var(--muted)">Controllers/Api/AuthController.php</small></td>
+  <td><code>RequireAuth</code><br><small style="color:var(--muted)">src/api/middleware.rs</small></td>
   <td>No direct outbound edge</td>
-  <td>.__construct() node in Controllers/Api/AuthController.php.</td>
+  <td>.from_request_parts() node in src/api/middleware.rs.</td>
 </tr>
 </table>
 
@@ -1693,15 +1692,18 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>docs/fullstack-managed-auth-plan.md</code></td><td>26 nodes</td></tr>
+<tr><td><code>api/handlers/auth.rs</code></td><td>8 nodes</td></tr>
 <tr><td><code>Controllers/Api/AuthController.php</code></td><td>5 nodes</td></tr>
 <tr><td><code>Controllers/Api/UserController.php</code></td><td>5 nodes</td></tr>
+<tr><td><code>src/api/middleware.rs</code></td><td>5 nodes</td></tr>
 <tr><td><code>app/Services/AuthService.php</code></td><td>4 nodes</td></tr>
 <tr><td><code>app/Services/UserService.php</code></td><td>4 nodes</td></tr>
+<tr><td><code>api/handlers/users.rs</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x29, method x10, imports x6, references x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: references x59, contains x41, method x10, imports x7. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1808,12 +1810,12 @@ flowchart LR
 
 <!-- ====== 8. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">8. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around tests, generatorts, test, scripts, mostly in src/generator.ts, src/template-engine.ts, tests/full-matrix.test.ts. This section covers 80 nodes and 171 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around tests, runtime, smoketestts, generatorts, mostly in tests/runtime-smoke.test.ts, src/generator.ts, src/template-engine.ts. This section covers 121 nodes and 242 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (80 nodes, 171 edges)
+    %% Section: Tests &amp; Fixtures (121 nodes, 242 edges)
     subgraph tests_fixtures_src_generator_ts_554b2d86["src/generator.ts"]
         src_generator_generatedbpassword_409f08e0("generateDbPassword()<br/><small>src/generator.ts</small>")
         src_generator_resolvedockercompose_75848839("resolveDockerCompose()<br/><small>src/generator.ts</small>")
@@ -1860,7 +1862,7 @@ flowchart LR
     src_generator_writejson_f3181f46 -->|calls| src_generator_generateexpressproject_dc4f5904
     src_generator_writejson_f3181f46 -->|calls| src_generator_generatehonoproject_5f49f869
     src_generator_writejson_f3181f46 -->|calls| src_generator_generatereactproject_bd002de7
-    %% Omitted for readability: 62 nodes, 26 edges
+    %% Omitted for readability: 103 nodes, 26 edges
     class src_generator_generatedbpassword_409f08e0 function;
     class src_generator_resolvedockercompose_75848839 function;
     class src_generator_resolveenvfile_e8338f4c function;
@@ -2147,19 +2149,19 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>src/generator.ts</code></td><td>30 nodes</td></tr>
+      <tr><td><code>tests/runtime-smoke.test.ts</code></td><td>41 nodes</td></tr>
+<tr><td><code>src/generator.ts</code></td><td>30 nodes</td></tr>
 <tr><td><code>src/template-engine.ts</code></td><td>10 nodes</td></tr>
 <tr><td><code>tests/full-matrix.test.ts</code></td><td>8 nodes</td></tr>
 <tr><td><code>tests/scripts/test-matrix.sh</code></td><td>5 nodes</td></tr>
 <tr><td><code>tests/scripts/test-qwykz.sh</code></td><td>5 nodes</td></tr>
 <tr><td><code>tests/cli.test.ts</code></td><td>4 nodes</td></tr>
 <tr><td><code>tests/e2e.test.ts</code></td><td>4 nodes</td></tr>
-<tr><td><code>tests/e2e.old.test.ts</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: calls x98, contains x58, imports x6, defines x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x129, contains x98, imports x6, defines x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -3902,17 +3904,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>725</td></tr>
-      <tr><td>Edges</td><td>923</td></tr>
+      <tr><td>Nodes</td><td>770</td></tr>
+      <tr><td>Edges</td><td>1002</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>85</td></tr>
+      <tr><td>Communities</td><td>87</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>900</td></tr>
+      <tr><td>EXTRACTED</td><td>979</td></tr>
       <tr><td>INFERRED</td><td>23</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -3921,7 +3923,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>qwykz — Architecture Documentation</p>
-  <p>Generated: 2026-07-14 23:06 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-07-15 10:43 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->
