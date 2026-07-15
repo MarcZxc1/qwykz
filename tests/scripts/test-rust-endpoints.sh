@@ -14,10 +14,16 @@ cd $TEST_DIR
 echo "🧪 Scaffolding Rust (Axum/Actix)..."
 bun run ../src/index.ts --yes --name rust-app --framework rust --db supabase --auth supabase --caching none
 
-# 2. Inject Supabase cloud credentials so it doesn't need Docker
-SUPABASE_URL="https://uycyiwnzikslmkjiqwyd.supabase.co"
-SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5Y3lpd256aWtzbG1ramlxd3lkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODYxMjQsImV4cCI6MjA5Nzg2MjEyNH0.EJfqKnhh73wW7aJuJYnzoRvdIyDkAQ_7YTC5pJN77mo"
-SUPABASE_DB_URL="postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?pgbouncer=true"
+# 2. Inject Supabase cloud credentials from environment only.
+SUPABASE_URL="${SUPABASE_URL:-}"
+SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-}"
+SUPABASE_DB_URL="${SUPABASE_DB_URL:-}"
+
+if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ] || [ -z "$SUPABASE_DB_URL" ]; then
+  echo "Missing SUPABASE_URL, SUPABASE_ANON_KEY, or SUPABASE_DB_URL."
+  echo "Managed-provider test scripts read credentials from env only."
+  exit 1
+fi
 
 env_file="rust-app/.env"
 if [ -f "$env_file" ]; then

@@ -8,14 +8,14 @@ echo "======================================================"
 TEST_DIR="qwykz-matrix-tests"
 mkdir -p $TEST_DIR
 
-SUPABASE_URL="https://uycyiwnzikslmkjiqwyd.supabase.co"
-SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5Y3lpd256aWtzbG1ramlxd3lkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODYxMjQsImV4cCI6MjA5Nzg2MjEyNH0.EJfqKnhh73wW7aJuJYnzoRvdIyDkAQ_7YTC5pJN77mo"
-SUPABASE_DB_URL="postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres?pgbouncer=true"
-SUPABASE_DIRECT_URL="postgresql://postgres.uycyiwnzikslmkjiqwyd:aGg2aY9vC9CvocXm@aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres"
-UPSTASH_URL="https://casual-macaque-155325.upstash.io"
-UPSTASH_TOKEN="gQAAAAAAAl69AAIgcDE4MGQwNDhmZGNkYmI0N2Q1OGE5ZjU1ZWM0YjlhOTVjYQ"
-CLERK_PUB_KEY="pk_test_bHVja3ktamF5YmlyZC02Mi5jbGVyay5hY2NvdW50cy5kZXYk"
-CLERK_SECRET_KEY="sk_test_dLa6ZN7GkUZ0UAgCfRBtU0w9zR074riqh8MfVolKKo"
+SUPABASE_URL="${SUPABASE_URL:-}"
+SUPABASE_ANON_KEY="${SUPABASE_ANON_KEY:-}"
+SUPABASE_DB_URL="${SUPABASE_DB_URL:-}"
+SUPABASE_DIRECT_URL="${SUPABASE_DIRECT_URL:-}"
+UPSTASH_URL="${UPSTASH_REDIS_REST_URL:-${UPSTASH_URL:-}}"
+UPSTASH_TOKEN="${UPSTASH_REDIS_REST_TOKEN:-${UPSTASH_TOKEN:-}}"
+CLERK_PUB_KEY="${CLERK_PUBLISHABLE_KEY:-${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-${CLERK_PUB_KEY:-}}}"
+CLERK_SECRET_KEY="${CLERK_SECRET_KEY:-}"
 
 inject_credentials() {
   local env_file=$1

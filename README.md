@@ -88,7 +88,7 @@ Available flags:
 * `--yes` or `-y`: Skip all prompts and use defaults/flags
 * `--name <string>`: Name of your project directory
 * `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
-* `--db <supabase|neon|local|docker|clerk>`: Select database/auth environment
+* `--db <supabase|neon|local|docker>`: Select database environment
 * `--zod`, `--helmet`, `--cors`: Include extra middlewares
 
 ### Capability matrix
@@ -109,6 +109,21 @@ Legend: ✅ supported and covered by default scaffold tests, 🧪 available but 
 | Rust Axum | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
 
 Unsupported combinations should be rejected before files are written. The matrix is meant to stay aligned with prompts, generated files, and CI coverage as qwykz evolves.
+
+### Managed credential smoke tests
+
+Managed provider checks are opt-in and read credentials from environment variables only. Do not commit `.env` files or paste real provider tokens into test scripts.
+
+```bash
+SUPABASE_URL="..." \
+SUPABASE_ANON_KEY="..." \
+CLERK_SECRET_KEY="..." \
+UPSTASH_REDIS_REST_URL="..." \
+UPSTASH_REDIS_REST_TOKEN="..." \
+bun run test:managed
+```
+
+Missing provider env vars skip only that provider's live check. The default safety checks still verify that generated scaffolds keep managed credentials as placeholders and that helper scripts do not contain committed provider credentials.
 
 ### Docker resource and data lifecycle
 
