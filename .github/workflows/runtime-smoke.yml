@@ -1,0 +1,76 @@
+name: Runtime Smoke Tests
+
+on:
+  workflow_call:
+  schedule:
+    - cron: '0 6 * * 1' # Monday 6AM UTC
+  workflow_dispatch:
+
+jobs:
+  smoke-default:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PGHOST: 127.0.0.1
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Install SQLx CLI
+        run: cargo install sqlx-cli --no-default-features --features rustls,postgres
+      - name: Run runtime matrix
+        id: runtime
+        continue-on-error: true
+        run: bun run test:runtime 2>&1 | tee runtime-smoke.log
+      - name: Generate smoke report
+        if: always()
+        run: bun run report:runtime runtime-smoke.log runtime-smoke-report.md
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-smoke-default
+          path: |
+            runtime-smoke.log
+            runtime-smoke-report.md
+      - name: Enforce runtime result
+        if: steps.runtime.outcome == 'failure'
+        run: exit 1
+
+  smoke-laravel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Run Laravel runtime matrix
+        id: runtime
+        continue-on-error: true
+        run: bun run test:runtime:laravel 2>&1 | tee runtime-smoke-laravel.log
+      - name: Generate smoke report
+        if: always()
+        run: bun run report:runtime runtime-smoke-laravel.log runtime-smoke-laravel-report.md
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-smoke-laravel
+          path: |
+            runtime-smoke-laravel.log
+            runtime-smoke-laravel-report.md
+      - name: Enforce runtime result
+        if: steps.runtime.outcome == 'failure'
+        run: exit 1

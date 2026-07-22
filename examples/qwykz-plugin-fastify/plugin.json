@@ -1,0 +1,38 @@
+{
+  "$schema": "https://qwykz.dev/plugin.schema.json",
+  "name": "qwykz-plugin-fastify",
+  "version": "1.0.0",
+  "description": "Reference Fastify framework plugin for qwykz",
+  "author": "qwykz contributors",
+  "qwykzVersion": ">=1.4.4",
+  "capabilities": {
+    "frameworks": [
+      {
+        "name": "fastify",
+        "label": "Fastify",
+        "type": "backend",
+        "language": "typescript",
+        "runtime": "bun",
+        "templateDir": "templates/fastify",
+        "dbTargets": ["local"],
+        "authTargets": ["local"],
+        "cachingTargets": ["none"]
+      }
+    ],
+    "authProviders": [],
+    "deploymentTargets": []
+  },
+  "packages": {
+    "dependencies": {
+      "fastify": "^5.0.0"
+    },
+    "devDependencies": {
+      "@types/node": "^25.0.0",
+      "typescript": "^5.0.0"
+    }
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

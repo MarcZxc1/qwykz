@@ -1,0 +1,11 @@
+name: Release Smoke Gate
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  runtime-smoke:
+    uses: ./.github/workflows/runtime-smoke.yml

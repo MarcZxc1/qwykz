@@ -1,5 +1,5 @@
-import { generateProject } from "./src/generator";
-import type { ProjectOptions } from "./src/types";
+import { generateProject } from "../../src/generator";
+import type { ProjectOptions } from "../../src/types";
 
 async function main() {
   const options: ProjectOptions = {
@@ -11,6 +11,7 @@ async function main() {
     authTarget: "supabase",
     cachingTarget: "none",
     extraPackages: ["zod", "helmet", "cors"],
+    experimental: true,
   };
 
   console.log("Generating Monorepo...");

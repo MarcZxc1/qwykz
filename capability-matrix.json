@@ -1,0 +1,220 @@
+{
+  "version": "1.0.0",
+  "generatorVersion": "1.4.4",
+  "matrix": {
+    "express": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "experimental",
+        "clerk": "experimental"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "supported"
+      },
+      "dockerfile": false,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "hono": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "experimental",
+        "clerk": "experimental"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "supported"
+      },
+      "dockerfile": false,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "elysia": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "experimental",
+        "clerk": "experimental"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "supported"
+      },
+      "dockerfile": false,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "nextjs": {
+      "dbTargets": {
+        "local": "experimental",
+        "docker": "experimental",
+        "supabase": "experimental",
+        "neon": "unsupported"
+      },
+      "authTargets": {
+        "local": "experimental",
+        "supabase": "experimental",
+        "clerk": "experimental"
+      },
+      "cachingTargets": {
+        "none": "experimental",
+        "docker": "experimental",
+        "upstash": "unsupported"
+      },
+      "dockerfile": false
+    },
+    "react": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "supported"
+      },
+      "authTargets": {
+        "local": "experimental",
+        "supabase": "supported",
+        "clerk": "supported"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "unsupported",
+        "upstash": "unsupported"
+      },
+      "dockerfile": false
+    },
+    "vue": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "supported"
+      },
+      "authTargets": {
+        "local": "experimental",
+        "supabase": "supported",
+        "clerk": "supported"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "unsupported",
+        "upstash": "unsupported"
+      },
+      "dockerfile": false
+    },
+    "python": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "unsupported",
+        "clerk": "unsupported"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "unsupported"
+      },
+      "dockerfile": true,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "go": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "unsupported",
+        "clerk": "unsupported"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "unsupported"
+      },
+      "dockerfile": true,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "rust": {
+      "dbTargets": {
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
+        "neon": "experimental"
+      },
+      "authTargets": {
+        "local": "supported",
+        "supabase": "unsupported",
+        "clerk": "unsupported"
+      },
+      "cachingTargets": {
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "unsupported"
+      },
+      "dockerfile": true,
+      "frontends": [
+        "react",
+        "vue"
+      ]
+    },
+    "laravel": {
+      "dbTargets": {
+        "local": "experimental",
+        "docker": "experimental",
+        "supabase": "experimental",
+        "neon": "unsupported"
+      },
+      "authTargets": {
+        "local": "experimental",
+        "supabase": "unsupported",
+        "clerk": "unsupported"
+      },
+      "cachingTargets": {
+        "none": "experimental",
+        "docker": "experimental",
+        "upstash": "experimental"
+      },
+      "dockerfile": false
+    }
+  }
+}

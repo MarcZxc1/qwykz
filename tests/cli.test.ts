@@ -217,7 +217,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "next-local";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local", "--experimental"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -295,7 +295,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "clerk-api";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--auth", "clerk"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--auth", "clerk", "--experimental"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -316,7 +316,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "clerk-hono";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "hono", "--auth", "clerk"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "hono", "--auth", "clerk", "--experimental"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",

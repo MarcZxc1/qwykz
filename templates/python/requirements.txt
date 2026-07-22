@@ -4,4 +4,5 @@ sqlmodel
 asyncpg
 bcrypt
 PyJWT
+pydantic>=2.0
 pydantic-settings

@@ -55,6 +55,12 @@ Why this matters:
 * It reduces surprise dependencies.
 * It makes generated manifests easier to review in CI and in pull requests.
 
+Current status:
+
+* Implemented one exact `ScaffoldPlan` used by dry-run and real writes.
+* Every scaffold now records package reasons, template checksums, capability status, and optional prompt answers in `.qwykz-manifest.json`.
+* `--dry-run`, `--show-diff`, `--strict`, and target-write safety are covered by CLI integration tests.
+
 ## Priority 2: Managed Fullstack Authentication
 
 ### 4. Production-ready Supabase Auth and Clerk
@@ -96,6 +102,12 @@ Why this matters:
 * It lowers the cost of adding new frameworks.
 * It keeps core logic smaller and easier to maintain.
 
+Current status:
+
+* Framework plugins support discovery, validation, non-interactive generation, template variables, packages, scripts, hooks, and manifest attribution.
+* Auth-provider and deployment capabilities can apply validated template overlays.
+* Added plugin CLI commands, an authoring guide, a reference Fastify plugin, and end-to-end plugin generation coverage.
+
 ## Priority 4: Reliability Automation
 
 ### 6. Template validation CI
@@ -114,6 +126,11 @@ Why this matters:
 * It prevents drift from coming back.
 * It makes releases safer.
 * It gives open-source contributors a clear quality bar.
+
+Current status:
+
+* CI validates generated outputs for unresolved placeholders, undeclared imports, prompt/capability mapping, syntax, and stack coverage.
+* Validation failures return a non-zero exit code and are covered with known-bad test cases.
 
 ### 7. Generated app smoke tests
 
@@ -182,6 +199,11 @@ Why this matters:
 * It prevents overpromising.
 * It helps users choose the right stack quickly.
 * It makes qwykz's enterprise-inspired positioning more credible by showing exactly what is verified.
+
+Current status:
+
+* Every scaffold generates a factual `AGENTS.md` by default; `--no-ai-context` opts out.
+* The versioned capability matrix generates both Markdown and JSON and gates unsupported or experimental selections before target files are written.
 
 ## Recommended Implementation Order
 

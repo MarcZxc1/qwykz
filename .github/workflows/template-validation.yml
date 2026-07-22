@@ -1,0 +1,18 @@
+name: Template Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run validate:templates
+      - run: bun run capabilities:generate
+      - name: Verify generated capability artifacts are current
+        run: git diff --exit-code -- docs/capability-matrix.md capability-matrix.json

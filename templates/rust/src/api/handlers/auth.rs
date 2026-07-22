@@ -48,6 +48,17 @@ pub async fn register(
     State(state): State<AppState>,
     Json(payload): Json<RegisterRequest>,
 ) -> Result<(StatusCode, Json<AuthResponse>), (StatusCode, String)> {
+    if !is_valid_email(&payload.email)
+        || payload.password.len() < 8
+        || payload.password.len() > 128
+        || payload.name.trim().is_empty()
+    {
+        return Err((
+            StatusCode::UNPROCESSABLE_ENTITY,
+            "Invalid registration payload".to_string(),
+        ));
+    }
+
     let password_clone = payload.password.clone();
     let password_hash = tokio::task::spawn_blocking(move || {
         let salt = SaltString::generate(&mut OsRng);
@@ -75,7 +86,14 @@ pub async fn register(
     .bind(Utc::now())
     .fetch_one(&state.db)
     .await
-    .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))?;
+    .map_err(|e| {
+        if let sqlx::Error::Database(database_error) = &e {
+            if database_error.is_unique_violation() {
+                return (StatusCode::CONFLICT, "Email is already registered".to_string());
+            }
+        }
+        (StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+    })?;
 
     let token = generate_jwt(&user, &state.jwt_secret)?;
 
@@ -113,6 +131,19 @@ pub async fn login(
     let token = generate_jwt(&user, &state.jwt_secret)?;
 
     Ok((StatusCode::OK, Json(AuthResponse { token, user })))
+}
+
+fn is_valid_email(email: &str) -> bool {
+    if email.chars().any(char::is_whitespace) {
+        return false;
+    }
+    let Some((local, domain)) = email.split_once('@') else {
+        return false;
+    };
+    !local.is_empty()
+        && domain.contains('.')
+        && !domain.starts_with('.')
+        && !domain.ends_with('.')
 }
 
 fn generate_jwt(user: &User, secret: &str) -> Result<String, (StatusCode, String)> {

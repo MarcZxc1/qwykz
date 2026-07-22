@@ -33,7 +33,17 @@ export function readEmbeddedTemplate(
  * Uses Bun.file(path).text() for fast reads.
  * Throws a clear, specific error if the file doesn't exist.
  */
-export async function readTemplate(relativePath: string): Promise<string> {
+export async function readTemplate(relativePath: string, pluginTemplateDir?: string): Promise<string> {
+  // If reading from a plugin, bypass the compiled embedded templates
+  if (pluginTemplateDir) {
+    const fullPath = join(pluginTemplateDir, relativePath);
+    const file = Bun.file(fullPath);
+    if (!(await file.exists())) {
+      throw new Error(`Plugin template file not found: "${relativePath}" at ${fullPath}`);
+    }
+    return file.text();
+  }
+
   // In compiled binary mode, use the embedded templates
   if (IS_COMPILED) {
     return readEmbeddedTemplate(EMBEDDED_TEMPLATES, relativePath);
@@ -89,7 +99,31 @@ const EMBEDDED_TEMPLATES: Record<string, string> = {};
 
 import { readdirSync, statSync } from "node:fs";
 
-export function getTemplatesInDirectory(dirPrefix: string): string[] {
+export function getTemplatesInDirectory(dirPrefix: string, pluginTemplateDir?: string): string[] {
+  if (pluginTemplateDir) {
+    const results: string[] = [];
+    // Here dirPrefix is expected to be a subpath within the plugin's templateDir, or empty to scan the whole capability templateDir
+    const fullDir = join(pluginTemplateDir, dirPrefix);
+
+    if (!require("node:fs").existsSync(fullDir)) return [];
+
+    function walkPlugin(dir: string) {
+      for (const entry of readdirSync(dir)) {
+        const fullPath = join(dir, entry);
+        if (statSync(fullPath).isDirectory()) {
+          walkPlugin(fullPath);
+        } else {
+          // relativePath is the path relative to the plugin's base templateDir,
+          // keeping the dirPrefix so it mirrors how core templates are returned
+          let rel = fullPath.replace(pluginTemplateDir + "/", "").replace(/\\/g, "/");
+          results.push(rel);
+        }
+      }
+    }
+    walkPlugin(fullDir);
+    return results;
+  }
+
   if (IS_COMPILED) {
     const prefix = dirPrefix.endsWith("/") ? dirPrefix : dirPrefix + "/";
     return Object.keys(EMBEDDED_TEMPLATES).filter(k => k.startsWith(prefix));

@@ -1,7 +1,9 @@
+import re
 import uuid
 from datetime import datetime
 from enum import Enum
 from typing import Optional
+from pydantic import field_validator
 from sqlmodel import Field, SQLModel
 
 
@@ -27,7 +29,14 @@ class User(UserBase, table=True):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(min_length=8, max_length=128)
+
+    @field_validator("email")
+    @classmethod
+    def validate_email(cls, value: str) -> str:
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value):
+            raise ValueError("Invalid email address")
+        return value
 
 
 class UserRead(UserBase):
