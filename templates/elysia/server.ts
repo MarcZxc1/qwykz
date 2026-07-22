@@ -7,11 +7,11 @@ import { userRouter } from "./routes/user.routes";
 
 const port = Number(process.env.PORT ?? 3000);
 
-const app = new Elysia(){{EXTRA_MIDDLEWARE}}
+const app = new Elysia()
+  .onError(errorHandler){{EXTRA_MIDDLEWARE}}
   .use(healthRouter)
   .use(userRouter)
-{{AUTH_ROUTE}}
-  .onError(errorHandler);
+{{AUTH_ROUTE}};
 
 app.all("*", notFoundHandler);
 

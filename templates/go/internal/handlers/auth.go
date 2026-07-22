@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"net/mail"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,6 +29,15 @@ func Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
+
+	name := strings.TrimSpace(req.Name)
+	email := strings.TrimSpace(req.Email)
+	parsedEmail, emailErr := mail.ParseAddress(email)
+	if len([]rune(name)) < 2 || len(req.Password) < 8 || emailErr != nil || parsedEmail.Address != email {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": "Invalid name, email, or password"})
+	}
+	req.Name = name
+	req.Email = strings.ToLower(email)
 
 	// Check if user exists
 	var count int64

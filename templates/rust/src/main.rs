@@ -53,7 +53,9 @@ async fn main() {
         .with_state(state)
         .layer(cors);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
-    println!("Listening on 0.0.0.0:8080");
+    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let address = format!("0.0.0.0:{port}");
+    let listener = tokio::net::TcpListener::bind(&address).await.unwrap();
+    println!("Listening on {address}");
     axum::serve(listener, app).await.unwrap();
 }

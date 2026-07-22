@@ -10,3 +10,4 @@ tests/
 AGENTS.md
 graphify-out/
 *.tgz
+*.orig

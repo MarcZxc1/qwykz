@@ -3,11 +3,15 @@ import pc from "picocolors";
 import { join } from "node:path";
 import { mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { generateProject } from "./generator";
+import { buildScaffoldPlan, writePlan } from "./generator";
+import { renderDryRun, renderPackageAudit } from "./dry-run";
+import { getProjectCapability } from "./capability/matrix";
 import {
   promptForAutomaticSetup,
   promptForProjectOptions,
   showSuccess,
+  isDryRun,
+  isShowDiff,
 } from "./prompts";
 
 /** Check if --verbose flag is present in process.argv */
@@ -177,6 +181,8 @@ async function runSetupCommands(
       s.message("🚀 Pushing database schema...");
       await runCommand(["bun", "run", "db:push"], backendDir);
     } else if (options.backendFramework === "laravel") {
+      s.message("📦 Installing Laravel Composer dependencies...");
+      await runCommand(["composer", "install", "--no-interaction"], backendDir);
       if (options.dbTarget === "docker" || options.cachingTarget === "docker") {
         s.message("🐳 Booting up Backend Docker containers...");
         await runCommand(["docker", "compose", "up", "-d", "--wait", "--wait-timeout", "120"], backendDir);
@@ -211,6 +217,8 @@ async function runSetupCommands(
       await runCommand(["cargo", "sqlx", "migrate", "run"], backendDir);
     }
   } else if (options.framework === "laravel") {
+    s.message("📦 Installing Laravel Composer dependencies...");
+    await runCommand(["composer", "install", "--no-interaction"], targetDir);
     if (options.dbTarget === "local") {
       s.message("📦 Ensuring local PostgreSQL database exists...");
       await ensureLocalPostgresDatabase(options.projectName, targetDir);
@@ -292,13 +300,91 @@ async function ensureBunTmpDir() {
 
 export async function runCli() {
   await ensureBunTmpDir();
+
+  // Load community plugins before prompting
+  const { registry } = await import("./plugins/registry");
+  const pluginsDirFlag = process.argv.find((arg) => arg.startsWith("--plugins-dir="));
+  const pluginsDirIndex = process.argv.indexOf("--plugins-dir");
+  const overridePluginsDir = pluginsDirFlag
+    ? pluginsDirFlag.slice("--plugins-dir=".length)
+    : pluginsDirIndex >= 0
+      ? process.argv[pluginsDirIndex + 1]
+      : undefined;
+  await registry.loadPlugins(overridePluginsDir);
+
   const options = await promptForProjectOptions();
+
+  const plugin = registry.getPluginForFramework(options.framework);
+  const authPlugin = registry.getAuthProvider(options.authTarget);
+  const deploymentPlugin = registry.getDeploymentTarget(options.deploymentTarget);
+  const activePlugins = registry.getActivePlugins(options);
+  try {
+    if (options.deploymentTarget && !deploymentPlugin) {
+      throw new Error(`Unknown deployment target: ${options.deploymentTarget}`);
+    }
+    if (!plugin && !authPlugin) {
+      const capability = getProjectCapability(options);
+      if (capability === "unsupported" || capability === "planned") {
+        throw new Error(
+          `Unsupported scaffold combination: ${options.framework} + ${options.dbTarget} DB + ${options.authTarget} auth + ${options.cachingTarget} cache`,
+        );
+      }
+      if (capability === "experimental" && !options.experimental) {
+        throw new Error(
+          "This scaffold combination is experimental. Re-run with --experimental to acknowledge the risk.",
+        );
+      }
+    }
+
+    // ── Dry-run: show preview and exit without writing anything ─────────────
+    if (isDryRun) {
+      const plan = await buildScaffoldPlan(options);
+      renderDryRun(plan, {
+        showFileDiff: true,
+        maxFileDiff: isShowDiff ? Number.POSITIVE_INFINITY : 5,
+      });
+      process.exit(0);
+    }
+  } catch (error) {
+    if (isVerbose) console.error(error);
+    else console.error(pc.red(pc.bold("✖ ")) + (error instanceof Error ? error.message : String(error)));
+    process.exit(1);
+  }
+
   const s = spinner();
 
   s.start("Scaffolding qwykz architecture...");
 
+
   try {
-    await generateProject(options);
+    for (const activePlugin of activePlugins) {
+      await registry.executeValidationHook(activePlugin, {
+        framework: options.framework,
+        dbTarget: options.dbTarget,
+        authTarget: options.authTarget,
+        cachingTarget: options.cachingTarget,
+        projectName: options.projectName,
+      });
+    }
+
+    const plan = await buildScaffoldPlan(options);
+    if (options.strict) {
+      console.log(pc.bold("\nPackage policy audit"));
+      console.log(renderPackageAudit(plan.packageAudit));
+    }
+    await writePlan(plan);
+
+    for (const activePlugin of activePlugins) {
+      await registry.executePostGenerateHook(activePlugin, {
+        framework: options.framework,
+        dbTarget: options.dbTarget,
+        authTarget: options.authTarget,
+        cachingTarget: options.cachingTarget,
+        projectName: options.projectName,
+        outputDir: join(process.cwd(), options.projectName),
+      });
+    }
+
     s.stop("Infrastructure generation finished.");
 
     const shouldRunSetup = await promptForAutomaticSetup(options);

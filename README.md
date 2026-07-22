@@ -24,6 +24,14 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to scaffold organized
 
 ---
 
+## The problem qwykz is trying to solve
+
+Starting a project should feel exciting, but the first hour often disappears into the same chores: creating folders, choosing packages, wiring authentication, configuring a database, fixing environment files, and explaining the structure to an AI assistant all over again. Experienced developers have rebuilt this foundation too many times. New learners can get stuck before they reach the part they actually wanted to learn. And the proudly “lazy” developer—usually the one looking for the simplest repeatable path—should not have to trade speed for clarity.
+
+qwykz turns those repeated decisions into an inspectable scaffold. You choose the stack; qwykz generates the project, explains every package, records the choices in a manifest, and leaves an `AGENTS.md` guide for humans and AI tools. Use `--dry-run` when you want to see the exact files first, `--strict` when you want a package audit, and the public capability matrix when you need an honest answer about what is supported today.
+
+It is for working developers who want momentum, learners who need a reliable example, teams that want consistent starting points, and anyone in tech who would rather spend their energy building the product than rebuilding setup scripts.
+
 ## Features
 
 * **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Hono, Elysia, Laravel, Python FastAPI, Go Fiber, Rust Axum), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
@@ -31,7 +39,7 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to scaffold organized
 * **Frontend Powerhouses**:
   * React & Vue apps are generated using high-speed Vite.
   * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
-  * **Ready-to-use Auth**: Beautiful Login, Register, and Dashboard components are pre-built, integrating `@supabase/supabase-js`, `Clerk`, or native **Classic / Codebase Auth**.
+  * **Auth choices with honest maturity labels**: Local authentication scaffolds include Login, Register, and Dashboard flows. Supabase and Clerk scaffolds are available behind `--experimental` while their production auth contracts are completed.
   * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
   * **Deterministic installs**: framework/runtime packages are always included for the selected stack, while optional packages stay opt-in and visible in the prompts.
   * **Universal Fullstack Alignment**: Frontends automatically map their `VITE_API_URL` exactly to match the chosen backend framework (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust). All backends expose identical routing topologies (`/api/auth`, `/api/users`, etc.) for seamless, plug-and-play cross-stack compatibility.
@@ -44,6 +52,7 @@ A lightning-fast CLI tool built with [Bun](https://bun.sh) to scaffold organized
   * Laravel: Silent Sanctum installation, automatic User model traits, and built-in Auth endpoints.
   * Python/Go/Rust: Native ORMs (SQLModel, Gorm, SQLx) natively wired with Bcrypt/Argon2 hashing and JWT Role-Based Access Control.
 * **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated testing setups.
+* **Inspectable By Default**: Every scaffold includes a manifest and AI context guide; dry-run and strict policy modes make files and dependencies reviewable before setup.
 
 ## Installation
 
@@ -90,25 +99,18 @@ Available flags:
 * `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
 * `--db <supabase|neon|local|docker>`: Select database environment
 * `--zod`, `--helmet`, `--cors`: Include extra middlewares
+* `--dry-run`: Preview the generated tree, packages, manifest, and file diffs without creating the target project
+* `--show-diff`: Show every generated file diff during a dry run
+* `--strict`: Print the reason and category for every generated dependency
+* `--record-prompts`: Store the resolved scaffold answers in `.qwykz-manifest.json`
+* `--no-ai-context`: Skip generated `AGENTS.md`
+* `--experimental`: Explicitly allow a combination marked experimental
+* `--plugins-dir <path>`: Load plugins from an explicit directory
+* `--deploy <plugin-target>`: Apply a deployment target registered by a plugin
 
 ### Capability matrix
 
-Legend: ✅ supported and covered by default scaffold tests, 🧪 available but experimental or external-bootstrap tested, 🗓 planned, — not applicable or unsupported.
-
-| Stack | Database targets | Auth targets | Redis/cache | App Dockerfile | Default CI coverage |
-| --- | --- | --- | --- | --- | --- |
-| Express | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
-| Hono | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
-| Elysia | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local JWT<br>🧪 Supabase, Clerk | ✅ Docker Redis, Upstash | 🗓 Planned | ✅ Scaffold + package checks |
-| Laravel | 🧪 Local, Docker, Supabase | 🧪 Sanctum/local API auth | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
-| Next.js | 🧪 Local, Docker, Supabase | 🧪 Local, Supabase, Clerk | 🧪 Docker Redis | — | 🧪 External bootstrap tests |
-| React | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
-| Vue | — | ✅ Supabase, Clerk<br>🧪 Local API auth in monorepos | — | — | ✅ Scaffold + package checks |
-| Python FastAPI | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Multi-user runtime image | ✅ Scaffold + Dockerfile checks |
-| Go Fiber | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
-| Rust Axum | ✅ Local, Docker, Supabase<br>🧪 Neon | ✅ Local API auth | ✅ Docker Redis | ✅ Builder/runtime image | ✅ Scaffold + Dockerfile checks |
-
-Unsupported combinations should be rejected before files are written. The matrix is meant to stay aligned with prompts, generated files, and CI coverage as qwykz evolves.
+See the generated [public capability matrix](docs/capability-matrix.md) for the current framework, database, authentication, cache, and Dockerfile contract. Unsupported combinations are rejected before project files are written; experimental combinations require `--experimental`.
 
 ### Managed credential smoke tests
 
@@ -159,18 +161,18 @@ Check out the [Wiki Guides](docs/home.md) for deep dives into:
 * [The Template Engine](docs/template-engine.md)
 * [Dependency Resolution](docs/dependency-resolution.md)
 * [Adding New Features](docs/contributing.md)
+* [Writing Plugins](docs/plugins.md)
 * [Roadmap](docs/roadmap.md)
 
 ## Roadmap
 
-Planned work that will make `qwykz` more trustworthy and more valuable as an open-source CLI:
+The trust-and-predictability foundation is now in place:
 
-* `--dry-run` and diff output so users can preview every file and dependency before writing anything.
-* A scaffold manifest so each generated project records its selected stack, packages, and generator version.
-* A strict package policy mode so only framework/runtime packages and explicitly selected extras are installed.
-* [Production-ready Supabase Auth and Clerk fullstack support](docs/fullstack-managed-auth-plan.md), delivered through a tested provider/backend capability matrix.
-* A plugin system for community-supported frameworks, auth providers, and deployment targets.
-* Template validation in CI so generated files stay in sync with prompts, manifests, and package selection.
+* `--dry-run`, file diffs, manifests, strict package audits, AI context packs, and capability gating ship as part of normal generation.
+* Community plugins can add frameworks, auth providers, and deployment targets through validated manifests and templates.
+* Template validation and generated-project smoke workflows guard the scaffold surface in CI.
+
+The largest remaining milestone is [production-ready Supabase Auth and Clerk fullstack support](docs/fullstack-managed-auth-plan.md), delivered through provider/backend contract tests rather than SDK presence alone. See the [detailed roadmap](docs/roadmap.md) for current status and sequencing.
 
 ## Contributing
 

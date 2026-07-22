@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, test } from "bun:test";
 import { mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { createServer } from "node:net";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -110,6 +111,7 @@ describe("generated app runtime smoke tests", () => {
     runner(`${spec.kind}: ${spec.name} responds through health and auth endpoints`, async () => {
       await cleanupSpec(spec);
       await mkdir(BUN_TMPDIR, { recursive: true });
+      spec.port = await findAvailablePort();
       await generateProject(spec);
       expect(existsSync(specRootDir(spec))).toBe(true);
 
@@ -217,7 +219,7 @@ function createSpec(input: {
     cacheTarget: input.cacheTarget,
     flags: input.flags,
     projectSubdir: input.projectSubdir,
-    start: input.kind === "fullstack" ? "bun run dev" : runtime.start,
+    start: runtime.start,
     port: runtime.port,
     healthPath: runtime.healthPath,
     auth: true,
@@ -229,7 +231,7 @@ function createSpec(input: {
 function runtimeFor(backend: BackendFramework | "nextjs") {
   if (backend === "python") {
     return {
-      start: "venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000",
+      start: 'venv/bin/uvicorn app.main:app --host 0.0.0.0 --port "$PORT"',
       port: 8000,
       healthPath: "/api/health/",
     };
@@ -241,12 +243,29 @@ function runtimeFor(backend: BackendFramework | "nextjs") {
     return { start: "cargo run", port: 8080, healthPath: "/api/health" };
   }
   if (backend === "laravel") {
-    return { start: "php artisan serve --host 0.0.0.0 --port 8000", port: 8000, healthPath: "/api/health" };
+    return { start: 'php artisan serve --host 0.0.0.0 --port "$PORT"', port: 8000, healthPath: "/api/health" };
   }
   if (backend === "nextjs") {
     return { start: "bun dev", port: 3000, healthPath: "/api/health" };
   }
   return { start: "bun run dev", port: 3000, healthPath: "/api/health" };
+}
+
+async function findAvailablePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = createServer();
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        server.close();
+        reject(new Error("Could not allocate a runtime smoke-test port"));
+        return;
+      }
+      const port = address.port;
+      server.close((error) => error ? reject(error) : resolve(port));
+    });
+  });
 }
 
 function findSpec(
@@ -324,7 +343,7 @@ function commandTimeoutSeconds() {
 function childEnv() {
   const env = { ...process.env, BUN_TMPDIR };
   for (const key of GENERATED_ENV_KEYS) {
-    delete env[key];
+    delete (env as any)[key];
   }
   return env;
 }
@@ -381,12 +400,26 @@ async function assertAuthFlow(spec: SmokeSpec) {
   const baseUrl = `http://127.0.0.1:${spec.port}`;
   const email = `${specProjectName(spec)}-${Date.now()}@example.com`;
   const password = "supersecuredpassword";
+  const invalid = await postJson(`${baseUrl}/api/auth/register`, {
+    name: "x",
+    email: "not-an-email",
+    password: "short",
+  });
+  expect([400, 422]).toContain(invalid.status);
+
   const register = await postJson(`${baseUrl}/api/auth/register`, {
     name: "Smoke Test",
     email,
     password,
   });
   expect([200, 201]).toContain(register.status);
+
+  const duplicate = await postJson(`${baseUrl}/api/auth/register`, {
+    name: "Smoke Test",
+    email,
+    password,
+  });
+  expect([400, 409, 422]).toContain(duplicate.status);
 
   const login = await postJson(`${baseUrl}/api/auth/login`, {
     email,
@@ -397,7 +430,13 @@ async function assertAuthFlow(spec: SmokeSpec) {
 
 async function generateProject(spec: SmokeSpec) {
   await rm(specRootDir(spec), { recursive: true, force: true });
-  await runShell(`bun run ${CLI_PATH} --yes --name ${specProjectName(spec)} ${spec.flags}`, TMP_ROOT);
+  const experimentalFlag = ["laravel", "nextjs"].includes(spec.backend)
+    ? " --experimental"
+    : "";
+  await runShell(
+    `bun run ${CLI_PATH} --yes --name ${specProjectName(spec)} ${spec.flags}${experimentalFlag}`,
+    TMP_ROOT,
+  );
 }
 
 async function runSetup(spec: SmokeSpec) {
@@ -439,6 +478,7 @@ async function runSetup(spec: SmokeSpec) {
   }
 
   if (spec.backend === "laravel") {
+    await runShell("composer install --no-interaction", specWorkingDir(spec));
     await runShell("php artisan key:generate --force -n", specWorkingDir(spec));
     await runShell("php artisan migrate --force -n", specWorkingDir(spec));
   }
@@ -475,7 +515,7 @@ async function cleanupSpec(spec: SmokeSpec) {
 }
 
 async function withServer(spec: SmokeSpec, fn: (health: CurlResult) => Promise<void>) {
-  const cwd = spec.kind === "fullstack" ? specRootDir(spec) : specWorkingDir(spec);
+  const cwd = specWorkingDir(spec);
   const verbose = process.env.QWYKZ_SMOKE_VERBOSE === "1";
   const server = Bun.spawn({
     cmd: ["bash", "-lc", spec.start],
@@ -483,7 +523,7 @@ async function withServer(spec: SmokeSpec, fn: (health: CurlResult) => Promise<v
     stdout: verbose ? "inherit" : "ignore",
     stderr: verbose ? "inherit" : "ignore",
     stdin: "ignore",
-    env: childEnv(),
+    env: { ...childEnv(), PORT: String(spec.port) },
     detached: true,
   });
 

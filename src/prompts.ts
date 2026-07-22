@@ -8,7 +8,9 @@ import {
   text,
 } from "@clack/prompts";
 import pc from "picocolors";
-import pkg from "../package.json";
+import { resolve } from "node:path";
+import { readFileSync } from "node:fs";
+import { registry } from "./plugins/registry";
 import type {
   AuthTarget,
   CachingTarget,
@@ -17,6 +19,8 @@ import type {
   ProjectOptions,
   Framework,
 } from "./types";
+
+const pkg = JSON.parse(readFileSync(resolve(__dirname, "../package.json"), "utf8"));
 
 function stopOnCancel(value: unknown): asserts value {
   if (isCancel(value)) {
@@ -53,6 +57,24 @@ function getFlagValue(flag: string): string | undefined {
 /** Non-interactive mode: --yes or -y */
 export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
 
+/** Dry-run mode: --dry-run — preview scaffold without writing files. */
+export const isDryRun = hasFlag("--dry-run");
+
+/** Strict package policy mode: --strict — print reason for every package added. */
+export const isStrict = hasFlag("--strict");
+
+/** Record prompt answers in the manifest: --record-prompts */
+export const isRecordPrompts = hasFlag("--record-prompts");
+
+/** Suppress AGENTS.md generation: --no-ai-context */
+export const isNoAiContext = hasFlag("--no-ai-context");
+
+/** Show full file diffs in dry-run output: --show-diff */
+export const isShowDiff = hasFlag("--show-diff");
+
+/** Allow combinations explicitly marked experimental in the public matrix. */
+export const isExperimental = hasFlag("--experimental");
+
 // ---------------------------------------------------------------------------
 // Prompts
 // ---------------------------------------------------------------------------
@@ -71,8 +93,9 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     const dbTarget: DbTarget = (
       ["supabase", "local", "docker", "neon"].includes(dbRaw) ? dbRaw : "local"
     ) as DbTarget;
+    const pluginAuthTargets = registry.getAuthProviders().map(({ capability }) => capability.name);
     const authTarget: AuthTarget = (
-      ["supabase", "clerk", "local"].includes(authRaw) ? authRaw : "local"
+      ["supabase", "clerk", "local", ...pluginAuthTargets].includes(authRaw) ? authRaw : "local"
     ) as AuthTarget;
 
     const cachingRaw = getFlagValue("--caching") ?? "none";
@@ -88,9 +111,10 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
 
     const frontendFramework = getFlagValue("--frontend") as Framework;
     const backendFramework = getFlagValue("--backend") as Framework;
+    const deploymentTarget = getFlagValue("--deploy");
 
     return {
-      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia", "python", "go", "rust", "monorepo"].includes(frameworkRaw)
+      framework: (["express", "laravel", "nextjs", "react", "vue", "hono", "elysia", "python", "go", "rust", "monorepo"].includes(frameworkRaw) || registry.getPluginForFramework(frameworkRaw)
         ? frameworkRaw
         : "express") as Framework,
       projectName: normalizePackageName(name),
@@ -101,7 +125,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       frontendFramework,
       backendFramework,
       dbPort: Math.floor(Math.random() * 1000) + 54000,
-      redisPort: Math.floor(Math.random() * 1000) + 63000
+      redisPort: Math.floor(Math.random() * 1000) + 63000,
+      dryRun: isDryRun,
+      strict: isStrict,
+      recordPrompts: isRecordPrompts,
+      noAiContext: isNoAiContext,
+      experimental: isExperimental,
+      deploymentTarget,
     };
   }
 
@@ -146,6 +176,10 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   let frontendFramework: Framework | undefined;
   let backendFramework: Framework | undefined;
 
+  const pluginBackends = registry.getFrameworks().filter(f => f.capability.type === "backend" || f.capability.type === "fullstack").map(f => ({ value: f.capability.name, label: `${f.capability.label} [plugin]` }));
+  const pluginFrontends = registry.getFrameworks().filter(f => f.capability.type === "frontend" || f.capability.type === "fullstack").map(f => ({ value: f.capability.name, label: `${f.capability.label} [plugin]` }));
+
+
   if (projectType === "backend") {
     framework = await select({
       message: "What stack do you want to generate?",
@@ -157,6 +191,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
         { value: "python", label: "FastAPI + Python (SQLModel + PostgreSQL)" },
         { value: "go", label: "Fiber + Go (GORM + PostgreSQL)" },
         { value: "rust", label: "Axum + Rust (SQLx + PostgreSQL)" },
+        ...pluginBackends,
       ],
     }) as string;
     stopOnCancel(framework);
@@ -167,6 +202,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
         { value: "nextjs", label: "Next.js App Router (full-stack web app)" },
         { value: "react", label: "React + Vite (SPA)" },
         { value: "vue", label: "Vue + Vite (SPA)" },
+        ...pluginFrontends,
       ],
     }) as string;
     stopOnCancel(framework);
@@ -177,6 +213,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
         options: [
           { value: "react", label: "React + Vite (SPA)" },
           { value: "vue", label: "Vue + Vite (SPA)" },
+          ...pluginFrontends,
         ],
       }) as Framework;
       stopOnCancel(frontendFramework);
@@ -191,6 +228,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
           { value: "python", label: "FastAPI + Python (SQLModel + PostgreSQL)" },
           { value: "go", label: "Fiber + Go (GORM + PostgreSQL)" },
           { value: "rust", label: "Axum + Rust (SQLx + PostgreSQL)" },
+          ...pluginBackends,
         ],
       }) as Framework;
       stopOnCancel(backendFramework);
@@ -213,23 +251,34 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
   const supportsProviderAuth = ["express", "hono", "elysia", "nextjs"].includes(targetBackend as string);
   const isStandaloneSpa = projectType === "frontend" && ["react", "vue"].includes(framework);
 
+  const pluginAuthProviders = registry.getAuthProviders().map(p => ({
+    value: p.capability.name,
+    label: `${p.capability.label} [plugin]`
+  }));
+
   let authTarget: string | symbol = "local";
-  if (["express", "nextjs", "react", "vue", "hono", "elysia", "monorepo"].includes(framework as string)) {
+  // For plugin frameworks we can assume they support auth providers if we don't know otherwise,
+  // or we just enable the prompt if it's a known framework or a plugin framework.
+  const isPluginFramework = registry.getPluginForFramework(framework as string) !== undefined;
+  if (["express", "nextjs", "react", "vue", "hono", "elysia", "monorepo"].includes(framework as string) || isPluginFramework) {
     authTarget = await select({
       message: "Select your Authentication Provider:",
       options: isStandaloneSpa
         ? [
             { value: "supabase", label: "Supabase Auth (managed; required by SPA-only auth)" },
             { value: "clerk", label: "Clerk Auth (managed; required by SPA-only auth)" },
+            ...pluginAuthProviders,
           ]
-        : supportsProviderAuth
+        : supportsProviderAuth || isPluginFramework
           ? [
               { value: "local", label: "Built-in JWT auth (backend only)" },
               { value: "supabase", label: "Supabase Auth (managed)" },
               { value: "clerk", label: "Clerk Auth (managed)" },
+              ...pluginAuthProviders,
             ]
           : [
               { value: "local", label: "Built-in API auth (only compatible option)" },
+              ...pluginAuthProviders,
             ],
       initialValue: projectType === "frontend" ? "supabase" : "local",
     });
@@ -283,6 +332,26 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     }
   }
 
+  const availableDeployments = registry.getDeploymentTargets().filter(({ capability }) =>
+    !capability.supportedFrameworks?.length || capability.supportedFrameworks.includes(framework as string),
+  );
+  let deploymentTarget: string | undefined;
+  if (availableDeployments.length > 0) {
+    const selectedDeployment = await select({
+      message: "Add a deployment target?",
+      options: [
+        { value: "none", label: "None" },
+        ...availableDeployments.map(({ capability }) => ({
+          value: capability.name,
+          label: `${capability.label} [plugin]`,
+        })),
+      ],
+      initialValue: "none",
+    });
+    stopOnCancel(selectedDeployment);
+    if (selectedDeployment !== "none") deploymentTarget = selectedDeployment as string;
+  }
+
   const selectedStack = framework === "monorepo"
     ? `${frontendFramework} frontend + ${backendFramework} backend`
     : framework;
@@ -302,7 +371,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     frontendFramework,
     backendFramework,
     dbPort: Math.floor(Math.random() * 1000) + 54000,
-    redisPort: Math.floor(Math.random() * 1000) + 63000
+    redisPort: Math.floor(Math.random() * 1000) + 63000,
+    dryRun: isDryRun,
+    strict: isStrict,
+    recordPrompts: isRecordPrompts,
+    noAiContext: isNoAiContext,
+    experimental: isExperimental,
+    deploymentTarget,
   };
 }
 
@@ -326,7 +401,9 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
   const devCommand =
     options.framework === "laravel" ? "php artisan serve" : "bun dev";
 
-  const installCmd = options.framework === "laravel" ? "" : "  bun install\n";
+  const installCmd = options.framework === "laravel"
+    ? "  composer install\n"
+    : "  bun install\n";
   
   if (options.framework === "monorepo") {
     const backendFramework = options.backendFramework!;
@@ -352,8 +429,8 @@ export function showSuccess(options: ProjectOptions, setupRan = false) {
       backendSetup = `  cd backend\n${dockerCmd}  bun run db:generate\n  bun run db:push\n  cd ..\n`;
       backendSetupOneLiner = `cd backend && ${dockerOneLiner}bun run db:generate && bun run db:push && cd ..`;
     } else if (backendFramework === "laravel") {
-      backendSetup = `  cd backend\n${dockerCmd}  php artisan key:generate\n  php artisan migrate\n  cd ..\n`;
-      backendSetupOneLiner = `cd backend && ${dockerOneLiner}php artisan key:generate && php artisan migrate && cd ..`;
+      backendSetup = `  cd backend\n  composer install\n${dockerCmd}  php artisan key:generate\n  php artisan migrate\n  cd ..\n`;
+      backendSetupOneLiner = `cd backend && composer install && ${dockerOneLiner}php artisan key:generate && php artisan migrate && cd ..`;
     } else if (backendFramework === "python") {
       const pipCmd = process.platform === "win32" ? "venv\\Scripts\\pip" : "venv/bin/pip";
       backendSetup = `  cd backend\n${dockerCmd}  python3 -m venv venv\n  ${pipCmd} install -r requirements.txt\n  cd ..\n`;

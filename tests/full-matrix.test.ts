@@ -245,7 +245,7 @@ describe("React", () => {
   test("no auth (local)", () => {
     const name = "t-react-local";
     allProjects.push(name);
-    expect(scaffold(name, "--framework react --auth local")).toBe(true);
+    expect(scaffold(name, "--framework react --auth local --experimental")).toBe(true);
     expect(fileExists(name, "src/App.tsx")).toBe(true);
     expect(fileContains(name, "package.json", '"zod"')).toBe(false);
     expect(fileContains(name, "package.json", '"@clerk/react"')).toBe(false);
@@ -277,7 +277,7 @@ describe("Vue", () => {
   test("no auth (local)", () => {
     const name = "t-vue-local";
     allProjects.push(name);
-    expect(scaffold(name, "--framework vue --auth local")).toBe(true);
+    expect(scaffold(name, "--framework vue --auth local --experimental")).toBe(true);
     expect(fileExists(name, "src/App.vue")).toBe(true);
     expect(fileContains(name, "package.json", '"zod"')).toBe(false);
     expect(fileContains(name, "package.json", '"@clerk/vue"')).toBe(false);

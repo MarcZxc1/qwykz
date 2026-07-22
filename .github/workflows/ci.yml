@@ -29,5 +29,8 @@ jobs:
       - name: Run Tests
         run: bun run test
 
+      - name: Typecheck
+        run: bunx tsc --noEmit
+
       - name: Verify Binary Build
         run: bun run build:bin

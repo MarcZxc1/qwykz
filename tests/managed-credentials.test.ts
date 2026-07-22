@@ -54,6 +54,7 @@ describe("managed provider credential safety", () => {
       "clerk",
       "--caching",
       "upstash",
+      "--experimental",
     ], TMP_ROOT);
 
     const envPath = join(TMP_ROOT, projectName, ".env");
@@ -199,7 +200,7 @@ async function runCommand(command: string[], cwd: string) {
 function childEnv() {
   const env = { ...process.env, BUN_TMPDIR, NO_COLOR: "1" };
   for (const key of MANAGED_ENV_KEYS) {
-    delete env[key];
+    delete (env as any)[key];
   }
   return env;
 }
