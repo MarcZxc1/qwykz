@@ -1,6 +1,7 @@
 <div align="center">
 
 # ⚡ qwykz ⚡
+
 **Quick & Ready Boilerplate Builder**
 
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh)
@@ -34,38 +35,46 @@ It is for working developers who want momentum, learners who need a reliable exa
 
 ## Features
 
-* **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Hono, Elysia, Laravel, Python FastAPI, Go Fiber, Rust Axum), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
-* **Enterprise-Inspired Architecture**: Organizes generated projects around clear service, controller, model, middleware, route, database, and configuration layers.
-* **Frontend Powerhouses**:
-  * React & Vue apps are generated using high-speed Vite.
-  * **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
-  * **Auth choices with honest maturity labels**: Local authentication scaffolds include Login, Register, and Dashboard flows. Supabase and Clerk scaffolds are available behind `--experimental` while their production auth contracts are completed.
-  * **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
-  * **Deterministic installs**: framework/runtime packages are always included for the selected stack, while optional packages stay opt-in and visible in the prompts.
-  * **Universal Fullstack Alignment**: Frontends automatically map their `VITE_API_URL` exactly to match the chosen backend framework (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust). All backends expose identical routing topologies (`/api/auth`, `/api/users`, etc.) for seamless, plug-and-play cross-stack compatibility.
-* **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
-  * **Local Installation**
-  * **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)
-  * **Supabase Cloud & Neon Serverless Postgres** (automatically formats connections and skips local migrations)
-* **Out-of-the-Box API Security**: 
-  * Express/Hono/Elysia: Prisma ORM, JWT authentication, Argon2 hashing, Helmet, CORS, and Zod validation with Role-Based Access Control.
-  * Laravel: Silent Sanctum installation, automatic User model traits, and built-in Auth endpoints.
-  * Python/Go/Rust: Native ORMs (SQLModel, Gorm, SQLx) natively wired with Bcrypt/Argon2 hashing and JWT Role-Based Access Control.
-* **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated testing setups.
-* **Inspectable By Default**: Every scaffold includes a manifest and AI context guide; dry-run and strict policy modes make files and dependencies reviewable before setup.
+- **Multi-Stack Scaffolding**: Generate exact boilerplate architectures in **Backend** (Express, Hono, Elysia, Laravel, Python FastAPI, Go Fiber, Rust Axum), **Frontend** (React, Vue), or **Fullstack** (Next.js) environments.
+- **Enterprise-Inspired Architecture**: Organizes generated projects around clear service, controller, model, middleware, route, database, and configuration layers.
+- **Frontend Powerhouses**:
+  - React & Vue apps are generated using high-speed Vite.
+  - **Zero-config UI**: Tailwind CSS v4 is automatically injected and configured.
+  - **Auth choices with honest maturity labels**: Local authentication scaffolds include Login, Register, and Dashboard flows. Supabase and Clerk scaffolds are available behind `--experimental` while their production auth contracts are completed.
+  - **Strict Validation**: Zod schemas are automatically wired up to the frontend authentication forms.
+  - **Deterministic installs**: framework/runtime packages are always included for the selected stack, while optional packages stay opt-in and visible in the prompts.
+  - **Universal Fullstack Alignment**: Frontends automatically map their `VITE_API_URL` exactly to match the chosen backend framework (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust). All backends expose identical routing topologies (`/api/auth`, `/api/users`, etc.) for seamless, plug-and-play cross-stack compatibility.
+- **Database Orchestration**: Intelligent, automated setup for your PostgreSQL environment:
+  - **Local Installation**
+  - **Fully Dockerized** (automatically assigns ports, boots containers, and waits for health checks)
+  - **Supabase Cloud & Neon Serverless Postgres** (automatically formats connections and skips local migrations)
+- **Out-of-the-Box API Security**:
+  - Express/Hono/Elysia: Prisma ORM, JWT authentication, Argon2 hashing, Helmet, CORS, and Zod validation with Role-Based Access Control.
+  - Laravel: Silent Sanctum installation, automatic User model traits, and built-in Auth endpoints.
+  - Python/Go/Rust: Native ORMs (SQLModel, Gorm, SQLx) natively wired with Bcrypt/Argon2 hashing and JWT Role-Based Access Control.
+- **Non-Interactive Mode**: Fully scriptable via CLI flags for CI/CD or automated testing setups.
+- **Inspectable By Default**: Every scaffold includes a manifest and AI context guide; dry-run and strict policy modes make files and dependencies reviewable before setup.
 
 ## Installation
 
 ### Run without installing (Recommended)
+
 You can run `qwykz` directly using `bunx`:
+
 ```bash
 bunx qwykz@latest
 # or
 bunx qwykz
+# or
+npx qwykz
+# or
+npx qwykz@latest
 ```
 
 ### Global Install
+
 If you prefer to install it globally:
+
 ```bash
 bun install -g qwykz
 ```
@@ -73,17 +82,22 @@ bun install -g qwykz
 ## Usage
 
 ### Interactive Mode
+
 Simply run the command and follow the beautiful CLI prompts:
+
 ```bash
 qwykz
 ```
+
 You will be prompted to:
+
 1. Name your project
 2. Select your Stack (Express, Hono, Elysia, Laravel, Python, Go, Rust, Next.js, React, or Vue)
 3. Select your Database Target (Local, Docker, Supabase, Neon) or Frontend Auth (Clerk, Supabase)
-4. Opt-in to extra features (Zod, Helmet, CORS) *[JS/TS Backends only]*
+4. Opt-in to extra features (Zod, Helmet, CORS) _[JS/TS Backends only]_
 
 ### Non-Interactive Mode (Automated)
+
 Perfect for scripts or CI/CD pipelines! Use the `--yes` or `-y` flag combined with options:
 
 ```bash
@@ -92,21 +106,22 @@ qwykz --yes \
   --framework laravel \
   --db docker
 ```
+
 Available flags:
 
-* `--yes` or `-y`: Skip all prompts and use defaults/flags
-* `--name <string>`: Name of your project directory
-* `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
-* `--db <supabase|neon|local|docker>`: Select database environment
-* `--zod`, `--helmet`, `--cors`: Include extra middlewares
-* `--dry-run`: Preview the generated tree, packages, manifest, and file diffs without creating the target project
-* `--show-diff`: Show every generated file diff during a dry run
-* `--strict`: Print the reason and category for every generated dependency
-* `--record-prompts`: Store the resolved scaffold answers in `.qwykz-manifest.json`
-* `--no-ai-context`: Skip generated `AGENTS.md`
-* `--experimental`: Explicitly allow a combination marked experimental
-* `--plugins-dir <path>`: Load plugins from an explicit directory
-* `--deploy <plugin-target>`: Apply a deployment target registered by a plugin
+- `--yes` or `-y`: Skip all prompts and use defaults/flags
+- `--name <string>`: Name of your project directory
+- `--framework <express|hono|elysia|laravel|python|go|rust|nextjs|react|vue>`: Choose your stack
+- `--db <supabase|neon|local|docker>`: Select database environment
+- `--zod`, `--helmet`, `--cors`: Include extra middlewares
+- `--dry-run`: Preview the generated tree, packages, manifest, and file diffs without creating the target project
+- `--show-diff`: Show every generated file diff during a dry run
+- `--strict`: Print the reason and category for every generated dependency
+- `--record-prompts`: Store the resolved scaffold answers in `.qwykz-manifest.json`
+- `--no-ai-context`: Skip generated `AGENTS.md`
+- `--experimental`: Explicitly allow a combination marked experimental
+- `--plugins-dir <path>`: Load plugins from an explicit directory
+- `--deploy <plugin-target>`: Apply a deployment target registered by a plugin
 
 ### Capability matrix
 
@@ -157,20 +172,21 @@ cleaned deliberately instead of using an unscoped system-wide prune.
 ## Documentation
 
 Check out the [Wiki Guides](docs/home.md) for deep dives into:
-* [Architecture Overview](docs/architecture.md)
-* [The Template Engine](docs/template-engine.md)
-* [Dependency Resolution](docs/dependency-resolution.md)
-* [Adding New Features](docs/contributing.md)
-* [Writing Plugins](docs/plugins.md)
-* [Roadmap](docs/roadmap.md)
+
+- [Architecture Overview](docs/architecture.md)
+- [The Template Engine](docs/template-engine.md)
+- [Dependency Resolution](docs/dependency-resolution.md)
+- [Adding New Features](docs/contributing.md)
+- [Writing Plugins](docs/plugins.md)
+- [Roadmap](docs/roadmap.md)
 
 ## Roadmap
 
 The trust-and-predictability foundation is now in place:
 
-* `--dry-run`, file diffs, manifests, strict package audits, AI context packs, and capability gating ship as part of normal generation.
-* Community plugins can add frameworks, auth providers, and deployment targets through validated manifests and templates.
-* Template validation and generated-project smoke workflows guard the scaffold surface in CI.
+- `--dry-run`, file diffs, manifests, strict package audits, AI context packs, and capability gating ship as part of normal generation.
+- Community plugins can add frameworks, auth providers, and deployment targets through validated manifests and templates.
+- Template validation and generated-project smoke workflows guard the scaffold surface in CI.
 
 The largest remaining milestone is [production-ready Supabase Auth and Clerk fullstack support](docs/fullstack-managed-auth-plan.md), delivered through provider/backend contract tests rather than SDK presence alone. See the [detailed roadmap](docs/roadmap.md) for current status and sequencing.
 
