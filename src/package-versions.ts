@@ -1,7 +1,7 @@
 export const packageVersions = {
   dependencies: {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     argon2: "^0.41.1",
     cors: "^2.8.6",
     dotenv: "^17.4.2",
@@ -12,7 +12,7 @@ export const packageVersions = {
     zod: "^4.4.3",
   },
   devDependencies: {
-    "@prisma/config": "^7.8.0",
+    "@prisma/config": "^7.10.0",
     "@types/bun": "^1.3.14",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
@@ -20,7 +20,7 @@ export const packageVersions = {
     "@types/node": "^25.9.3",
     "@types/pg": "^8.20.0",
     concurrently: "^9.2.1",
-    prisma: "^7.8.0",
+    prisma: "^7.10.0",
     typescript: "^6.0.3",
   },
 } as const;

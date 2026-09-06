@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>qwykz — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 1124 nodes, 1663 edges, 115 communities. Commit: 7075ecb</p>
+<p class="subtitle">Generated from graphify knowledge graph: 1125 nodes, 1667 edges, 115 communities. Commit: 333b3b0</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -90,7 +90,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>131 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>296 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>297 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>10 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
@@ -118,7 +118,7 @@ flowchart LR
     class ERROR_MIDDLEWARE_TS_E6A200_12C024CD module;
     OTHER_D0941E68("Other<br/><small>237 nodes</small>")
     class OTHER_D0941E68 module;
-    BUILD_GRAPH_321CBB04 -->|imports x30| TESTS_FIXTURES_B84B1DCC
+    BUILD_GRAPH_321CBB04 -->|imports x29| TESTS_FIXTURES_B84B1DCC
     TESTS_FIXTURES_B84B1DCC -->|imports x17| BUILD_GRAPH_321CBB04
     EXPRESS_F3C62DE4 -->|imports x7| OTHER_D0941E68
     TESTS_FIXTURES_B84B1DCC -->|imports x7| INGEST_CACHE_UPDATE_FF457338
@@ -145,7 +145,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>131</td><td><code>0, 4, 12, 16, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>296</td><td><code>96, 84, 6, 88, 10, 8, 9, 11, 95, 15, 100, 2, 103, 105, 112, 113</code></td></tr><tr><td>Outputs &amp; Docs</td><td>10</td><td><code>102, 114</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>49</td><td><code>79</code></td></tr><tr><td>Serving API</td><td>47</td><td><code>71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>240</td><td><code>89, 87, 40, 92, 86, 74, 81, 82, 110, 77, 78, 83, 85, 59, 61, 63</code></td></tr><tr><td>Priority 1: Trust And Predictability — Implementation Plan</td><td>19</td><td><code>90</code></td></tr><tr><td>Feature 8: AI Context Pack</td><td>19</td><td><code>91</code></td></tr><tr><td>express</td><td>17</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Other</td><td>237</td><td><code>94, 1, 72, 5, 17, 101, 104, 93, 106, 107, 108, 97, 98, 109, 111, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 99, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>131</td><td><code>0, 4, 12, 16, 18, 33, 35, 36, 58</code></td></tr><tr><td>Graph Build</td><td>297</td><td><code>96, 84, 6, 88, 10, 8, 9, 11, 95, 15, 100, 2, 103, 105, 112, 113</code></td></tr><tr><td>Outputs &amp; Docs</td><td>10</td><td><code>102, 114</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>7</td><td><code>76, 57</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>49</td><td><code>79</code></td></tr><tr><td>Serving API</td><td>47</td><td><code>71, 7</code></td></tr><tr><td>Security &amp; Global Graph</td><td>5</td><td><code>75</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>240</td><td><code>89, 87, 40, 92, 86, 74, 81, 82, 110, 77, 78, 83, 85, 59, 61, 63</code></td></tr><tr><td>Priority 1: Trust And Predictability — Implementation Plan</td><td>19</td><td><code>90</code></td></tr><tr><td>Feature 8: AI Context Pack</td><td>19</td><td><code>91</code></td></tr><tr><td>express</td><td>17</td><td><code>3</code></td></tr><tr><td>Roadmap</td><td>17</td><td><code>73</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>13</code></td></tr><tr><td>error.middleware.ts</td><td>15</td><td><code>14</code></td></tr><tr><td>Other</td><td>237</td><td><code>94, 1, 72, 5, 17, 101, 104, 93, 106, 107, 108, 97, 98, 109, 111, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 99, 34, 37, 38, 39, 44, 48, 53, 41, 42, 43, 45, 46, 47, 49, 50, 51, 52, 54, 55, 56, 80, 60, 62, 64, 65, 66, 67, 68, 69, 70</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -157,7 +157,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>1124 nodes · 1663 edges · 115 communities (76 shown, 39 thin omitted)</li>
+      <li>1125 nodes · 1667 edges · 115 communities (76 shown, 39 thin omitted)</li>
       <li>Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `readTemplate()` - 28 edges</li>
@@ -519,12 +519,12 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around tsconfigjson, packagejson, templates, generator, mostly in package.json, docs/plans/plan-priority-2-managed-fullstack-auth.md, tsconfig.json. This section covers 296 nodes and 475 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around tsconfigjson, packagejson, templates, generator, mostly in package.json, docs/plans/plan-priority-2-managed-fullstack-auth.md, tsconfig.json. This section covers 297 nodes and 480 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (296 nodes, 475 edges)
+    %% Section: Graph Build (297 nodes, 480 edges)
     subgraph build_graph_generator_frameworks_native_ts_bb79f215["generator/frameworks/native.ts"]
         src_generator_frameworks_native_f417829d("native.ts")
         src_generator_frameworks_native_generatepythonpr_8bb3281e("generatePythonProject()<br/><small>generator/frameworks/native.ts</small>")
@@ -577,7 +577,7 @@ flowchart LR
     src_generator_frameworks_native_generaterustproj_b5cde2ed -->|calls| src_template_engine_readtemplate_846ea414
     src_generator_frameworks_node_api_generateexpres_96a9fa00 -->|calls| src_generator_shared_files_generatedbpassword_7c0b93cd
     src_generator_frameworks_node_api_generateexpres_96a9fa00 -->|calls| src_generator_shared_files_generatejwtsecret_f0789311
-    %% Omitted for readability: 278 nodes, 34 edges
+    %% Omitted for readability: 279 nodes, 34 edges
     class src_generator_frameworks_native_f417829d module;
     class src_generator_frameworks_native_generatepythonpr_8bb3281e function;
     class src_generator_frameworks_native_generategoprojec_b4dfd2e8 function;
@@ -876,7 +876,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x210, calls x100, imports x85, extends x46. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x211, calls x103, imports x86, extends x46. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4082,8 +4082,8 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>1124</td></tr>
-      <tr><td>Edges</td><td>1663</td></tr>
+      <tr><td>Nodes</td><td>1125</td></tr>
+      <tr><td>Edges</td><td>1667</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
       <tr><td>Communities</td><td>115</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
@@ -4092,7 +4092,7 @@ flowchart LR
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>1640</td></tr>
+      <tr><td>EXTRACTED</td><td>1644</td></tr>
       <tr><td>INFERRED</td><td>23</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -4101,7 +4101,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>qwykz — Architecture Documentation</p>
-  <p>Generated: 2026-07-22 02:54 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-09-06 01:53 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->
