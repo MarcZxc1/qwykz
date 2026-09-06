@@ -452,5 +452,35 @@ describe("qwykz CLI integration", () => {
     const manifest = JSON.parse(await Bun.file(join(projectDir, ".qwykz-manifest.json")).text());
     expect(manifest.scaffold.learn).toBe(true);
   });
+
+  test("prints version with --version flag", async () => {
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--version"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+    const stdout = await new Response(proc.stdout).text();
+    expect(stdout).toMatch(/qwykz v\d+\.\d+\.\d+/);
+  });
+
+  test("prints help with --help flag", async () => {
+    const proc = Bun.spawn({
+      cmd: ["bun", "run", CLI_PATH, "--help"],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+    const stdout = await new Response(proc.stdout).text();
+    expect(stdout).toContain("qwykz — Inspectable multi-stack project scaffolder");
+    expect(stdout).toContain("--preset");
+    expect(stdout).toContain("--list-presets");
+  });
 });
 
