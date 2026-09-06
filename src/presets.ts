@@ -289,12 +289,13 @@ export function resolvePresetOptions(
   const defaultProjectName = overrides?.projectName || `qwykz-${preset.name.replace(/^(api-|web-|fullstack-)/, "")}`;
 
   return {
-    ...preset.options,
     projectName: defaultProjectName,
+    ...preset.options,
     preset: preset.name,
     dbPort: Math.floor(Math.random() * 1000) + 54000,
     redisPort: Math.floor(Math.random() * 1000) + 63000,
     ...overrides,
+    experimental: overrides?.experimental ?? preset.options.experimental ?? false,
   };
 }
 

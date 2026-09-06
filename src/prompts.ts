@@ -101,7 +101,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       strict: isStrict,
       recordPrompts: isRecordPrompts,
       noAiContext: isNoAiContext,
-      experimental: isExperimental,
+      ...(isExperimental ? { experimental: true } : {}),
       deploymentTarget: getFlagValue("--deploy"),
     };
     if (getFlagValue("--db")) overrides.dbTarget = getFlagValue("--db") as DbTarget;
@@ -246,7 +246,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       strict: isStrict,
       recordPrompts: isRecordPrompts,
       noAiContext: isNoAiContext,
-      experimental: isExperimental,
+      ...(isExperimental ? { experimental: true } : {}),
       deploymentTarget: getFlagValue("--deploy"),
     });
 
