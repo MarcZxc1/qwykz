@@ -139,7 +139,7 @@ export async function resolveDockerCompose(
 
 export async function resolvePrismaClient(dbTarget: DbTarget): Promise<string> {
   const variant =
-    dbTarget === "supabase"
+    dbTarget === "supabase" || dbTarget === "neon"
       ? "express/prisma-client.supabase.ts"
       : "express/prisma-client.default.ts";
   return readTemplate(variant);

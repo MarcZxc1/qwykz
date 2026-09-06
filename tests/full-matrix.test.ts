@@ -82,6 +82,16 @@ describe("Express", () => {
     expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 
+  test("neon DB", () => {
+    const name = "t-express-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework express --db neon")).toBe(true);
+    expect(fileExists(name, "src/index.ts")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
+  });
+
   test("local DB + docker redis", () => {
     const name = "t-express-local-redis";
     allProjects.push(name);
@@ -127,6 +137,14 @@ describe("Hono", () => {
     expect(scaffold(name, "--framework hono --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "YOUR-PROJECT-ID")).toBe(true);
   });
+
+  test("neon DB", () => {
+    const name = "t-hono-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework hono --db neon")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
+  });
 });
 
 describe("Elysia", () => {
@@ -154,6 +172,14 @@ describe("Elysia", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework elysia --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "YOUR-PROJECT-ID")).toBe(true);
+  });
+
+  test("neon DB", () => {
+    const name = "t-elysia-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework elysia --db neon")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
   });
 });
 
@@ -209,6 +235,16 @@ describe("Next.js", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework nextjs --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "supabase")).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
+  });
+
+  test("neon DB", () => {
+    const name = "t-nextjs-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework nextjs --db neon")).toBe(true);
+    expect(fileExists(name, "app/api/health/route.ts")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
     expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 });
@@ -329,6 +365,15 @@ describe("Python (FastAPI)", () => {
     expect(fileContains(name, "requirements.txt", "redis")).toBe(true);
     expect(fileContains(name, ".env", "REDIS_URL")).toBe(true);
   });
+
+  test("neon DB", () => {
+    const name = "t-python-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework python --db neon")).toBe(true);
+    expect(fileExists(name, "app/main.py")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "sslmode=require")).toBe(true);
+  });
 });
 
 describe("Go (Fiber)", () => {
@@ -361,6 +406,15 @@ describe("Go (Fiber)", () => {
     expect(fileExists(name, "docker-compose.yml")).toBe(true);
     expect(fileContains(name, "go.mod", "redis")).toBe(true);
     expect(fileContains(name, ".env", "REDIS_URL")).toBe(true);
+  });
+
+  test("neon DB", () => {
+    const name = "t-go-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework go --db neon")).toBe(true);
+    expect(fileExists(name, "cmd/api/main.go")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "sslmode=require")).toBe(true);
   });
 });
 
@@ -396,4 +450,14 @@ describe("Rust (Axum)", () => {
     expect(fileContains(name, "Cargo.toml", "redis")).toBe(true);
     expect(fileContains(name, ".env", "REDIS_URL")).toBe(true);
   });
+
+  test("neon DB", () => {
+    const name = "t-rust-neon";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework rust --db neon")).toBe(true);
+    expect(fileExists(name, "src/main.rs")).toBe(true);
+    expect(fileContains(name, ".env", "neon.tech")).toBe(true);
+    expect(fileContains(name, ".env", "sslmode=require")).toBe(true);
+  });
 });
+

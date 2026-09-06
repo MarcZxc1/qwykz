@@ -412,7 +412,8 @@ function getEnvSection(
     vars.push({ key: "SUPABASE_URL", description: "Supabase project URL" });
     vars.push({ key: "SUPABASE_ANON_KEY", description: "Supabase public anon key" });
   } else if (dbTarget === "neon") {
-    vars.push({ key: "DATABASE_URL", description: "Neon serverless PostgreSQL connection string" });
+    vars.push({ key: "DATABASE_URL", description: "Neon pooled PostgreSQL connection string" });
+    vars.push({ key: "DIRECT_URL", description: "Neon direct connection string (unpooled, required for Prisma migrations)" });
   }
 
   if (authTarget === "local") {

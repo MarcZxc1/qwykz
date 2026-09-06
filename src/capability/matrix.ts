@@ -10,7 +10,7 @@ export const CAPABILITY_MATRIX: CapabilityMatrix = {
     hono: nodeCapabilities(),
     elysia: nodeCapabilities(),
     nextjs: {
-      dbTargets: statuses("supported", "supported", "supported", "unsupported"),
+      dbTargets: statuses("supported", "supported", "supported", "supported"),
       authTargets: { local: "supported", supabase: "experimental", clerk: "experimental" },
       cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
       dockerfile: false,
@@ -40,7 +40,7 @@ function statuses(
 
 function nodeCapabilities(): FrameworkCapabilities {
   return {
-    dbTargets: statuses("supported", "supported", "supported", "experimental"),
+    dbTargets: statuses("supported", "supported", "supported", "supported"),
     authTargets: { local: "supported", supabase: "experimental", clerk: "experimental" },
     cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
     dockerfile: false,
@@ -61,7 +61,7 @@ function frontendCapabilities(): FrameworkCapabilities {
 
 function nativeCapabilities(): FrameworkCapabilities {
   return {
-    dbTargets: statuses("supported", "supported", "supported", "experimental"),
+    dbTargets: statuses("supported", "supported", "supported", "supported"),
     authTargets: { local: "supported", supabase: "unsupported", clerk: "unsupported" },
     cachingTargets: { none: "supported", docker: "supported", upstash: "unsupported" },
     dockerfile: true,

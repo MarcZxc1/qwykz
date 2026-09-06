@@ -7,7 +7,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -30,7 +30,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -53,7 +53,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -76,7 +76,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "unsupported"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -133,7 +133,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -156,7 +156,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",
@@ -179,7 +179,7 @@
         "local": "supported",
         "docker": "supported",
         "supabase": "supported",
-        "neon": "experimental"
+        "neon": "supported"
       },
       "authTargets": {
         "local": "supported",

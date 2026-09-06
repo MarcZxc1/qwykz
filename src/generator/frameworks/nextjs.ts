@@ -79,6 +79,8 @@ export async function generateNextJsProject(options: ProjectOptions) {
   if (options.dbTarget === "supabase") {
     const parsed = new URL(options.supabaseDbUrl || "postgresql://postgres:postgres@aws-0-eu-central-1.pooler.supabase.com:5432/postgres");
     envContent = `DATABASE_URL="${options.supabaseDbUrl}"\nDIRECT_URL="postgresql://${parsed.username}:${parsed.password}@${parsed.hostname}:5432/postgres"\nJWT_SECRET="${generateJwtSecret()}"\n`;
+  } else if (options.dbTarget === "neon") {
+    envContent = `DATABASE_URL="postgresql://user:password@ep-wandering-water-123456-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"\nDIRECT_URL="postgresql://user:password@ep-wandering-water-123456.us-east-2.aws.neon.tech/neondb?sslmode=require"\nJWT_SECRET="${generateJwtSecret()}"\n`;
   } else {
     const port = options.dbTarget === "docker" ? (options.dbPort ?? 54320).toString() : "5432";
     const pass = options.dbTarget === "docker" ? dbPassword : "postgres";
@@ -92,7 +94,7 @@ export async function generateNextJsProject(options: ProjectOptions) {
   }
   await Bun.write(envPath, envContent);
 
-  const prismaClientStub = options.dbTarget === "supabase"
+  const prismaClientStub = options.dbTarget === "supabase" || options.dbTarget === "neon"
     ? await readTemplate("express/prisma-client.supabase.ts")
     : await readTemplate("express/prisma-client.default.ts");
 
