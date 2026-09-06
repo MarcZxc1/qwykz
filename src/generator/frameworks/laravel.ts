@@ -6,6 +6,12 @@ import { generateDbPassword } from "../shared/files";
 import { resolveDockerCompose } from "../shared/runtime";
 
 export async function generateLaravelProject(options: ProjectOptions) {
+  if (!Bun.which("composer") || !Bun.which("php")) {
+    throw new Error(
+      "Laravel scaffolding requires 'composer' and 'php' (>= 8.2) to be installed and available in your PATH.",
+    );
+  }
+
   const targetDir = join(process.cwd(), options.projectName);
   const dbPassword = generateDbPassword();
 

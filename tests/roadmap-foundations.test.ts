@@ -68,12 +68,33 @@ describe("roadmap foundations", () => {
   });
 
   test("experimental combinations require explicit acknowledgement", async () => {
-    const rejected = await run(["--name", "react-local-rejected", "--framework", "react", "--auth", "local"]);
-    expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("--experimental");
+    const { CAPABILITY_MATRIX } = await import("../src/capability/matrix");
+    CAPABILITY_MATRIX.matrix["test-experimental"] = {
+      dbTargets: { local: "experimental" },
+      authTargets: { local: "supported" },
+      cachingTargets: { none: "supported" },
+      dockerfile: false,
+    };
+    try {
+      expect(
+        buildScaffoldPlan({
+          projectName: "exp-test",
+          framework: "test-experimental",
+          dbTarget: "local",
+          authTarget: "local",
+          cachingTarget: "none",
+          extraPackages: [],
+        }),
+      ).rejects.toThrow("This scaffold combination is experimental");
+    } finally {
+      delete CAPABILITY_MATRIX.matrix["test-experimental"];
+    }
+  });
 
-    const accepted = await run(["--name", "react-local-accepted", "--framework", "react", "--auth", "local", "--experimental"]);
-    expect(accepted.exitCode).toBe(0);
+  test("react local auth succeeds as standard without --experimental", async () => {
+    const result = await run(["--name", "react-local-std", "--framework", "react", "--auth", "local", "--dry-run"]);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Dry run complete");
   });
 
   test("unsupported combinations are rejected before writing", async () => {

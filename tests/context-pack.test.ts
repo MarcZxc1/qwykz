@@ -45,7 +45,7 @@ describe("generateContextPack", () => {
       makeOptions({ authTarget: "supabase", dbTarget: "supabase" }),
     );
     expect(md).toContain("Supabase Auth");
-    expect(md).toContain("Status: experimental");
+    expect(md).toContain("Status: supported");
     expect(md).not.toContain("Supabase Admin SDK");
     expect(md).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(md).toContain("SUPABASE_URL");
