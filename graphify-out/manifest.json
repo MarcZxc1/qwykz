@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "src/npm-registry.ts": {
-    "mtime": 1788659567.520373,
-    "ast_hash": "a7f0200dccf36749393b63edce4bacfd",
+    "mtime": 1788660225.9534166,
+    "ast_hash": "1fb5ced76ebdc124398eb0023af628aa",
     "semantic_hash": ""
   },
   "src/package-json.ts": {

@@ -21,12 +21,15 @@ const VALID_NPM_PACKAGE_NAME = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-
  * - Rejects pre-release versions (e.g. -rc, -beta, -alpha, -dev)
  * - Keeps Prisma on version 7 (rejects Prisma major >= 8)
  */
-function isAcceptableVersion(packageName: string, versionStr: string): boolean {
+function isAcceptableVersion(packageName: string, versionStr: string | undefined): boolean {
+  if (!versionStr) return false;
   const raw = versionStr.replace(/^[\^~]/, "");
   if (raw.includes("-")) return false;
   if (packageName === "prisma" || packageName.startsWith("@prisma/")) {
-    const major = parseInt(raw.split(".")[0], 10);
-    if (major >= 8) return false;
+    const firstPart = raw.split(".")[0];
+    if (!firstPart) return false;
+    const major = parseInt(firstPart, 10);
+    if (!Number.isNaN(major) && major >= 8) return false;
   }
   return true;
 }
@@ -126,16 +129,17 @@ async function fetchLatestVersion(packageName: string): Promise<string> {
 export async function resolveLatestVersions(
   packageNames: string[],
 ): Promise<Record<string, string>> {
-  const hardcoded: Record<string, string> = {
-    ...packageVersions.dependencies,
-    ...packageVersions.devDependencies,
-  };
+  const hardcoded: Record<string, string> = Object.assign(
+    {},
+    packageVersions.dependencies,
+    packageVersions.devDependencies,
+  );
 
   // 1. Check if today's cache is fresh
   const cached = readCache();
   if (cached && cached.date === todayKey()) {
     const allPresent = packageNames.every(
-      (name) => name in cached.versions && isAcceptableVersion(name, cached.versions[name]),
+      (name) => isAcceptableVersion(name, cached.versions[name]),
     );
     if (allPresent) {
       return cached.versions;
@@ -150,19 +154,20 @@ export async function resolveLatestVersions(
           const version = await fetchLatestVersion(name);
           return [name, version] as const;
         } catch {
+          const cachedVer = cached?.versions[name];
           const fallback =
-            cached?.versions && isAcceptableVersion(name, cached.versions[name])
-              ? cached.versions[name]
+            isAcceptableVersion(name, cachedVer) && typeof cachedVer === "string"
+              ? cachedVer
               : hardcoded[name] ?? "latest";
           return [name, fallback] as const;
         }
       }),
     );
 
-    const versions = Object.fromEntries(results);
+    const versions: Record<string, string> = Object.fromEntries(results);
 
     // Merge with any existing cached versions (for packages we didn't fetch this time)
-    const merged = { ...(cached?.versions ?? {}), ...versions };
+    const merged: Record<string, string> = Object.assign({}, cached?.versions, versions);
     writeCache(merged);
 
     return merged;
@@ -170,7 +175,7 @@ export async function resolveLatestVersions(
     // 3. Fallback: stale cache → hardcoded
     if (cached?.versions) {
       const allPresent = packageNames.every(
-        (name) => name in cached.versions && isAcceptableVersion(name, cached.versions[name]),
+        (name) => isAcceptableVersion(name, cached.versions[name]),
       );
       if (allPresent) {
         return cached.versions;
