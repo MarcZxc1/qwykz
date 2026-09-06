@@ -249,9 +249,29 @@ Current status:
 
 * Completed. In-memory deduplication implemented in `src/generator/scaffold-plan.ts` and validated in the 15-target E2E laboratory battery.
 
-## Priority 7: Workflow & Developer Ergonomics (Next Up)
+## Priority 7: Educational Scaffolding & Developer Ownership (Next Up)
 
-### 13. Scaffolded GitHub Actions CI/CD workflows (`--ci github`)
+### 13. Educational scaffolding and `LEARN.md` guide
+
+Goal: empower developers of all experience levels to understand, modify, and truly own their scaffolded codebase from the moment it is generated.
+
+Scope:
+
+* **Generated `LEARN.md` Guide**: A plain-English companion to `AGENTS.md` written specifically for human developers. Covers:
+  * Architectural overview: how an incoming HTTP request flows from router to controller to database.
+  * Technology rationale: why Docker Compose is used for local database isolation, why the chosen ORM/query builder was selected, and how the authentication flow operates step-by-step (bcrypt hashing, JWT token issue, bearer header validation).
+  * "Your First Three Steps": concrete walkthroughs for adding a database field, creating a protected endpoint, and running tests.
+* **Educational CLI Decision Context**: Enrich interactive prompts with concise, honest trade-off context (e.g. learning curve, compile speed, concurrency model, use cases) so developers learn while selecting their stack.
+* **Architectural Code Comments**: Include comments in scaffolded templates that explain the *why*, not just the *what* (e.g. security header purposes, connection pool sharing via State extractors, explicit dependency injection).
+* **Terminal Architectural Summary**: Print a concise 4-bullet architectural mental model upon scaffold completion pointing the developer to `LEARN.md`.
+
+Why this matters:
+
+* Scaffolding tools often dump dozens of files that feel like a brittle black box to juniors or developers learning a new language.
+* Developers feel true ownership of a project when they understand why every package and file exists.
+* Bridges the gap between blank-prompt confusion and production-grade software architecture.
+
+### 14. Scaffolded GitHub Actions CI/CD workflows (`--ci github`)
 
 Goal: generate a ready-to-run GitHub Actions CI workflow (`.github/workflows/ci.yml`) tailored to the selected framework and runtime.
 
@@ -270,7 +290,7 @@ Why this matters:
 * New projects immediately have active CI upon the first push to GitHub.
 * Enforces reproducible testing standards across all supported stacks.
 
-### 14. Production multi-stage Dockerfiles (`dockerfile: true`)
+### 15. Production multi-stage Dockerfiles (`dockerfile: true`)
 
 Goal: provide production-grade, multi-stage Dockerfiles across all supported frontend and backend stacks.
 
@@ -287,7 +307,7 @@ Why this matters:
 * Allows developers to deploy directly to container platforms (Fly.io, Render, Railway, AWS ECS, Kubernetes).
 * Eliminates boilerplate container setup.
 
-### 15. Interactive OpenAPI and Swagger documentation (`/docs`)
+### 16. Interactive OpenAPI and Swagger documentation (`/docs`)
 
 Goal: provide built-in interactive API documentation out-of-the-box for all backend API scaffolds.
 
@@ -305,7 +325,7 @@ Why this matters:
 * Developers can visually explore and test API routes without needing Postman or external HTTP clients.
 * Documents request/response contracts directly in the scaffold.
 
-### 16. Database seeding and fixtures (`db:seed`)
+### 17. Database seeding and fixtures (`db:seed`)
 
 Goal: provide deterministic database seed scripts for local databases and Docker setups.
 
@@ -321,7 +341,7 @@ Why this matters:
 * Scaffolded authentication can be exercised immediately with pre-seeded test credentials.
 * Eliminates manual database population after `bun dev` or `cargo run`.
 
-### 17. Post-scaffold resource generator (`qwykz add <resource>`)
+### 18. Post-scaffold resource generator (`qwykz add <resource>`)
 
 Goal: scaffold follow-up routes, controllers, services, and tests in an existing `qwykz` project.
 
@@ -348,12 +368,13 @@ Why this matters:
 9. Curated stack presets (`--preset`). *(Done)*
 10. Next.js App Router graduation to supported. *(Done)*
 11. Deterministic staging & deduplication. *(Done)*
-12. Scaffolded GitHub Actions CI/CD (`--ci github`). *(Next)*
-13. Production multi-stage Dockerfiles across all stacks.
-14. Interactive OpenAPI & Swagger docs (`/docs`).
-15. Database seeding & fixtures (`db:seed`).
-16. Post-scaffold resource generator (`qwykz add`).
-17. Managed fullstack auth Phases 2 through 4 (Go/Rust/Python JWT verification).
+12. Educational scaffolding & `LEARN.md` guide. *(Next)*
+13. Scaffolded GitHub Actions CI/CD (`--ci github`).
+14. Production multi-stage Dockerfiles across all stacks.
+15. Interactive OpenAPI & Swagger docs (`/docs`).
+16. Database seeding & fixtures (`db:seed`).
+17. Post-scaffold resource generator (`qwykz add`).
+18. Managed fullstack auth Phases 2 through 4 (Go/Rust/Python JWT verification).
 
 ## Notes For Contributors
 
