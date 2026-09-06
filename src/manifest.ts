@@ -43,6 +43,7 @@ export function buildManifest(plan: ScaffoldPlan): ScaffoldManifest {
     },
     scaffold: {
       framework: options.framework,
+      ...(options.preset ? { preset: options.preset } : {}),
       dbTarget: options.dbTarget,
       authTarget: options.authTarget,
       cachingTarget: options.cachingTarget,
@@ -72,6 +73,7 @@ export function buildManifest(plan: ScaffoldPlan): ScaffoldManifest {
     ...(options.recordPrompts
       ? {
           promptAnswers: {
+            ...(options.preset ? { preset: options.preset } : {}),
             framework: options.framework,
             dbTarget: options.dbTarget,
             authTarget: options.authTarget,

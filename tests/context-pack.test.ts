@@ -25,6 +25,12 @@ describe("generateContextPack", () => {
     expect(md).toContain("## Commands");
     expect(md).toContain("## Auth Model");
     expect(md).toContain("## Environment Variables");
+    expect(md).toContain("## Agent Guidelines");
+  });
+
+  it("includes preset in stack section when preset option is set", () => {
+    const md = generateContextPack(makeOptions({ preset: "api-rust" }));
+    expect(md).toContain("- **Preset**    : api-rust");
   });
 
   it("includes JWT auth section for local auth", () => {

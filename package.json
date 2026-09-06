@@ -49,7 +49,7 @@
     "capabilities:generate": "bun run scripts/generate-capability-matrix.ts",
     "validate:templates": "bun run scripts/validate-templates.ts",
     "build:bin": "bun run scripts/build-bin.ts",
-    "test": "bun test --timeout 180000 tests/template-engine.test.ts tests/manifest.test.ts tests/context-pack.test.ts tests/capability-matrix.test.ts tests/plugin-manifest.test.ts tests/plugin-cli.test.ts tests/plugin-e2e.test.ts tests/template-validation.test.ts tests/roadmap-foundations.test.ts && bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts",
+    "test": "bun test --timeout 180000 tests/presets.test.ts tests/template-engine.test.ts tests/manifest.test.ts tests/context-pack.test.ts tests/capability-matrix.test.ts tests/plugin-manifest.test.ts tests/plugin-cli.test.ts tests/plugin-e2e.test.ts tests/template-validation.test.ts tests/roadmap-foundations.test.ts && bun test --timeout 180000 tests/cli.test.ts && bun test --timeout 180000 tests/e2e.test.ts && bun test --timeout 180000 tests/full-matrix.test.ts",
     "test:runtime": "QWYKZ_RUN_RUNTIME_SMOKE=1 bun test --timeout 900000 tests/runtime-smoke.test.ts",
     "test:runtime:laravel": "QWYKZ_RUN_RUNTIME_SMOKE=1 QWYKZ_SMOKE_INCLUDE_EXTERNAL=1 QWYKZ_SMOKE_FILTER=laravel bun test --timeout 900000 tests/runtime-smoke.test.ts",
     "report:runtime": "bun run scripts/generate-smoke-report.ts",
