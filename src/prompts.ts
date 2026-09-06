@@ -88,6 +88,44 @@ export const isLearnMode = hasFlag("--learn");
 // ---------------------------------------------------------------------------
 
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
+  if (hasFlag("--version") || hasFlag("-v")) {
+    const pkg = await import("../package.json");
+    console.log(`qwykz v${pkg.version}`);
+    process.exit(0);
+  }
+
+  if (hasFlag("--help") || hasFlag("-h")) {
+    console.log(`
+qwykz — Inspectable multi-stack project scaffolder
+
+Usage:
+  qwykz [options]
+  qwykz --preset <preset-name> [--name <project-name>]
+
+Options:
+  -n, --name <name>          Project name (default: qwykz-app)
+  -f, --framework <name>     Target framework (express, hono, elysia, nextjs, react, vue, python, go, rust, laravel, monorepo)
+  --db <target>              Database target (local, docker, supabase, neon)
+  --auth <target>            Auth target (local, supabase, clerk)
+  --caching <target>         Caching target (none, docker, upstash)
+  --frontend <name>          Frontend framework for monorepos (react, vue)
+  --backend <name>           Backend framework for monorepos (express, hono, elysia, python, go, rust, laravel)
+  --preset <name>            Use a curated stack preset
+  --list-presets             Display all available stack presets
+  --learn                    Generate hands-on learning workspace with GUIDE.md
+  --dry-run                  Preview generated files without touching disk
+  --show-diff                Show full file diffs in dry-run mode
+  --strict                   Print package policy rationale for all added packages
+  --no-ai-context            Do not generate AGENTS.md
+  --record-prompts           Record answers in .qwykz-manifest.json
+  --plugins-dir <path>       Directory to search for community plugins
+  -y, --yes                  Skip interactive prompts and use defaults / passed flags
+  -v, --version              Show qwykz version
+  -h, --help                 Show help message
+`);
+    process.exit(0);
+  }
+
   if (hasFlag("--list-presets")) {
     const { formatPresetsTable } = await import("./presets");
     console.log(formatPresetsTable());
