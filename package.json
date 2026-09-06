@@ -53,7 +53,8 @@
     "test:runtime": "QWYKZ_RUN_RUNTIME_SMOKE=1 bun test --timeout 900000 tests/runtime-smoke.test.ts",
     "test:runtime:laravel": "QWYKZ_RUN_RUNTIME_SMOKE=1 QWYKZ_SMOKE_INCLUDE_EXTERNAL=1 QWYKZ_SMOKE_FILTER=laravel bun test --timeout 900000 tests/runtime-smoke.test.ts",
     "report:runtime": "bun run scripts/generate-smoke-report.ts",
-    "test:managed": "QWYKZ_RUN_MANAGED_CREDENTIAL_SMOKE=1 bun test --timeout 180000 tests/managed-credentials.test.ts"
+    "test:managed": "QWYKZ_RUN_MANAGED_CREDENTIAL_SMOKE=1 bun test --timeout 180000 tests/managed-credentials.test.ts",
+    "sync:web": "bun run scripts/sync-web.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

@@ -81,3 +81,29 @@ Rules:
 - If `graphify-out/wiki/index.md` exists, use it for broad navigation instead of raw source browsing.
 - Read `graphify-out/GRAPH_REPORT.md` only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost). Note: `graphify-out/` is gitignored to avoid repository bloat.
+
+---
+
+## 5. Web Documentation Sync Protocol (`qwykz-web`)
+
+The official documentation and interactive showcase lives at `/home/marc/projects/qwykz-web`.
+
+Whenever you modify any of the following in `qwykz`:
+1. **`capability-matrix.json`**: Adding new frameworks, graduating databases/auth, or altering support tiers.
+2. **`src/presets.ts`**: Adding new curated presets, modifying options, or adding ergonomic aliases.
+3. **`package.json`**: Bumping version or altering core dependencies.
+4. **CLI Flags**: Adding or changing flags (`--version`, `--help`, `--preset`, `--learn`, etc.).
+
+### Automatic Sync Command
+Run this command from `qwykz` before concluding your task:
+
+```bash
+bun run sync:web
+```
+
+This triggers the upstream synchronization pipeline in `../qwykz-web`, updating:
+- `qwykz-web/src/data/version.ts` (current version and release metadata)
+- `qwykz-web/src/data/matrix.ts` (full capability matrix dataset)
+- `qwykz-web/.qwykz-sync-state.json` (recorded sync commit and timestamp)
+
+Always verify that `qwykz-web` passes its build triad (`bun run lint && bun run build`) after syncing.
