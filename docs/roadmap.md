@@ -205,18 +205,155 @@ Current status:
 * Every scaffold generates a factual `AGENTS.md` by default; `--no-ai-context` opts out.
 * The versioned capability matrix generates both Markdown and JSON and gates unsupported or experimental selections before target files are written.
 
+## Priority 6: Curated Stacks & Production Readiness
+
+### 10. Curated stack presets
+
+Goal: provide zero-decision, single-flag scaffolding for popular fullstack and backend architectures.
+
+Scope:
+
+* 17 curated stack presets covering Rust Axum, Go Fiber, Python FastAPI, Elysia, Hono, Express, Laravel, Next.js, React, Vue, and fullstack monorepos.
+* Ergonomic short aliases (`rust`, `go`, `fastapi`, `elysia`, `hono`, `express`, `laravel`, `nextjs`, `react`, `vue`, and monorepos).
+* Interactive selection menu and CLI flags (`--preset <name-or-alias>`, `--list-presets`).
+* Full integration with capability matrix gating and manifest attribution.
+
+Current status:
+
+* Completed. All 17 presets are defined in `src/presets.ts`, documented in `docs/presets.md`, and tested across CLI, unit, and runtime suites.
+
+### 11. Next.js App Router graduation to supported
+
+Goal: graduate Next.js App Router from experimental to fully supported across core database and auth combinations.
+
+Scope:
+
+* Pure in-memory scaffolding without external bootstrap dependencies.
+* Support local PostgreSQL, Docker PostgreSQL, and Supabase database configurations via Prisma adapter-pg.
+* Activate full test matrix coverage in `tests/full-matrix.test.ts` and `tests/e2e.test.ts`.
+
+Current status:
+
+* Completed. Promoted to `supported` in `capability-matrix.json` and `docs/capability-matrix.md` with active E2E and matrix test coverage.
+
+### 12. Deterministic staging and deduplication
+
+Goal: prevent file collisions and race conditions when upstream tools or templates supply conflicting files.
+
+Scope:
+
+* In-memory deduplication in `ScaffoldPlan` before disk write.
+* Graceful override and suppression of upstream files (such as Laravel's default `AGENTS.md`).
+
+Current status:
+
+* Completed. In-memory deduplication implemented in `src/generator/scaffold-plan.ts` and validated in the 15-target E2E laboratory battery.
+
+## Priority 7: Workflow & Developer Ergonomics (Next Up)
+
+### 13. Scaffolded GitHub Actions CI/CD workflows (`--ci github`)
+
+Goal: generate a ready-to-run GitHub Actions CI workflow (`.github/workflows/ci.yml`) tailored to the selected framework and runtime.
+
+Scope:
+
+* Rust Axum: `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`.
+* Go Fiber: `go test -v ./...`, `go vet ./...`.
+* Python FastAPI: `pytest`, `ruff check`.
+* Node / Bun (Express, Hono, Elysia): `bun test`, `bun run build`.
+* Next.js / React / Vue: linting, typecheck, production build.
+* Fullstack monorepos: parallel matrix jobs for frontend build and backend tests.
+* Opt-in via `--ci github` flag, with prompt option in interactive mode.
+
+Why this matters:
+
+* New projects immediately have active CI upon the first push to GitHub.
+* Enforces reproducible testing standards across all supported stacks.
+
+### 14. Production multi-stage Dockerfiles (`dockerfile: true`)
+
+Goal: provide production-grade, multi-stage Dockerfiles across all supported frontend and backend stacks.
+
+Scope:
+
+* Next.js: multi-stage build using `output: 'standalone'` and a minimal Node alpine runner.
+* React / Vue SPAs: multi-stage build with Vite into an unprivileged Nginx or Caddy alpine container.
+* Go Fiber: multi-stage build into scratch or distroless (<20MB image).
+* Rust Axum: multi-stage build with `cargo-chef` dependency caching into a slim Debian/Alpine image.
+* Update `capability-matrix.json` so `dockerfile` reflects `true` across all supported stacks.
+
+Why this matters:
+
+* Allows developers to deploy directly to container platforms (Fly.io, Render, Railway, AWS ECS, Kubernetes).
+* Eliminates boilerplate container setup.
+
+### 15. Interactive OpenAPI and Swagger documentation (`/docs`)
+
+Goal: provide built-in interactive API documentation out-of-the-box for all backend API scaffolds.
+
+Scope:
+
+* FastAPI: native Swagger UI and ReDoc at `/docs`.
+* Elysia: `@elysiajs/swagger` mounted at `/docs`.
+* Hono: `@scalar/hono-api-reference` or OpenAPI middleware at `/docs`.
+* Express: `swagger-ui-express` with typed OpenAPI definitions.
+* Go Fiber: `gofiber/swagger` with generated annotations.
+* Rust Axum: `utoipa` and `utoipa-swagger-ui` mounted at `/docs`.
+
+Why this matters:
+
+* Developers can visually explore and test API routes without needing Postman or external HTTP clients.
+* Documents request/response contracts directly in the scaffold.
+
+### 16. Database seeding and fixtures (`db:seed`)
+
+Goal: provide deterministic database seed scripts for local databases and Docker setups.
+
+Scope:
+
+* Node / Bun / Next.js: `prisma/seed.ts` via `bun run db:seed`.
+* Python: `app/db/seed.py` creating sample test records and an admin account.
+* Go: `cmd/seed/main.go` using GORM fixtures.
+* Rust: SQL migration seed file or CLI seed command.
+
+Why this matters:
+
+* Scaffolded authentication can be exercised immediately with pre-seeded test credentials.
+* Eliminates manual database population after `bun dev` or `cargo run`.
+
+### 17. Post-scaffold resource generator (`qwykz add <resource>`)
+
+Goal: scaffold follow-up routes, controllers, services, and tests in an existing `qwykz` project.
+
+Scope:
+
+* Inspect `.qwykz-manifest.json` in the current working directory to identify the stack.
+* Generate route handler, business service, model schema, and test file matching the conventions defined in `AGENTS.md`.
+
+Why this matters:
+
+* Keeps code structure consistent as projects grow.
+* Extends `qwykz` from an initial scaffolder into an ongoing development assistant.
+
 ## Recommended Implementation Order
 
-1. `--dry-run` and diff output.
-2. Scaffold manifest.
-3. Strict package policy mode.
-4. AI context pack.
-5. Public capability matrix.
-6. Generated app smoke tests.
-7. Managed fullstack auth Phase 0 and Phase 1.
-8. Template validation CI.
-9. Plugin system.
-10. Managed fullstack auth Phases 2 through 4.
+1. `--dry-run` and diff output. *(Done)*
+2. Scaffold manifest. *(Done)*
+3. Strict package policy mode. *(Done)*
+4. AI context pack. *(Done)*
+5. Public capability matrix. *(Done)*
+6. Generated app smoke tests. *(Done)*
+7. Template validation CI. *(Done)*
+8. Plugin system. *(Done)*
+9. Curated stack presets (`--preset`). *(Done)*
+10. Next.js App Router graduation to supported. *(Done)*
+11. Deterministic staging & deduplication. *(Done)*
+12. Scaffolded GitHub Actions CI/CD (`--ci github`). *(Next)*
+13. Production multi-stage Dockerfiles across all stacks.
+14. Interactive OpenAPI & Swagger docs (`/docs`).
+15. Database seeding & fixtures (`db:seed`).
+16. Post-scaffold resource generator (`qwykz add`).
+17. Managed fullstack auth Phases 2 through 4 (Go/Rust/Python JWT verification).
 
 ## Notes For Contributors
 
