@@ -71,6 +71,7 @@ const selectedSpecs = smokeSpecs.filter((spec) => {
 });
 
 afterAll(async () => {
+  if (!RUN_RUNTIME_SMOKE) return;
   for (const spec of selectedSpecs) {
     await cleanupSpec(spec);
   }

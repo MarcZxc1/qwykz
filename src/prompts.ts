@@ -80,6 +80,9 @@ export const isShowDiff = hasFlag("--show-diff");
 /** Allow combinations explicitly marked experimental in the public matrix. */
 export const isExperimental = hasFlag("--experimental");
 
+/** Educational scaffolding / hands-on learning mode: --learn */
+export const isLearnMode = hasFlag("--learn");
+
 // ---------------------------------------------------------------------------
 // Prompts
 // ---------------------------------------------------------------------------
@@ -103,6 +106,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       noAiContext: isNoAiContext,
       ...(isExperimental ? { experimental: true } : {}),
       deploymentTarget: getFlagValue("--deploy"),
+      learn: isLearnMode,
     };
     if (getFlagValue("--db")) overrides.dbTarget = getFlagValue("--db") as DbTarget;
     if (getFlagValue("--auth")) overrides.authTarget = getFlagValue("--auth") as AuthTarget;
@@ -169,6 +173,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       noAiContext: isNoAiContext,
       experimental: isExperimental,
       deploymentTarget,
+      learn: isLearnMode,
     };
   }
 
@@ -240,6 +245,25 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     stopOnCancel(selectedPreset);
 
     const { resolvePresetOptions } = await import("./presets");
+    let isLearnSelected = isLearnMode;
+    if (!isLearnMode) {
+      const scaffoldingMode = await select({
+        message: "Choose scaffolding style:",
+        options: [
+          {
+            value: "standard",
+            label: "🚀 Complete Boilerplate (Ready to run with full code & architecture docs)",
+          },
+          {
+            value: "learn",
+            label: "🎓 Guided Hands-On Skeleton (--learn: Zero boilerplate, step-by-step feature build guide)",
+          },
+        ],
+      });
+      stopOnCancel(scaffoldingMode);
+      isLearnSelected = scaffoldingMode === "learn";
+    }
+
     const resolved = resolvePresetOptions(selectedPreset, {
       projectName: normalizePackageName(projectName),
       dryRun: isDryRun,
@@ -248,6 +272,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       noAiContext: isNoAiContext,
       ...(isExperimental ? { experimental: true } : {}),
       deploymentTarget: getFlagValue("--deploy"),
+      learn: isLearnSelected,
     });
 
     if (resolved) return resolved;
@@ -452,6 +477,25 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     ),
   );
 
+  let isLearnSelected = isLearnMode;
+  if (!isLearnMode) {
+    const scaffoldingMode = await select({
+      message: "Choose scaffolding style:",
+      options: [
+        {
+          value: "standard",
+          label: "🚀 Complete Boilerplate (Ready to run with full code & architecture docs)",
+        },
+        {
+          value: "learn",
+          label: "🎓 Guided Hands-On Skeleton (--learn: Zero boilerplate, step-by-step feature build guide)",
+        },
+      ],
+    });
+    stopOnCancel(scaffoldingMode);
+    isLearnSelected = scaffoldingMode === "learn";
+  }
+
   return {
     framework: framework as Framework,
     projectName: normalizePackageName(String(projectName)),
@@ -469,12 +513,13 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     noAiContext: isNoAiContext,
     experimental: isExperimental,
     deploymentTarget,
+    learn: isLearnSelected,
   };
 }
 
 export async function promptForAutomaticSetup(options: ProjectOptions) {
-  // In non-interactive mode, skip setup commands (user can run them manually)
-  if (isNonInteractive) return false;
+  // In non-interactive mode or learn mode, skip setup commands (user runs milestones manually)
+  if (isNonInteractive || options.learn) return false;
 
   if (options.dbTarget === "supabase" || options.dbTarget === "neon") {
     return false;
@@ -489,6 +534,18 @@ export async function promptForAutomaticSetup(options: ProjectOptions) {
 }
 
 export function showSuccess(options: ProjectOptions, setupRan = false) {
+  if (options.learn) {
+    outro(`🎓 Your hands-on learning workspace "${options.projectName}" is ready!
+
+📖 Next Steps:
+  1. cd ${options.projectName}
+  2. Open ${pc.cyan("GUIDE.md")} in your editor to begin Milestone 1.
+  3. Reference ${pc.cyan("LEARN.md")} for stack architecture and syntax reference.
+
+Remember: You learn by building with your own hands. Work milestone by milestone!`);
+    return;
+  }
+
   const devCommand =
     options.framework === "laravel" ? "php artisan serve" : "bun dev";
 

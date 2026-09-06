@@ -50,6 +50,7 @@ export function buildManifest(plan: ScaffoldPlan): ScaffoldManifest {
       frontendFramework: options.frontendFramework ?? null,
       backendFramework: options.backendFramework ?? null,
       extraPackages: options.extraPackages,
+      ...(options.learn ? { learn: true } : {}),
     },
     packages: {
       dependencies,
@@ -82,6 +83,7 @@ export function buildManifest(plan: ScaffoldPlan): ScaffoldManifest {
             frontendFramework: options.frontendFramework,
             backendFramework: options.backendFramework,
             deploymentTarget: options.deploymentTarget,
+            ...(options.learn ? { learn: true } : {}),
           },
         }
       : {}),

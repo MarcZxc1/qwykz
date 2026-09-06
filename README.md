@@ -57,6 +57,9 @@ bun install -g qwykz
   - **Backend APIs**: Express, Hono, Elysia, Python (FastAPI), Go (Fiber), Rust (Axum), Laravel.
   - **Frontends**: React & Vue powered by high-speed Vite + Tailwind CSS v4.
   - **Fullstack**: Next.js App Router.
+- **Educational Scaffolding & Hands-On Learning (`--learn`)**:
+  - **Standard Mode**: Generates a tailored `LEARN.md` companion guide explaining the entry point, setup steps, request lifecycle flow, framework syntax & methods, and extension guidelines.
+  - **Hands-On Mode (`--learn`)**: For developers mastering a new stack. Generates directory structures and configs with zero business boilerplate, providing a feature-based `GUIDE.md` milestone curriculum (pure English concepts, architectural best practices, exact methods to use, and verification commands without spoon-feeding).
 - **AI-Native Context (`AGENTS.md`)**: Generates a factual project guide out of the box so LLM assistants (Claude Code, Cursor, Copilot) immediately understand project layout, commands, and routes without wasting tokens.
 - **Deterministic & Inspectable**: Uses an isolated temporary staging workspace. Use `--dry-run` to preview exact files and diffs before writing, and `--strict` to audit every dependency justification.
 - **Universal API Alignment**: Frontends automatically configure `VITE_API_URL` to match backend ports (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust) with matching API routes (`/api/auth/*`, `/api/health`).
@@ -93,6 +96,17 @@ Run `qwykz` and follow the interactive terminal prompts:
 qwykz
 ```
 
+### Guided Hands-On Mode (`--learn`)
+
+Ideal for learners, students, or developers picking up a new language or framework:
+
+```bash
+# Scaffold a hands-on learning skeleton with a feature-based milestone guide (GUIDE.md)
+bunx qwykz@latest --preset rust --learn
+# or with any custom framework
+bunx qwykz@latest --framework hono --learn
+```
+
 ### Non-Interactive (Custom Flags)
 
 Ideal for CI/CD pipelines, custom configurations, or scripts:
@@ -111,6 +125,7 @@ qwykz --yes \
 | :--- | :--- |
 | `--preset <name>` | Scaffold from a curated preset (`rust`, `go`, `python`, `elysia`, `react-rust`, `nextjs`, etc.) |
 | `--list-presets` | List all curated stack presets and exit |
+| `--learn` | Generate clean project skeleton with zero finished boilerplate + feature milestone guide (`GUIDE.md`) |
 | `--yes`, `-y` | Skip prompts and accept defaults/flags |
 | `--name <string>` | Project directory name |
 | `--framework <name>` | `express`, `hono`, `elysia`, `laravel`, `python`, `go`, `rust`, `nextjs`, `react`, `vue` |

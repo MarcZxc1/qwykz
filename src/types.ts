@@ -36,6 +36,8 @@ export interface ProjectOptions {
   // P5: allow combinations explicitly marked experimental
   experimental?: boolean;
   deploymentTarget?: string;
+  // Educational scaffolding & hands-on learning mode
+  learn?: boolean;
 }
 
 /** A record of a single file that will be generated. */
@@ -83,6 +85,7 @@ export interface ScaffoldManifest {
     frontendFramework: string | null;
     backendFramework: string | null;
     extraPackages: string[];
+    learn?: boolean;
   };
   packages: {
     dependencies: Record<string, string>;
@@ -111,6 +114,7 @@ export interface ScaffoldManifest {
     frontendFramework?: string;
     backendFramework?: string;
     deploymentTarget?: string;
+    learn?: boolean;
   };
   createdAt: string;
 }

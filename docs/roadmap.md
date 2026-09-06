@@ -249,27 +249,42 @@ Current status:
 
 * Completed. In-memory deduplication implemented in `src/generator/scaffold-plan.ts` and validated in the 15-target E2E laboratory battery.
 
-## Priority 7: Educational Scaffolding & Developer Ownership (Next Up)
+## Priority 7: Educational Scaffolding & Developer Ownership
 
-### 13. Educational scaffolding and `LEARN.md` guide
+### 13. Educational scaffolding, `LEARN.md` codebase guide, and `--learn` hands-on mode
 
-Goal: empower developers of all experience levels to understand, modify, and truly own their scaffolded codebase from the moment it is generated.
+Goal: empower developers of all experience levels to understand, modify, and truly own their scaffolded codebase through two distinct paths: standard companion documentation and guided hands-on construction.
 
 Scope:
 
-* **Generated `LEARN.md` Guide**: A plain-English companion to `AGENTS.md` written specifically for human developers. Covers:
-  * Architectural overview: how an incoming HTTP request flows from router to controller to database.
-  * Technology rationale: why Docker Compose is used for local database isolation, why the chosen ORM/query builder was selected, and how the authentication flow operates step-by-step (bcrypt hashing, JWT token issue, bearer header validation).
-  * "Your First Three Steps": concrete walkthroughs for adding a database field, creating a protected endpoint, and running tests.
-* **Educational CLI Decision Context**: Enrich interactive prompts with concise, honest trade-off context (e.g. learning curve, compile speed, concurrency model, use cases) so developers learn while selecting their stack.
-* **Architectural Code Comments**: Include comments in scaffolded templates that explain the *why*, not just the *what* (e.g. security header purposes, connection pool sharing via State extractors, explicit dependency injection).
-* **Terminal Architectural Summary**: Print a concise 4-bullet architectural mental model upon scaffold completion pointing the developer to `LEARN.md`.
+* **Standard Companion Guide (`LEARN.md`)**: Automatically generated in every scaffolded project. Covers:
+  * Primary entry point and application bootstrapping flow.
+  * Exact setup commands to make the project functional (installing dependencies, configuring `.env`, running migrations, and verifying with `curl`).
+  * Visual request flow ASCII diagram explaining the path of an HTTP request through middleware, routing, controllers, services, and database pools.
+  * Tailored syntax and methods reference for the chosen framework (e.g. `new Hono()`, `c.json()`, `c.req.valid()`, `express.Router()`, `res.status().json()`, `axum::extract::State`, `fiber.New()`, `FastAPI()`).
+  * ORM and authentication method breakdown with code snippets.
+  * Actionable guide on extending the codebase: adding a new route, adding a database model with migrations, and protecting an endpoint with auth.
+* **Guided Hands-On Mode (`--learn` flag & interactive style selection)**:
+  * Creates clean directory structures and essential configuration files (`package.json`, `tsconfig.json`, `.env`, schema files) while stripping pre-written business logic boilerplate (`controllers/`, `routes/`, `services/`, `middlewares/`).
+  * Employs directory preservation with `.gitkeep` so the intended architectural layout is preserved in version control.
+  * Replaces entry points (`src/index.ts`, `src/main.rs`, `cmd/api/main.go`, `app/main.py`, `routes/api.php`, `app/page.tsx`) with clean starter stubs pointing to `GUIDE.md`.
+  * Generates **`GUIDE.md`** containing a feature-based curriculum:
+    * Philosophy: deliberate practice without spoon-feeding (no copy-pasting completed apps).
+    * Milestone 1: Tooling & Environment Setup
+    * Milestone 2: Server Entry Point & Health Route
+    * Milestone 3: Database Connection & Schema Migration
+    * Milestone 4: Core CRUD Feature Implementation
+    * Milestone 5: Input Validation & Error Boundaries
+    * Milestone 6: Authentication & Protected Routes
+    * Each milestone provides the Goal in plain English, the architectural Concept & Best Practice, Key Methods & APIs to Use, and a Verification Command.
+* **Inspection & Manifest Attribution**:
+  * Manifest records `scaffold.learn: true` and `promptAnswers.learn: true`.
+  * `AGENTS.md` notes hands-on learning mode so AI tools respect the developer's learning intent.
+* **Interactive Scaffolding Style Selection**: Prompts the user to choose between "Complete Boilerplate" or "Guided Hands-On Skeleton (`--learn`)".
 
-Why this matters:
+Current status:
 
-* Scaffolding tools often dump dozens of files that feel like a brittle black box to juniors or developers learning a new language.
-* Developers feel true ownership of a project when they understand why every package and file exists.
-* Bridges the gap between blank-prompt confusion and production-grade software architecture.
+* Completed. All 10 stacks and fullstack monorepos have tailored profiles in `src/learn/`, validated with unit and CLI integration tests in `tests/learn.test.ts` and `tests/cli.test.ts`.
 
 ### 14. Scaffolded GitHub Actions CI/CD workflows (`--ci github`)
 
@@ -368,8 +383,8 @@ Why this matters:
 9. Curated stack presets (`--preset`). *(Done)*
 10. Next.js App Router graduation to supported. *(Done)*
 11. Deterministic staging & deduplication. *(Done)*
-12. Educational scaffolding & `LEARN.md` guide. *(Next)*
-13. Scaffolded GitHub Actions CI/CD (`--ci github`).
+12. Educational scaffolding & `LEARN.md` / `GUIDE.md` guide. *(Done)*
+13. Scaffolded GitHub Actions CI/CD (`--ci github`). *(Next)*
 14. Production multi-stage Dockerfiles across all stacks.
 15. Interactive OpenAPI & Swagger docs (`/docs`).
 16. Database seeding & fixtures (`db:seed`).
