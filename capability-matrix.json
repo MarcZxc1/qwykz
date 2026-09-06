@@ -73,20 +73,20 @@
     },
     "nextjs": {
       "dbTargets": {
-        "local": "experimental",
-        "docker": "experimental",
-        "supabase": "experimental",
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
         "neon": "unsupported"
       },
       "authTargets": {
-        "local": "experimental",
+        "local": "supported",
         "supabase": "experimental",
         "clerk": "experimental"
       },
       "cachingTargets": {
-        "none": "experimental",
-        "docker": "experimental",
-        "upstash": "unsupported"
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "supported"
       },
       "dockerfile": false
     },

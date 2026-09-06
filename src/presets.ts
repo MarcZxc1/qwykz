@@ -121,7 +121,6 @@ export const PRESETS: PresetDefinition[] = [
       authTarget: "local",
       cachingTarget: "docker",
       extraPackages: [],
-      experimental: true,
     },
   },
   {

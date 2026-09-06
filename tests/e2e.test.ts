@@ -73,7 +73,7 @@ externalBootstrapTest("E2E: Laravel with Docker Postgres", async () => {
   }
 }, 120000);
 
-externalBootstrapTest("E2E: Next.js with Docker Postgres", async () => {
+test("E2E: Next.js with Docker Postgres", async () => {
   const projectName = "e2e-nextjs";
   await rm(projectName, { recursive: true, force: true });
   const cwd = join(process.cwd(), projectName);

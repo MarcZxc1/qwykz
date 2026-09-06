@@ -217,7 +217,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "next-local";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local", "--experimental"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "nextjs", "--db", "local", "--auth", "local"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
