@@ -11,7 +11,7 @@ export const CAPABILITY_MATRIX: CapabilityMatrix = {
     elysia: nodeCapabilities(),
     nextjs: {
       dbTargets: statuses("supported", "supported", "supported", "supported"),
-      authTargets: { local: "supported", supabase: "experimental", clerk: "experimental" },
+      authTargets: { local: "supported", supabase: "supported", clerk: "supported" },
       cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
       dockerfile: false,
     },
@@ -41,7 +41,7 @@ function statuses(
 function nodeCapabilities(): FrameworkCapabilities {
   return {
     dbTargets: statuses("supported", "supported", "supported", "supported"),
-    authTargets: { local: "supported", supabase: "experimental", clerk: "experimental" },
+    authTargets: { local: "supported", supabase: "supported", clerk: "supported" },
     cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
     dockerfile: false,
     frontends: ["react", "vue"],

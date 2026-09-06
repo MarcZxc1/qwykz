@@ -68,11 +68,11 @@ describe("roadmap foundations", () => {
   });
 
   test("experimental combinations require explicit acknowledgement", async () => {
-    const rejected = await run(["--name", "clerk-rejected", "--auth", "clerk"]);
+    const rejected = await run(["--name", "react-local-rejected", "--framework", "react", "--auth", "local"]);
     expect(rejected.exitCode).toBe(1);
     expect(rejected.stderr).toContain("--experimental");
 
-    const accepted = await run(["--name", "clerk-accepted", "--auth", "clerk", "--experimental"]);
+    const accepted = await run(["--name", "react-local-accepted", "--framework", "react", "--auth", "local", "--experimental"]);
     expect(accepted.exitCode).toBe(0);
   });
 

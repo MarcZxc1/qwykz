@@ -1,29 +1,26 @@
 import type { Request, Response, NextFunction } from "express";
-import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
+import { requireAuth, getAuth } from "@clerk/express";
 import { HttpError } from "./error.middleware";
 
 export interface AuthRequest extends Request {
-  auth?: { userId: string; sessionClaims?: { metadata?: { role?: string } } };
+  auth?: any;
   user?: { id: string; role?: string };
 }
 
-// Clerk middleware automatically checks the token and injects req.auth
-const clerkMiddleware = ClerkExpressRequireAuth({
-  onError: (err: any, _req: Request, res: Response) => {
-    res.status(401).json({ message: "Unauthenticated" });
-  }
-});
+const requireClerkAuth = requireAuth();
 
-// Adapter to map Clerk's req.auth to req.user for consistency across the boilerplate
+// Adapter to map Clerk's auth context to req.user for consistency across the boilerplate
 export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
-  clerkMiddleware(req, res, (err: any) => {
+  requireClerkAuth(req, res, (err: any) => {
     if (err) return next(err);
-    if (req.auth && req.auth.userId) {
-      req.user = { 
-        id: req.auth.userId, 
-        role: req.auth.sessionClaims?.metadata?.role ?? "user" 
-      };
+    const auth = getAuth(req);
+    if (!auth || !auth.userId) {
+      return next(new HttpError(401, "Unauthenticated"));
     }
+    req.user = { 
+      id: auth.userId, 
+      role: (auth.sessionClaims?.metadata as any)?.role ?? "user" 
+    };
     next();
   });
 }

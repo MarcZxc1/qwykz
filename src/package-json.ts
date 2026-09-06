@@ -141,7 +141,7 @@ export async function createPackageJson(
     devDependencies["@types/jsonwebtoken"] = "^9.0.9";
   } else if (authTarget === "clerk") {
     if (framework === "express") {
-      dependencies["@clerk/clerk-sdk-node"] = "^5.0.0";
+      dependencies["@clerk/express"] = "^1.3.4";
     } else {
       dependencies["@clerk/backend"] = "^1.0.0";
     }
