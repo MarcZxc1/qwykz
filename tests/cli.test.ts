@@ -384,5 +384,34 @@ describe("qwykz CLI integration", () => {
     expect(pkgJson.devDependencies["@prisma/config"]).toMatch(/^\^7\./);
     expect(pkgJson.dependencies["@prisma/adapter-pg"]).toMatch(/^\^7\./);
   });
+
+  test("generates a project directly via --preset flag", async () => {
+    const projectName = "preset-cli-express";
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun", "run", CLI_PATH,
+        "--preset", "express",
+        "--name", projectName,
+      ],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const manifest = JSON.parse(await Bun.file(join(testDir, projectName, ".qwykz-manifest.json")).text());
+    expect(manifest.scaffold.preset).toBe("api-express");
+    expect(manifest.scaffold.framework).toBe("express");
+    expect(manifest.scaffold.extraPackages).toContain("zod");
+    expect(manifest.scaffold.extraPackages).toContain("helmet");
+    expect(manifest.scaffold.extraPackages).toContain("cors");
+
+    const agentsMd = await Bun.file(join(testDir, projectName, "AGENTS.md")).text();
+    expect(agentsMd).toContain("- **Preset**    : api-express");
+    expect(agentsMd).toContain("## Agent Guidelines");
+  });
 });
 
