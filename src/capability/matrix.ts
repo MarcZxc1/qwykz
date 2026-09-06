@@ -21,10 +21,11 @@ export const CAPABILITY_MATRIX: CapabilityMatrix = {
     go: nativeCapabilities(),
     rust: nativeCapabilities(),
     laravel: {
-      dbTargets: statuses("experimental", "experimental", "experimental", "unsupported"),
-      authTargets: { local: "experimental", supabase: "unsupported", clerk: "unsupported" },
-      cachingTargets: { none: "experimental", docker: "experimental", upstash: "experimental" },
+      dbTargets: statuses("supported", "supported", "supported", "unsupported"),
+      authTargets: { local: "supported", supabase: "unsupported", clerk: "unsupported" },
+      cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
       dockerfile: false,
+      frontends: ["react", "vue"],
     },
   },
 };
@@ -53,7 +54,7 @@ function frontendCapabilities(): FrameworkCapabilities {
     // Database selection is not applicable to standalone SPAs, so it must not
     // make an otherwise valid frontend/auth selection unsupported.
     dbTargets: statuses("supported", "supported", "supported", "supported"),
-    authTargets: { local: "experimental", supabase: "supported", clerk: "supported" },
+    authTargets: { local: "supported", supabase: "supported", clerk: "supported" },
     cachingTargets: { none: "supported", docker: "unsupported", upstash: "unsupported" },
     dockerfile: false,
   };

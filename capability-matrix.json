@@ -98,7 +98,7 @@
         "neon": "supported"
       },
       "authTargets": {
-        "local": "experimental",
+        "local": "supported",
         "supabase": "supported",
         "clerk": "supported"
       },
@@ -117,7 +117,7 @@
         "neon": "supported"
       },
       "authTargets": {
-        "local": "experimental",
+        "local": "supported",
         "supabase": "supported",
         "clerk": "supported"
       },
@@ -199,22 +199,26 @@
     },
     "laravel": {
       "dbTargets": {
-        "local": "experimental",
-        "docker": "experimental",
-        "supabase": "experimental",
+        "local": "supported",
+        "docker": "supported",
+        "supabase": "supported",
         "neon": "unsupported"
       },
       "authTargets": {
-        "local": "experimental",
+        "local": "supported",
         "supabase": "unsupported",
         "clerk": "unsupported"
       },
       "cachingTargets": {
-        "none": "experimental",
-        "docker": "experimental",
-        "upstash": "experimental"
+        "none": "supported",
+        "docker": "supported",
+        "upstash": "supported"
       },
-      "dockerfile": false
+      "dockerfile": false,
+      "frontends": [
+        "react",
+        "vue"
+      ]
     }
   }
 }

@@ -81,12 +81,7 @@ describe("Presets System", () => {
       if (!opts) continue;
 
       const status = getProjectCapability(opts);
-      expect(["supported", "experimental"]).toContain(status);
-      expect(status).not.toBe("unsupported");
-
-      if (status === "experimental") {
-        expect(preset.options.experimental).toBe(true);
-      }
+      expect(status).toBe("supported");
     }
   });
 

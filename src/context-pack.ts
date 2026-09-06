@@ -369,7 +369,7 @@ function getAuthSection(
 
   if (authTarget === "supabase") {
     return `## Auth Model (Supabase Auth)
-- Status: experimental
+- Status: supported
 - Authentication is handled by Supabase — users sign in via the Supabase client SDK
 - The frontend obtains a short-lived JWT from Supabase after sign-in
 - Include the token as \`Authorization: Bearer <supabase-jwt>\` on API requests
@@ -380,7 +380,7 @@ function getAuthSection(
 
   if (authTarget === "clerk") {
     return `## Auth Model (Clerk Auth)
-- Status: experimental
+- Status: supported
 - Authentication is handled by Clerk — users sign in via the Clerk React/Vue component
 - The frontend obtains a session token from Clerk after sign-in
 - Include the token as \`Authorization: Bearer <clerk-session-token>\` on API requests
