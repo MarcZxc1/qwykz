@@ -1,6 +1,6 @@
 {
   "name": "qwykz",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "Inspectable multi-stack project scaffolder for developers, learners, teams, and AI-assisted workflows",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "qwykz": "src/index.ts"
   },
   "files": [
+    "assets/",
     "src/",
     "templates/",
     "scripts/",

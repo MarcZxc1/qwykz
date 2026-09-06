@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatorVersion": "1.4.6",
+  "generatorVersion": "1.4.7",
   "matrix": {
     "express": {
       "dbTargets": {
