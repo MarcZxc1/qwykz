@@ -8,13 +8,14 @@ Welcome to the `qwykz` documentation wiki!
 
 1. [Architecture Overview](architecture.md)
 2. [Capability Matrix](capability-matrix.md)
-3. [The Template Engine](template-engine.md)
-4. [Dependency Resolution](dependency-resolution.md)
-5. [Docker Resource & Storage Lifecycle](docker.md)
-6. [Testing & Verification Guide](testing.md)
-7. [Writing Plugins](plugins.md)
-8. [Roadmap](roadmap.md)
-9. [Contributing Guide](contributing.md)
+3. [Curated Stack Presets](presets.md)
+4. [The Template Engine](template-engine.md)
+5. [Dependency Resolution](dependency-resolution.md)
+6. [Docker Resource & Storage Lifecycle](docker.md)
+7. [Testing & Verification Guide](testing.md)
+8. [Writing Plugins](plugins.md)
+9. [Roadmap](roadmap.md)
+10. [Contributing Guide](contributing.md)
 
 ---
 *Looking to just use the CLI? Head back to the [main README](../README.md).*

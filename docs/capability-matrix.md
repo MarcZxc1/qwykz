@@ -9,7 +9,7 @@ Legend: ✅ supported · 🧪 experimental (requires `--experimental`) · 🗓 p
 | express | ✅ local<br>✅ docker<br>✅ supabase<br>🧪 neon | ✅ local<br>🧪 supabase<br>🧪 clerk | ✅ none<br>✅ docker<br>✅ upstash | — |
 | hono | ✅ local<br>✅ docker<br>✅ supabase<br>🧪 neon | ✅ local<br>🧪 supabase<br>🧪 clerk | ✅ none<br>✅ docker<br>✅ upstash | — |
 | elysia | ✅ local<br>✅ docker<br>✅ supabase<br>🧪 neon | ✅ local<br>🧪 supabase<br>🧪 clerk | ✅ none<br>✅ docker<br>✅ upstash | — |
-| nextjs | 🧪 local<br>🧪 docker<br>🧪 supabase<br>— neon | 🧪 local<br>🧪 supabase<br>🧪 clerk | 🧪 none<br>🧪 docker<br>— upstash | — |
+| nextjs | ✅ local<br>✅ docker<br>✅ supabase<br>— neon | ✅ local<br>🧪 supabase<br>🧪 clerk | ✅ none<br>✅ docker<br>✅ upstash | — |
 | react | ✅ local<br>✅ docker<br>✅ supabase<br>✅ neon | 🧪 local<br>✅ supabase<br>✅ clerk | ✅ none<br>— docker<br>— upstash | — |
 | vue | ✅ local<br>✅ docker<br>✅ supabase<br>✅ neon | 🧪 local<br>✅ supabase<br>✅ clerk | ✅ none<br>— docker<br>— upstash | — |
 | python | ✅ local<br>✅ docker<br>✅ supabase<br>🧪 neon | ✅ local<br>— supabase<br>— clerk | ✅ none<br>✅ docker<br>— upstash | ✅ |

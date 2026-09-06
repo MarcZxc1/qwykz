@@ -67,6 +67,13 @@ describe("buildManifest", () => {
     const manifest = buildManifest(plan);
     expect(manifest.scaffold.frontendFramework).toBe("react");
   });
+
+  it("records preset in scaffold and promptAnswers when set", () => {
+    const plan = makePlan({ preset: "api-rust", recordPrompts: true });
+    const manifest = buildManifest(plan);
+    expect(manifest.scaffold.preset).toBe("api-rust");
+    expect(manifest.promptAnswers?.preset).toBe("api-rust");
+  });
 });
 
 describe("serializeManifest", () => {

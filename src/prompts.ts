@@ -22,7 +22,7 @@ import type {
 
 const pkg = JSON.parse(readFileSync(resolve(__dirname, "../package.json"), "utf8"));
 
-function stopOnCancel(value: unknown): asserts value {
+function stopOnCancel<T>(value: T): asserts value is Exclude<T, symbol> {
   if (isCancel(value)) {
     cancel("Operation cancelled.");
     process.exit(0);
@@ -49,13 +49,18 @@ function hasFlag(flag: string): boolean {
 }
 
 function getFlagValue(flag: string): string | undefined {
+  const prefix = `${flag}=`;
+  const equalArg = process.argv.find((arg) => arg.startsWith(prefix));
+  if (equalArg) {
+    return equalArg.slice(prefix.length);
+  }
   const idx = process.argv.indexOf(flag);
   if (idx === -1 || idx + 1 >= process.argv.length) return undefined;
   return process.argv[idx + 1];
 }
 
-/** Non-interactive mode: --yes or -y */
-export const isNonInteractive = hasFlag("--yes") || hasFlag("-y");
+/** Non-interactive mode: --yes, -y, or explicit preset */
+export const isNonInteractive = hasFlag("--yes") || hasFlag("-y") || hasFlag("--preset") || process.argv.some((arg) => arg.startsWith("--preset="));
 
 /** Dry-run mode: --dry-run — preview scaffold without writing files. */
 export const isDryRun = hasFlag("--dry-run");
@@ -80,6 +85,38 @@ export const isExperimental = hasFlag("--experimental");
 // ---------------------------------------------------------------------------
 
 export async function promptForProjectOptions(): Promise<ProjectOptions> {
+  if (hasFlag("--list-presets")) {
+    const { formatPresetsTable } = await import("./presets");
+    console.log(formatPresetsTable());
+    process.exit(0);
+  }
+
+  const presetArg = getFlagValue("--preset");
+  if (presetArg) {
+    const { resolvePresetOptions } = await import("./presets");
+    const name = getFlagValue("--name") ?? `qwykz-${presetArg.replace(/^(api-|web-|fullstack-)/, "")}`;
+    const overrides: Partial<ProjectOptions> = {
+      projectName: normalizePackageName(name),
+      dryRun: isDryRun,
+      strict: isStrict,
+      recordPrompts: isRecordPrompts,
+      noAiContext: isNoAiContext,
+      ...(isExperimental ? { experimental: true } : {}),
+      deploymentTarget: getFlagValue("--deploy"),
+    };
+    if (getFlagValue("--db")) overrides.dbTarget = getFlagValue("--db") as DbTarget;
+    if (getFlagValue("--auth")) overrides.authTarget = getFlagValue("--auth") as AuthTarget;
+    if (getFlagValue("--caching")) overrides.cachingTarget = getFlagValue("--caching") as CachingTarget;
+
+    const resolved = resolvePresetOptions(presetArg, overrides);
+    if (!resolved) {
+      console.error(pc.red(`Error: Unknown preset "${presetArg}".`));
+      console.log(pc.yellow("Run `qwykz --list-presets` to see all available presets."));
+      process.exit(1);
+    }
+    return resolved;
+  }
+
   // Non-interactive mode: use flags or sensible default
   if (isNonInteractive) {
     const name = getFlagValue("--name") ?? "qwykz-app";
@@ -161,6 +198,60 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
     },
   });
   stopOnCancel(projectName);
+
+  const setupMode = await select({
+    message: "How would you like to set up your project?",
+    options: [
+      {
+        value: "preset",
+        label: "⚡ Use a Curated Preset (Fastest: Rust, Go, Python, Elysia, Next.js, Fullstack...)",
+      },
+      {
+        value: "custom",
+        label: "🛠️  Custom Stack (Configure every layer step-by-step)",
+      },
+    ],
+  });
+  stopOnCancel(setupMode);
+
+  if (setupMode === "preset") {
+    const selectedPreset = await select({
+      message: "Choose a curated stack preset:",
+      options: [
+        { value: "api-rust", label: "🦀 Rust (Axum) API — Docker Postgres + Redis [api-rust]" },
+        { value: "api-go", label: "🐹 Go (Fiber) API — Docker Postgres + Redis [api-go]" },
+        { value: "api-python", label: "🐍 Python (FastAPI) API — Docker Postgres + Redis [api-python]" },
+        { value: "api-elysia", label: "🥟 Elysia + Bun API — Docker Postgres + Redis [api-elysia]" },
+        { value: "api-hono", label: "🔥 Hono + Bun API — Docker Postgres + Redis [api-hono]" },
+        { value: "api-express", label: "⚡ Express + TypeScript API — Docker Postgres + Zod/Helmet/CORS [api-express]" },
+        { value: "api-laravel", label: "🔴 Laravel 11/12 API — Docker Postgres + Redis [api-laravel]" },
+        { value: "web-nextjs", label: "▲ Next.js App Router — Docker Postgres + Redis [web-nextjs]" },
+        { value: "web-react", label: "⚛️  React 19 SPA + Vite + Tailwind CSS v4 [web-react]" },
+        { value: "web-vue", label: "💚 Vue 3 SPA + Vite + Tailwind CSS v4 [web-vue]" },
+        { value: "fullstack-react-rust", label: "📦 Fullstack: React Vite + Rust Axum API [fullstack-react-rust]" },
+        { value: "fullstack-react-go", label: "📦 Fullstack: React Vite + Go Fiber API [fullstack-react-go]" },
+        { value: "fullstack-react-elysia", label: "📦 Fullstack: React Vite + Elysia Bun API [fullstack-react-elysia]" },
+        { value: "fullstack-react-hono", label: "📦 Fullstack: React Vite + Hono Bun API [fullstack-react-hono]" },
+        { value: "fullstack-react-express", label: "📦 Fullstack: React Vite + Express API [fullstack-react-express]" },
+        { value: "fullstack-react-fastapi", label: "📦 Fullstack: React Vite + FastAPI Python [fullstack-react-fastapi]" },
+        { value: "fullstack-vue-hono", label: "📦 Fullstack: Vue Vite + Hono Bun API [fullstack-vue-hono]" },
+      ],
+    }) as string;
+    stopOnCancel(selectedPreset);
+
+    const { resolvePresetOptions } = await import("./presets");
+    const resolved = resolvePresetOptions(selectedPreset, {
+      projectName: normalizePackageName(projectName),
+      dryRun: isDryRun,
+      strict: isStrict,
+      recordPrompts: isRecordPrompts,
+      noAiContext: isNoAiContext,
+      ...(isExperimental ? { experimental: true } : {}),
+      deploymentTarget: getFlagValue("--deploy"),
+    });
+
+    if (resolved) return resolved;
+  }
 
   const projectType = await select({
     message: "What type of project do you want to generate?",

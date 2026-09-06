@@ -17,6 +17,7 @@ export type PackageMap = Record<string, string>;
 export interface ProjectOptions {
   framework: Framework;
   projectName: string;
+  preset?: string;
   dbTarget: DbTarget;
   authTarget: AuthTarget;
   cachingTarget: CachingTarget;
@@ -75,6 +76,7 @@ export interface ScaffoldManifest {
   };
   scaffold: {
     framework: string;
+    preset?: string;
     dbTarget: string;
     authTarget: string;
     cachingTarget: string;
@@ -100,6 +102,7 @@ export interface ScaffoldManifest {
     version: string;
   }[];
   promptAnswers?: {
+    preset?: string;
     framework: string;
     dbTarget: string;
     authTarget: string;

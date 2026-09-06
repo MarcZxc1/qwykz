@@ -67,6 +67,24 @@ bun install -g qwykz
 
 ## Usage
 
+### Curated Presets (Fastest)
+
+Scaffold tested setups in one command:
+
+```bash
+# Standalone APIs (Axum, Fiber, FastAPI, Elysia, Hono, Express, Laravel)
+bunx qwykz@latest --preset rust --name my-service
+bunx qwykz@latest --preset go --name my-service
+bunx qwykz@latest --preset python --name my-service
+
+# Fullstack Monorepos (React/Vue frontends + performant backends)
+bunx qwykz@latest --preset react-rust --name my-app
+bunx qwykz@latest --preset react-elysia --name my-app
+
+# List all available presets
+qwykz --list-presets
+```
+
 ### Interactive Mode
 
 Run `qwykz` and follow the interactive terminal prompts:
@@ -75,9 +93,9 @@ Run `qwykz` and follow the interactive terminal prompts:
 qwykz
 ```
 
-### Non-Interactive (Automated)
+### Non-Interactive (Custom Flags)
 
-Ideal for CI/CD pipelines, scripts, or fast generation:
+Ideal for CI/CD pipelines, custom configurations, or scripts:
 
 ```bash
 qwykz --yes \
@@ -91,6 +109,8 @@ qwykz --yes \
 
 | Flag | Description |
 | :--- | :--- |
+| `--preset <name>` | Scaffold from a curated preset (`rust`, `go`, `python`, `elysia`, `react-rust`, `nextjs`, etc.) |
+| `--list-presets` | List all curated stack presets and exit |
 | `--yes`, `-y` | Skip prompts and accept defaults/flags |
 | `--name <string>` | Project directory name |
 | `--framework <name>` | `express`, `hono`, `elysia`, `laravel`, `python`, `go`, `rust`, `nextjs`, `react`, `vue` |
@@ -110,6 +130,7 @@ qwykz --yes \
 
 For detailed architectural deep dives, guides, and testing references, visit the [Documentation Wiki](docs/home.md):
 
+* ⚡ **[Curated Stack Presets](docs/presets.md)** — Pre-configured stack setups for APIs, fullstack monorepos, and SPAs.
 * 🗺️ **[Capability Matrix](docs/capability-matrix.md)** — Verified matrix of framework, database, auth, and cache combinations.
 * 🏗️ **[Architecture Overview](docs/architecture.md)** — Staging pipeline, dispatcher, and package policy internals.
 * 🐳 **[Docker & Storage Lifecycle](docs/docker.md)** — Container resource limits, volume persistence, and cleanup workflows.

@@ -10,9 +10,9 @@ export const CAPABILITY_MATRIX: CapabilityMatrix = {
     hono: nodeCapabilities(),
     elysia: nodeCapabilities(),
     nextjs: {
-      dbTargets: statuses("experimental", "experimental", "experimental", "unsupported"),
-      authTargets: { local: "experimental", supabase: "experimental", clerk: "experimental" },
-      cachingTargets: { none: "experimental", docker: "experimental", upstash: "unsupported" },
+      dbTargets: statuses("supported", "supported", "supported", "unsupported"),
+      authTargets: { local: "supported", supabase: "experimental", clerk: "experimental" },
+      cachingTargets: { none: "supported", docker: "supported", upstash: "supported" },
       dockerfile: false,
     },
     react: frontendCapabilities(),

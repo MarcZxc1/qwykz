@@ -184,9 +184,7 @@ describeLaravel("Laravel", () => {
   });
 });
 
-const describeNextjs = RUN_EXTERNAL_BOOTSTRAPS ? describe : describe.skip;
-
-describeNextjs("Next.js", () => {
+describe("Next.js", () => {
   test("local DB", () => {
     const name = "t-nextjs-local";
     allProjects.push(name);
@@ -211,7 +209,7 @@ describeNextjs("Next.js", () => {
     allProjects.push(name);
     expect(scaffold(name, "--framework nextjs --db supabase")).toBe(true);
     expect(fileContains(name, ".env", "supabase")).toBe(true);
-    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 });
 
