@@ -413,5 +413,42 @@ describe("qwykz CLI integration", () => {
     expect(agentsMd).toContain("- **Preset**    : api-express");
     expect(agentsMd).toContain("## Agent Guidelines");
   });
+
+  test("generates a hands-on learning workspace via --learn flag", async () => {
+    const projectName = "cli-learn-hono";
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun", "run", CLI_PATH,
+        "--preset", "hono",
+        "--name", projectName,
+        "--learn",
+      ],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const projectDir = join(testDir, projectName);
+    expect(existsSync(join(projectDir, "GUIDE.md"))).toBe(true);
+    expect(existsSync(join(projectDir, "LEARN.md"))).toBe(true);
+
+    const guideMd = await Bun.file(join(projectDir, "GUIDE.md")).text();
+    expect(guideMd).toContain("Hands-On Developer Guide");
+    expect(guideMd).toContain("Milestone 1");
+
+    const serverSource = await Bun.file(join(projectDir, "src/index.ts")).text();
+    expect(serverSource).toContain("GUIDE.md");
+
+    // Finished routes stripped
+    expect(existsSync(join(projectDir, "src/controllers/user.controller.ts"))).toBe(false);
+    expect(existsSync(join(projectDir, "src/routes/user.routes.ts"))).toBe(false);
+
+    const manifest = JSON.parse(await Bun.file(join(projectDir, ".qwykz-manifest.json")).text());
+    expect(manifest.scaffold.learn).toBe(true);
+  });
 });
 
