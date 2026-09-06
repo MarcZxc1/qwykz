@@ -26,8 +26,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .eslintcache
 .cache
 .test-tmp
-graphify-out/cache/
-graphify-out/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+graphify-out/
 *.tsbuildinfo
 *.orig
 /QWYKZ_PERSONAL_SYSTEM_GUIDE.md
