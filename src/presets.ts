@@ -103,6 +103,7 @@ export const PRESETS: PresetDefinition[] = [
       authTarget: "local",
       cachingTarget: "docker",
       extraPackages: [],
+      experimental: true,
     },
   },
 
@@ -120,6 +121,7 @@ export const PRESETS: PresetDefinition[] = [
       authTarget: "local",
       cachingTarget: "docker",
       extraPackages: [],
+      experimental: true,
     },
   },
   {
