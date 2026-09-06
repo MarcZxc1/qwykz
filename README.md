@@ -1,6 +1,8 @@
 <div align="center">
 
-# ⚡ qwykz ⚡
+<img src="assets/logo-badge.svg" alt="qwykz logo" width="96" height="96" />
+
+# qwykz
 
 **Quick & Ready Boilerplate Builder**
 

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="qwykzFaviconGrad" x1="16" y1="12" x2="88" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="55%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="qwykzFaviconBg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#11131a" />
+      <stop offset="100%" stop-color="#07080c" />
+    </linearGradient>
+  </defs>
+  <!-- Squircle container -->
+  <rect width="100" height="100" rx="24" fill="url(#qwykzFaviconBg)" />
+  <rect x="0.5" y="0.5" width="99" height="99" rx="23.5" stroke="#1e293b" stroke-opacity="0.8" />
+  <!-- Precision Q Glyph -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="
+    M 46 16
+    A 28 28 0 1 0 74 44
+    A 28 28 0 0 0 46 16
+    Z
+    M 46 26.5
+    A 17.5 17.5 0 1 1 28.5 44
+    A 17.5 17.5 0 0 1 46 26.5
+    Z
+  " fill="url(#qwykzFaviconGrad)" />
+  <path d="
+    M 47.5 43
+    L 73 68.5
+    H 83
+    V 79
+    H 69.5
+    L 42 51.5
+    Z
+  " fill="url(#qwykzFaviconGrad)" />
+</svg>

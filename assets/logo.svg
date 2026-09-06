@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="qwykzMarkGrad" x1="16" y1="12" x2="88" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="55%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <!-- Precision Q Glyph -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="
+    M 46 12
+    A 32 32 0 1 0 78 44
+    A 32 32 0 0 0 46 12
+    Z
+    M 46 23.2
+    A 20.8 20.8 0 1 1 25.2 44
+    A 20.8 20.8 0 0 1 46 23.2
+    Z
+  " fill="url(#qwykzMarkGrad)" />
+  <path d="
+    M 47.5 42.5
+    L 76 71
+    H 88
+    V 83
+    H 72
+    L 41.5 52.5
+    Z
+  " fill="url(#qwykzMarkGrad)" />
+</svg>
