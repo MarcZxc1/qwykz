@@ -360,4 +360,29 @@ describe("qwykz CLI integration", () => {
     const backendEnv = await Bun.file(join(testDir, projectName, "backend", ".env")).text();
     expect(backendEnv).toContain("python-monorepo-backend");
   });
+
+  test("keeps Prisma packages on version 7 and rejects Prisma 8 / pre-releases", async () => {
+    const projectName = "prisma7-version-guard";
+
+    const proc = Bun.spawn({
+      cmd: [
+        "bun", "run", CLI_PATH,
+        "--yes", "--name", projectName,
+        "--framework", "express",
+      ],
+      cwd: testDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: { ...process.env, NO_COLOR: "1" },
+    });
+
+    expect(await proc.exited).toBe(0);
+
+    const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
+    expect(pkgJson.devDependencies.prisma).toMatch(/^\^7\./);
+    expect(pkgJson.dependencies["@prisma/client"]).toMatch(/^\^7\./);
+    expect(pkgJson.devDependencies["@prisma/config"]).toMatch(/^\^7\./);
+    expect(pkgJson.dependencies["@prisma/adapter-pg"]).toMatch(/^\^7\./);
+  });
 });
+

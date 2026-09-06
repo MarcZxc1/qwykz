@@ -1,16 +1,16 @@
-# Graph Report - qwykz  (2026-07-22)
+# Graph Report - qwykz  (2026-09-06)
 
 ## Corpus Check
-- 191 files · ~56,614 words
+- 191 files · ~56,848 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1124 nodes · 1663 edges · 115 communities (76 shown, 39 thin omitted)
+- 1125 nodes · 1667 edges · 115 communities (76 shown, 39 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7075ecb3`
+- Built from commit: `082ff48a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -334,7 +334,7 @@ Nodes (14): files, src/, templates/, bun.lock, capability-matrix.json, CODE_OF_C
 
 ### Community 96 - "npm-registry.ts"
 Cohesion: 0.08
-Nodes (67): FrameworkGenerator, BUILT_IN_GENERATORS, generateMonorepo(), getBackendCommand(), generateLaravelProject(), generateGoProject(), generatePythonProject(), generateRustProject() (+59 more)
+Nodes (68): FrameworkGenerator, BUILT_IN_GENERATORS, generateMonorepo(), getBackendCommand(), generateLaravelProject(), generateGoProject(), generatePythonProject(), generateRustProject() (+60 more)
 
 ### Community 100 - "scripts"
 Cohesion: 0.22
@@ -395,9 +395,9 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `keywords` connect `keywords` to `package.json`, `express`, `generator.ts`?**
   _High betweenness centrality (0.055) - this node is a cross-community bridge._
 - **Why does `express` connect `express` to `cli.ts`, `dry-run.ts`, `context-pack.ts`, `package-json.ts`, `keywords`, `roadmap-foundations.test.ts`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `files` connect `files` to `package.json`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `buildScaffoldPlan()` connect `User` to `npm-registry.ts`, `matrix.ts`, `e2e.old.test.ts`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `$schema`, `name`, `version` to the rest of the system?**
   _449 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
