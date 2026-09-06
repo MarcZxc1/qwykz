@@ -98,14 +98,28 @@ export async function buildScaffoldPlan(options: ProjectOptions): Promise<Scaffo
 
     if (!options.noAiContext) {
       const { generateContextPack } = await import("../context-pack");
-      plan.files.push({ path: "AGENTS.md", content: generateContextPack(plan) });
+      const agentsContent = generateContextPack(plan);
+      const existingIdx = plan.files.findIndex((f) => f.path === "AGENTS.md");
+      if (existingIdx >= 0 && plan.files[existingIdx]) {
+        plan.files[existingIdx].content = agentsContent;
+      } else {
+        plan.files.push({ path: "AGENTS.md", content: agentsContent });
+      }
+    } else {
+      plan.files = plan.files.filter((f) => f.path !== "AGENTS.md");
     }
 
     const { buildManifest, serializeManifest } = await import("../manifest");
-    plan.files.push({
-      path: ".qwykz-manifest.json",
-      content: serializeManifest(buildManifest(plan)),
-    });
+    const manifestContent = serializeManifest(buildManifest(plan));
+    const manifestIdx = plan.files.findIndex((f) => f.path === ".qwykz-manifest.json");
+    if (manifestIdx >= 0 && plan.files[manifestIdx]) {
+      plan.files[manifestIdx].content = manifestContent;
+    } else {
+      plan.files.push({
+        path: ".qwykz-manifest.json",
+        content: manifestContent,
+      });
+    }
     plan.files.sort((a, b) => a.path.localeCompare(b.path));
     return plan;
   } finally {
