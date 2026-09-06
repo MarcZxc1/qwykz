@@ -92,6 +92,23 @@ describe("Express", () => {
     expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
   });
 
+  test("clerk auth", () => {
+    const name = "t-express-clerk";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework express --auth clerk")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/express"')).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/clerk-sdk-node"')).toBe(false);
+  });
+
+  test("supabase auth", () => {
+    const name = "t-express-supabase-auth";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework express --auth supabase")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
+  });
+
   test("local DB + docker redis", () => {
     const name = "t-express-local-redis";
     allProjects.push(name);
@@ -145,6 +162,22 @@ describe("Hono", () => {
     expect(fileContains(name, ".env", "neon.tech")).toBe(true);
     expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
   });
+
+  test("clerk auth", () => {
+    const name = "t-hono-clerk";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework hono --auth clerk")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/backend"')).toBe(true);
+  });
+
+  test("supabase auth", () => {
+    const name = "t-hono-supabase-auth";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework hono --auth supabase")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
+  });
 });
 
 describe("Elysia", () => {
@@ -180,6 +213,22 @@ describe("Elysia", () => {
     expect(scaffold(name, "--framework elysia --db neon")).toBe(true);
     expect(fileContains(name, ".env", "neon.tech")).toBe(true);
     expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
+  });
+
+  test("clerk auth", () => {
+    const name = "t-elysia-clerk";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework elysia --auth clerk")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/backend"')).toBe(true);
+  });
+
+  test("supabase auth", () => {
+    const name = "t-elysia-supabase-auth";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework elysia --auth supabase")).toBe(true);
+    expect(fileExists(name, "src/middlewares/auth.middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
   });
 });
 
@@ -246,6 +295,22 @@ describe("Next.js", () => {
     expect(fileContains(name, ".env", "neon.tech")).toBe(true);
     expect(fileContains(name, ".env", "DIRECT_URL")).toBe(true);
     expect(fileContains(name, "package.json", '"@prisma/client"')).toBe(true);
+  });
+
+  test("clerk auth", () => {
+    const name = "t-nextjs-clerk";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework nextjs --auth clerk")).toBe(true);
+    expect(fileExists(name, "middleware.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@clerk/nextjs"')).toBe(true);
+  });
+
+  test("supabase auth", () => {
+    const name = "t-nextjs-supabase-auth";
+    allProjects.push(name);
+    expect(scaffold(name, "--framework nextjs --auth supabase")).toBe(true);
+    expect(fileExists(name, "lib/supabase.ts")).toBe(true);
+    expect(fileContains(name, "package.json", '"@supabase/supabase-js"')).toBe(true);
   });
 });
 

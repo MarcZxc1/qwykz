@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { clerkClient } from "@clerk/clerk-sdk-node";
+import { clerkClient } from "@clerk/express";
 import { HttpError } from "../middlewares/error.middleware";
 
 export async function register(req: Request, res: Response) {

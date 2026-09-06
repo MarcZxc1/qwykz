@@ -295,7 +295,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "clerk-api";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--auth", "clerk", "--experimental"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--auth", "clerk"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -305,7 +305,8 @@ describe("qwykz CLI integration", () => {
     expect(await proc.exited).toBe(0);
 
     const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
-    expect(pkgJson.dependencies["@clerk/clerk-sdk-node"]).toBeDefined();
+    expect(pkgJson.dependencies["@clerk/express"]).toBeDefined();
+    expect(pkgJson.dependencies["@clerk/clerk-sdk-node"]).toBeUndefined();
     expect(pkgJson.dependencies["@clerk/backend"]).toBeUndefined();
     expect(pkgJson.dependencies.zod).toBeUndefined();
     expect(pkgJson.dependencies.argon2).toBeUndefined();
@@ -316,7 +317,7 @@ describe("qwykz CLI integration", () => {
     const projectName = "clerk-hono";
 
     const proc = Bun.spawn({
-      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "hono", "--auth", "clerk", "--experimental"],
+      cmd: ["bun", "run", CLI_PATH, "--yes", "--name", projectName, "--framework", "hono", "--auth", "clerk"],
       cwd: testDir,
       stdout: "pipe",
       stderr: "pipe",
@@ -328,6 +329,7 @@ describe("qwykz CLI integration", () => {
     const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
     expect(pkgJson.dependencies["@clerk/backend"]).toBeDefined();
     expect(pkgJson.dependencies["@clerk/clerk-sdk-node"]).toBeUndefined();
+    expect(pkgJson.dependencies["@clerk/express"]).toBeUndefined();
     expect(pkgJson.devDependencies["@prisma/config"]).toBeDefined();
   });
 
