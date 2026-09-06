@@ -1,16 +1,16 @@
 # Graph Report - qwykz  (2026-09-06)
 
 ## Corpus Check
-- 191 files · ~56,848 words
+- 193 files · ~56,630 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1125 nodes · 1667 edges · 115 communities (76 shown, 39 thin omitted)
+- 1132 nodes · 1676 edges · 116 communities (77 shown, 39 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 23 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `082ff48a`
+- Built from commit: `04cd6b7c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -114,6 +114,7 @@
 - peerDependencies
 - repository
 - generate-smoke-report.ts
+- dependency-resolution.md
 
 ## God Nodes (most connected - your core abstractions)
 1. `readTemplate()` - 28 edges
@@ -142,7 +143,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (115 total, 39 thin omitted)
+## Communities (116 total, 39 thin omitted)
 
 ### Community 0 - "User"
 Cohesion: 0.08
@@ -209,8 +210,8 @@ Cohesion: 0.40
 Nodes (5): LoginRequest, RegisterRequest, Ctx, Login(), Register()
 
 ### Community 17 - "README.md"
-Cohesion: 0.22
-Nodes (9): Contributing, Documentation, Features, Global Install, Installation, ⚡ qwykz ⚡, Roadmap, Run without installing (Recommended) (+1 more)
+Cohesion: 0.18
+Nodes (11): Contributing, Documentation, Features, Interactive Mode, Key CLI Flags, License, Non-Interactive (Automated), Quickstart (+3 more)
 
 ### Community 18 - "config.py"
 Cohesion: 0.50
@@ -261,8 +262,8 @@ Cohesion: 0.12
 Nodes (17): 1. Dry-run and diff mode, 2. Scaffold manifest, 3. Strict package policy mode, 4. Production-ready Supabase Auth and Clerk, 5. Plugin system, 6. Template validation CI, 7. Generated app smoke tests, 8. AI context pack (+9 more)
 
 ### Community 74 - "full-matrix.test.ts"
-Cohesion: 0.29
-Nodes (5): allProjects, BUN_TMPDIR, fileContains(), fileExists(), ROOT
+Cohesion: 0.21
+Nodes (15): ScaffoldPlan, validateCoverage(), packageName(), validateImports(), runValidation(), validatePlaceholders(), getValidationPlans(), REPRESENTATIVE_OPTIONS (+7 more)
 
 ### Community 75 - "Security Policy"
 Cohesion: 0.40
@@ -297,8 +298,8 @@ Cohesion: 0.19
 Nodes (9): BUN_TMPDIR, childEnv(), CLI_PATH, expectOk(), MANAGED_ENV_KEYS, redact(), ROOT, runCommand() (+1 more)
 
 ### Community 87 - "User"
-Cohesion: 0.08
-Nodes (39): FrameworkContext, generateContextPack(), getAuthSection(), getEnvSection(), getFrameworkContext(), renderPlanTree(), generateProjectFiles(), AUTH_PACKAGES (+31 more)
+Cohesion: 0.09
+Nodes (26): FrameworkContext, generateContextPack(), getAuthSection(), getEnvSection(), getFrameworkContext(), renderPlanTree(), generateProjectFiles(), AUTH_PACKAGES (+18 more)
 
 ### Community 88 - "plugin.json"
 Cohesion: 0.09
@@ -306,7 +307,7 @@ Nodes (22): author, capabilities, authProviders, deploymentTargets, frameworks, 
 
 ### Community 89 - "matrix.ts"
 Cohesion: 0.06
-Nodes (51): ICON, rows, CAPABILITY_MATRIX, combineStatuses(), frontendCapabilities(), getCapability(), getFrameworkCapabilities(), getProjectCapability() (+43 more)
+Nodes (50): ICON, rows, CAPABILITY_MATRIX, combineStatuses(), frontendCapabilities(), getCapability(), getFrameworkCapabilities(), getProjectCapability() (+42 more)
 
 ### Community 90 - "Priority 1: Trust And Predictability — Implementation Plan"
 Cohesion: 0.11
@@ -334,18 +335,18 @@ Nodes (14): files, src/, templates/, bun.lock, capability-matrix.json, CODE_OF_C
 
 ### Community 96 - "npm-registry.ts"
 Cohesion: 0.08
-Nodes (68): FrameworkGenerator, BUILT_IN_GENERATORS, generateMonorepo(), getBackendCommand(), generateLaravelProject(), generateGoProject(), generatePythonProject(), generateRustProject() (+60 more)
+Nodes (72): FrameworkGenerator, BUILT_IN_GENERATORS, generateMonorepo(), getBackendCommand(), generateLaravelProject(), generateGoProject(), generatePythonProject(), generateRustProject() (+64 more)
 
 ### Community 100 - "scripts"
 Cohesion: 0.22
 Nodes (9): scripts, build:bin, capabilities:generate, report:runtime, test, test:managed, test:runtime, test:runtime:laravel (+1 more)
 
 ### Community 101 - "home.md"
-Cohesion: 0.25
-Nodes (5): Architecture Overview, Dependency Resolution, The 3-Tier Fallback Strategy, qwykz Wiki, Table of Contents
+Cohesion: 0.26
+Nodes (4): Architecture Overview, qwykz Capability Matrix, qwykz Wiki, Table of Contents
 
 ### Community 102 - "Runtime Smoke Test Report - 2026-07-15"
-Cohesion: 0.25
+Cohesion: 0.20
 Nodes (7): Interpretation, Laravel External Runtime Run, Runtime Smoke Test Report - 2026-07-15, Runtime Time By Backend, Runtime Time By Surface, Slowest Cases, Summary
 
 ### Community 103 - "dependencies"
@@ -353,7 +354,7 @@ Cohesion: 0.29
 Nodes (7): @clack/prompts, cors, dependencies, @clack/prompts, cors, picocolors, picocolors
 
 ### Community 104 - "Plugin Authoring"
-Cohesion: 0.29
+Cohesion: 0.33
 Nodes (6): Authentication and deployment overlays, Directory contract, Hooks, Plugin Authoring, Template variables, Validate and use
 
 ### Community 105 - "devDependencies"
@@ -361,12 +362,16 @@ Cohesion: 0.29
 Nodes (7): devDependencies, @types/bun, @types/cors, @types/node, @types/node, @types/bun, @types/cors
 
 ### Community 106 - "Contributing Guide"
-Cohesion: 0.33
+Cohesion: 0.40
 Nodes (5): Adding a New Template Feature, Contributing Guide, Getting Started, Submitting a PR, Testing Your Changes
 
 ### Community 107 - "Usage"
-Cohesion: 0.33
-Nodes (6): Capability matrix, Docker resource and data lifecycle, Interactive Mode, Managed credential smoke tests, Non-Interactive Mode (Automated), Usage
+Cohesion: 0.40
+Nodes (5): Laravel Provider Configuration, Managed Credential Smoke Tests, Runtime Smoke Tests, Test Suites, Testing & Verification Guide
+
+### Community 108 - "README.md"
+Cohesion: 0.50
+Nodes (4): Docker Resource and Data Lifecycle, Managed Volume Inventory, PostgreSQL Volume Lifecycle, Resetting Data
 
 ### Community 109 - "template-engine.md"
 Cohesion: 0.50
@@ -385,7 +390,7 @@ Cohesion: 0.67
 Nodes (3): repository, type, url
 
 ## Knowledge Gaps
-- **448 isolated node(s):** `$schema`, `name`, `version`, `description`, `author` (+443 more)
+- **451 isolated node(s):** `$schema`, `name`, `version`, `description`, `author` (+446 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **39 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -396,10 +401,10 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.055) - this node is a cross-community bridge._
 - **Why does `express` connect `express` to `cli.ts`, `dry-run.ts`, `context-pack.ts`, `package-json.ts`, `keywords`, `roadmap-foundations.test.ts`?**
   _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **Why does `buildScaffoldPlan()` connect `User` to `npm-registry.ts`, `matrix.ts`, `e2e.old.test.ts`?**
+- **Why does `buildScaffoldPlan()` connect `User` to `npm-registry.ts`, `matrix.ts`, `full-matrix.test.ts`, `e2e.old.test.ts`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `$schema`, `name`, `version` to the rest of the system?**
-  _449 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _452 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
   _Cohesion score 0.07801418439716312 - nodes in this community are weakly interconnected._
 - **Should `express` be split into smaller, more focused modules?**

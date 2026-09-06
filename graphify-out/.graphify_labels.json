@@ -113,5 +113,6 @@
   "111": "roadmap-foundations.test.ts",
   "112": "peerDependencies",
   "113": "repository",
-  "114": "generate-smoke-report.ts"
+  "114": "generate-smoke-report.ts",
+  "115": "dependency-resolution.md"
 }

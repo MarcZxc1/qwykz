@@ -1110,7 +1110,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_validate_templates",
-      "community": 87,
+      "community": 74,
       "norm_label": "validate-templates.ts"
     },
     {
@@ -3080,7 +3080,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_types",
-      "community": 87,
+      "community": 96,
       "norm_label": "types.ts"
     },
     {
@@ -3090,7 +3090,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_types_nodeframework",
-      "community": 87,
+      "community": 96,
       "norm_label": "nodeframework"
     },
     {
@@ -3110,7 +3110,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_types_capabilitystatus",
-      "community": 87,
+      "community": 96,
       "norm_label": "capabilitystatus"
     },
     {
@@ -3120,7 +3120,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_types_dbtarget",
-      "community": 89,
+      "community": 96,
       "norm_label": "dbtarget"
     },
     {
@@ -3150,7 +3150,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_types_extrapackage",
-      "community": 87,
+      "community": 96,
       "norm_label": "extrapackage"
     },
     {
@@ -3200,7 +3200,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "src_types_scaffoldplan",
-      "community": 87,
+      "community": 74,
       "norm_label": "scaffoldplan"
     },
     {
@@ -3230,7 +3230,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_coverage",
-      "community": 87,
+      "community": 74,
       "norm_label": "coverage.ts"
     },
     {
@@ -3240,7 +3240,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_validation_coverage_validatecoverage",
-      "community": 87,
+      "community": 74,
       "norm_label": "validatecoverage()"
     },
     {
@@ -3250,7 +3250,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_imports",
-      "community": 87,
+      "community": 74,
       "norm_label": "imports.ts"
     },
     {
@@ -3260,7 +3260,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_validation_imports_packagename",
-      "community": 87,
+      "community": 74,
       "norm_label": "packagename()"
     },
     {
@@ -3270,7 +3270,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_validation_imports_validateimports",
-      "community": 87,
+      "community": 74,
       "norm_label": "validateimports()"
     },
     {
@@ -3280,7 +3280,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_index",
-      "community": 87,
+      "community": 74,
       "norm_label": "index.ts"
     },
     {
@@ -3290,7 +3290,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_validation_index_runvalidation",
-      "community": 87,
+      "community": 74,
       "norm_label": "runvalidation()"
     },
     {
@@ -3300,7 +3300,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_placeholders",
-      "community": 87,
+      "community": 74,
       "norm_label": "placeholders.ts"
     },
     {
@@ -3310,7 +3310,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_validation_placeholders_validateplaceholders",
-      "community": 87,
+      "community": 74,
       "norm_label": "validateplaceholders()"
     },
     {
@@ -3320,7 +3320,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_plans",
-      "community": 87,
+      "community": 74,
       "norm_label": "plans.ts"
     },
     {
@@ -3330,7 +3330,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_validation_plans_representative_options",
-      "community": 87,
+      "community": 74,
       "norm_label": "representative_options"
     },
     {
@@ -3340,7 +3340,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_validation_plans_options",
-      "community": 87,
+      "community": 74,
       "norm_label": "options()"
     },
     {
@@ -3350,7 +3350,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_validation_plans_getvalidationplans",
-      "community": 87,
+      "community": 74,
       "norm_label": "getvalidationplans()"
     },
     {
@@ -3360,7 +3360,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_prompt_mapping",
-      "community": 87,
+      "community": 74,
       "norm_label": "prompt-mapping.ts"
     },
     {
@@ -3370,7 +3370,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_validation_prompt_mapping_built_in_frameworks",
-      "community": 87,
+      "community": 74,
       "norm_label": "built_in_frameworks"
     },
     {
@@ -3380,7 +3380,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_validation_prompt_mapping_validatepromptmapping",
-      "community": 87,
+      "community": 74,
       "norm_label": "validatepromptmapping()"
     },
     {
@@ -3390,7 +3390,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_syntax",
-      "community": 87,
+      "community": 74,
       "norm_label": "syntax.ts"
     },
     {
@@ -3400,7 +3400,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_validation_syntax_getallfiles",
-      "community": 87,
+      "community": 74,
       "norm_label": "getallfiles()"
     },
     {
@@ -3410,7 +3410,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_validation_syntax_isframeworktemplatefile",
-      "community": 87,
+      "community": 74,
       "norm_label": "isframeworktemplatefile()"
     },
     {
@@ -3420,7 +3420,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_validation_syntax_validatesyntax",
-      "community": 87,
+      "community": 74,
       "norm_label": "validatesyntax()"
     },
     {
@@ -3430,7 +3430,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_types",
-      "community": 87,
+      "community": 74,
       "norm_label": "types.ts"
     },
     {
@@ -3440,7 +3440,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_validation_types_validationresult",
-      "community": 87,
+      "community": 74,
       "norm_label": "validationresult"
     },
     {
@@ -3450,7 +3450,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_validation_types_validationreport",
-      "community": 87,
+      "community": 74,
       "norm_label": "validationreport"
     },
     {
@@ -7712,7 +7712,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_full_matrix_test",
-      "community": 74,
+      "community": 87,
       "norm_label": "full-matrix.test.ts"
     },
     {
@@ -7722,7 +7722,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_full_matrix_test_root",
-      "community": 74,
+      "community": 87,
       "norm_label": "root"
     },
     {
@@ -7732,7 +7732,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_full_matrix_test_bun_tmpdir",
-      "community": 74,
+      "community": 87,
       "norm_label": "bun_tmpdir"
     },
     {
@@ -7742,7 +7742,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_full_matrix_test_scaffold",
-      "community": 74,
+      "community": 87,
       "norm_label": "scaffold()"
     },
     {
@@ -7752,7 +7752,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "tests_full_matrix_test_fileexists",
-      "community": 74,
+      "community": 87,
       "norm_label": "fileexists()"
     },
     {
@@ -7762,7 +7762,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "tests_full_matrix_test_filecontains",
-      "community": 74,
+      "community": 87,
       "norm_label": "filecontains()"
     },
     {
@@ -7772,7 +7772,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_full_matrix_test_cleanup",
-      "community": 74,
+      "community": 87,
       "norm_label": "cleanup()"
     },
     {
@@ -7782,7 +7782,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_full_matrix_test_allprojects",
-      "community": 74,
+      "community": 87,
       "norm_label": "allprojects"
     },
     {
@@ -8776,7 +8776,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_template_validation_test",
-      "community": 87,
+      "community": 74,
       "norm_label": "template-validation.test.ts"
     },
     {
@@ -8786,7 +8786,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "tests_template_validation_test_plan",
-      "community": 87,
+      "community": 74,
       "norm_label": "plan()"
     },
     {
@@ -9206,7 +9206,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "readme",
-      "community": 108,
+      "community": 101,
       "norm_label": "readme.md"
     },
     {
@@ -9220,144 +9220,104 @@
       "norm_label": "\u26a1 qwykz \u26a1"
     },
     {
-      "label": "The problem qwykz is trying to solve",
+      "label": "Why qwykz?",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L28",
       "_origin": "ast",
-      "id": "readme_the_problem_qwykz_is_trying_to_solve",
+      "id": "readme_why_qwykz",
       "community": 17,
-      "norm_label": "the problem qwykz is trying to solve"
+      "norm_label": "why qwykz?"
+    },
+    {
+      "label": "Quickstart",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "readme_quickstart",
+      "community": 17,
+      "norm_label": "quickstart"
     },
     {
       "label": "Features",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L36",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "readme_features",
       "community": 17,
       "norm_label": "features"
     },
     {
-      "label": "Installation",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L58",
-      "_origin": "ast",
-      "id": "readme_installation",
-      "community": 17,
-      "norm_label": "installation"
-    },
-    {
-      "label": "Run without installing (Recommended)",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L60",
-      "_origin": "ast",
-      "id": "readme_run_without_installing_recommended",
-      "community": 17,
-      "norm_label": "run without installing (recommended)"
-    },
-    {
-      "label": "Global Install",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L74",
-      "_origin": "ast",
-      "id": "readme_global_install",
-      "community": 17,
-      "norm_label": "global install"
-    },
-    {
       "label": "Usage",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L82",
+      "source_location": "L68",
       "_origin": "ast",
       "id": "readme_usage",
-      "community": 107,
+      "community": 17,
       "norm_label": "usage"
     },
     {
       "label": "Interactive Mode",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L84",
+      "source_location": "L70",
       "_origin": "ast",
       "id": "readme_interactive_mode",
-      "community": 107,
+      "community": 17,
       "norm_label": "interactive mode"
     },
     {
-      "label": "Non-Interactive Mode (Automated)",
+      "label": "Non-Interactive (Automated)",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L99",
+      "source_location": "L78",
       "_origin": "ast",
-      "id": "readme_non_interactive_mode_automated",
-      "community": 107,
-      "norm_label": "non-interactive mode (automated)"
+      "id": "readme_non_interactive_automated",
+      "community": 17,
+      "norm_label": "non-interactive (automated)"
     },
     {
-      "label": "Capability matrix",
+      "label": "Key CLI Flags",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L126",
+      "source_location": "L90",
       "_origin": "ast",
-      "id": "readme_capability_matrix",
-      "community": 107,
-      "norm_label": "capability matrix"
-    },
-    {
-      "label": "Managed credential smoke tests",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L130",
-      "_origin": "ast",
-      "id": "readme_managed_credential_smoke_tests",
-      "community": 107,
-      "norm_label": "managed credential smoke tests"
-    },
-    {
-      "label": "Docker resource and data lifecycle",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L153",
-      "_origin": "ast",
-      "id": "readme_docker_resource_and_data_lifecycle",
-      "community": 107,
-      "norm_label": "docker resource and data lifecycle"
+      "id": "readme_key_cli_flags",
+      "community": 17,
+      "norm_label": "key cli flags"
     },
     {
       "label": "Documentation",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L172",
+      "source_location": "L109",
       "_origin": "ast",
       "id": "readme_documentation",
       "community": 17,
       "norm_label": "documentation"
     },
     {
-      "label": "Roadmap",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L183",
-      "_origin": "ast",
-      "id": "readme_roadmap",
-      "community": 17,
-      "norm_label": "roadmap"
-    },
-    {
       "label": "Contributing",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L193",
+      "source_location": "L123",
       "_origin": "ast",
       "id": "readme_contributing",
       "community": 17,
       "norm_label": "contributing"
+    },
+    {
+      "label": "License",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L129",
+      "_origin": "ast",
+      "id": "readme_license",
+      "community": 17,
+      "norm_label": "license"
     },
     {
       "label": "SECURITY.md",
@@ -9436,7 +9396,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_capability_matrix",
-      "community": 108,
+      "community": 101,
       "norm_label": "capability-matrix.md"
     },
     {
@@ -9446,7 +9406,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_capability_matrix_qwykz_capability_matrix",
-      "community": 108,
+      "community": 101,
       "norm_label": "qwykz capability matrix"
     },
     {
@@ -9456,7 +9416,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_contributing",
-      "community": 106,
+      "community": 101,
       "norm_label": "contributing.md"
     },
     {
@@ -9516,7 +9476,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_dependency_resolution",
-      "community": 101,
+      "community": 115,
       "norm_label": "dependency-resolution.md"
     },
     {
@@ -9526,7 +9486,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_dependency_resolution_dependency_resolution",
-      "community": 101,
+      "community": 115,
       "norm_label": "dependency resolution"
     },
     {
@@ -9536,8 +9496,58 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "docs_dependency_resolution_the_3_tier_fallback_strategy",
-      "community": 101,
+      "community": 115,
       "norm_label": "the 3-tier fallback strategy"
+    },
+    {
+      "label": "docker.md",
+      "file_type": "document",
+      "source_file": "docs/docker.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_docker",
+      "community": 101,
+      "norm_label": "docker.md"
+    },
+    {
+      "label": "Docker Resource and Data Lifecycle",
+      "file_type": "document",
+      "source_file": "docs/docker.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_docker_docker_resource_and_data_lifecycle",
+      "community": 108,
+      "norm_label": "docker resource and data lifecycle"
+    },
+    {
+      "label": "PostgreSQL Volume Lifecycle",
+      "file_type": "document",
+      "source_file": "docs/docker.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "docs_docker_postgresql_volume_lifecycle",
+      "community": 108,
+      "norm_label": "postgresql volume lifecycle"
+    },
+    {
+      "label": "Resetting Data",
+      "file_type": "document",
+      "source_file": "docs/docker.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "docs_docker_resetting_data",
+      "community": 108,
+      "norm_label": "resetting data"
+    },
+    {
+      "label": "Managed Volume Inventory",
+      "file_type": "document",
+      "source_file": "docs/docker.md",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "docs_docker_managed_volume_inventory",
+      "community": 108,
+      "norm_label": "managed volume inventory"
     },
     {
       "label": "fullstack-managed-auth-plan.md",
@@ -9546,7 +9556,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_fullstack_managed_auth_plan",
-      "community": 108,
+      "community": 102,
       "norm_label": "fullstack-managed-auth-plan.md"
     },
     {
@@ -10906,7 +10916,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_plugins",
-      "community": 104,
+      "community": 101,
       "norm_label": "plugins.md"
     },
     {
@@ -10976,7 +10986,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "docs_roadmap",
-      "community": 108,
+      "community": 102,
       "norm_label": "roadmap.md"
     },
     {
@@ -11268,6 +11278,66 @@
       "id": "docs_template_engine_compiled_mode_vs_development_mode",
       "community": 109,
       "norm_label": "compiled mode vs development mode"
+    },
+    {
+      "label": "testing.md",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_testing",
+      "community": 101,
+      "norm_label": "testing.md"
+    },
+    {
+      "label": "Testing & Verification Guide",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "docs_testing_testing_verification_guide",
+      "community": 107,
+      "norm_label": "testing & verification guide"
+    },
+    {
+      "label": "Test Suites",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "docs_testing_test_suites",
+      "community": 107,
+      "norm_label": "test suites"
+    },
+    {
+      "label": "Runtime Smoke Tests",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "docs_testing_runtime_smoke_tests",
+      "community": 107,
+      "norm_label": "runtime smoke tests"
+    },
+    {
+      "label": "Managed Credential Smoke Tests",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "docs_testing_managed_credential_smoke_tests",
+      "community": 107,
+      "norm_label": "managed credential smoke tests"
+    },
+    {
+      "label": "Laravel Provider Configuration",
+      "file_type": "document",
+      "source_file": "docs/testing.md",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "docs_testing_laravel_provider_configuration",
+      "community": 107,
+      "norm_label": "laravel provider configuration"
     },
     {
       "label": "SKILL.md",
@@ -26730,7 +26800,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/home.md",
-      "source_location": "L15",
+      "source_location": "L20",
       "weight": 1.0,
       "source": "docs_home",
       "target": "readme",
@@ -26740,7 +26810,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L176",
+      "source_location": "L114",
       "weight": 1.0,
       "source": "readme",
       "target": "docs_architecture",
@@ -26750,7 +26820,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L128",
+      "source_location": "L113",
       "weight": 1.0,
       "source": "readme",
       "target": "docs_capability_matrix",
@@ -26760,7 +26830,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L179",
+      "source_location": "L119",
       "weight": 1.0,
       "source": "readme",
       "target": "docs_contributing",
@@ -26770,27 +26840,17 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L178",
+      "source_location": "L115",
       "weight": 1.0,
       "source": "readme",
-      "target": "docs_dependency_resolution",
+      "target": "docs_docker",
       "confidence_score": 1.0
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L191",
-      "weight": 1.0,
-      "source": "readme",
-      "target": "docs_fullstack_managed_auth_plan",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L180",
+      "source_location": "L117",
       "weight": 1.0,
       "source": "readme",
       "target": "docs_plugins",
@@ -26800,7 +26860,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L181",
+      "source_location": "L118",
       "weight": 1.0,
       "source": "readme",
       "target": "docs_roadmap",
@@ -26810,10 +26870,10 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L177",
+      "source_location": "L116",
       "weight": 1.0,
       "source": "readme",
-      "target": "docs_template_engine",
+      "target": "docs_testing",
       "confidence_score": 1.0
     },
     {
@@ -26830,7 +26890,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L193",
+      "source_location": "L123",
       "weight": 1.0,
       "source": "readme_qwykz",
       "target": "readme_contributing",
@@ -26840,7 +26900,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L172",
+      "source_location": "L109",
       "weight": 1.0,
       "source": "readme_qwykz",
       "target": "readme_documentation",
@@ -26850,7 +26910,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L36",
+      "source_location": "L54",
       "weight": 1.0,
       "source": "readme_qwykz",
       "target": "readme_features",
@@ -26860,37 +26920,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L58",
+      "source_location": "L129",
       "weight": 1.0,
       "source": "readme_qwykz",
-      "target": "readme_installation",
+      "target": "readme_license",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L183",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "readme_qwykz",
-      "target": "readme_roadmap",
+      "target": "readme_quickstart",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "source": "readme_qwykz",
-      "target": "readme_the_problem_qwykz_is_trying_to_solve",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L82",
+      "source_location": "L68",
       "weight": 1.0,
       "source": "readme_qwykz",
       "target": "readme_usage",
@@ -26900,47 +26950,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L74",
+      "source_location": "L28",
       "weight": 1.0,
-      "source": "readme_installation",
-      "target": "readme_global_install",
+      "source": "readme_qwykz",
+      "target": "readme_why_qwykz",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L60",
-      "weight": 1.0,
-      "source": "readme_installation",
-      "target": "readme_run_without_installing_recommended",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L126",
-      "weight": 1.0,
-      "source": "readme_usage",
-      "target": "readme_capability_matrix",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L153",
-      "weight": 1.0,
-      "source": "readme_usage",
-      "target": "readme_docker_resource_and_data_lifecycle",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L84",
+      "source_location": "L70",
       "weight": 1.0,
       "source": "readme_usage",
       "target": "readme_interactive_mode",
@@ -26950,20 +26970,20 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L130",
+      "source_location": "L90",
       "weight": 1.0,
       "source": "readme_usage",
-      "target": "readme_managed_credential_smoke_tests",
+      "target": "readme_key_cli_flags",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L99",
+      "source_location": "L78",
       "weight": 1.0,
       "source": "readme_usage",
-      "target": "readme_non_interactive_mode_automated",
+      "target": "readme_non_interactive_automated",
       "confidence_score": 1.0
     },
     {
@@ -27037,6 +27057,16 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_capability_matrix",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/contributing.md",
@@ -27050,7 +27080,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/home.md",
-      "source_location": "L12",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "docs_home",
       "target": "docs_contributing",
@@ -27110,7 +27140,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/home.md",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0,
       "source": "docs_home",
       "target": "docs_dependency_resolution",
@@ -27124,6 +27154,56 @@
       "weight": 1.0,
       "source": "docs_dependency_resolution_dependency_resolution",
       "target": "docs_dependency_resolution_the_3_tier_fallback_strategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/docker.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_docker",
+      "target": "docs_docker_docker_resource_and_data_lifecycle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_docker",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/docker.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "docs_docker_docker_resource_and_data_lifecycle",
+      "target": "docs_docker_managed_volume_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/docker.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "docs_docker_docker_resource_and_data_lifecycle",
+      "target": "docs_docker_postgresql_volume_lifecycle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/docker.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "docs_docker_docker_resource_and_data_lifecycle",
+      "target": "docs_docker_resetting_data",
       "confidence_score": 1.0
     },
     {
@@ -27410,10 +27490,40 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/home.md",
-      "source_location": "L10",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_plugins",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_roadmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L11",
       "weight": 1.0,
       "source": "docs_home",
       "target": "docs_template_engine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/home.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "docs_home",
+      "target": "docs_testing",
       "confidence_score": 1.0
     },
     {
@@ -28769,6 +28879,56 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "docs/testing.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "docs_testing",
+      "target": "docs_testing_testing_verification_guide",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/testing.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "docs_testing_testing_verification_guide",
+      "target": "docs_testing_managed_credential_smoke_tests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/testing.md",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "docs_testing_testing_verification_guide",
+      "target": "docs_testing_runtime_smoke_tests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/testing.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "docs_testing_testing_verification_guide",
+      "target": "docs_testing_test_suites",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/testing.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "docs_testing_managed_credential_smoke_tests",
+      "target": "docs_testing_laravel_provider_configuration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "skills/deep-analysis/SKILL.md",
       "source_location": "L6",
       "weight": 1.0,
@@ -28808,5 +28968,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "082ff48ab12c37ff0af0ed242657a316fd7a2b37"
+  "built_at_commit": "04cd6b7c9d84fc05d0715be8ccf87d5683443e4a"
 }

@@ -610,8 +610,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1786761800.7662454,
-    "ast_hash": "d4ff0eab1c99d6d162c170fa4cbea509",
+    "mtime": 1788661208.653363,
+    "ast_hash": "2e41a5fe07beacc72c91d65beb63fed2",
     "semantic_hash": ""
   },
   "SECURITY.md": {
@@ -640,8 +640,8 @@
     "semantic_hash": ""
   },
   "docs/home.md": {
-    "mtime": 1781944822.2522318,
-    "ast_hash": "4cefcc1f467760c58a50728bdb7bb88c",
+    "mtime": 1788661187.2797976,
+    "ast_hash": "57cba2bea53a53c94c75cfe7f18d4e38",
     "semantic_hash": ""
   },
   "docs/roadmap.md": {
@@ -1047,6 +1047,16 @@
   "docs/plans/plan-generator-modularization.md": {
     "mtime": 1784689997.2944,
     "ast_hash": "05ddb3d1832b026432d771f075a4c79a",
+    "semantic_hash": ""
+  },
+  "docs/docker.md": {
+    "mtime": 1788661175.6804855,
+    "ast_hash": "a18a39066738cff94167a90e729f2919",
+    "semantic_hash": ""
+  },
+  "docs/testing.md": {
+    "mtime": 1788661180.28661,
+    "ast_hash": "5ad6ad26faff85331322a8fc0212fa23",
     "semantic_hash": ""
   }
 }
