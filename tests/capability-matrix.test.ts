@@ -24,4 +24,11 @@ describe('capability matrix', () => {
   it('isSupported returns true for supported combinations', () => {
     expect(isSupported('express', 'docker', 'local', 'docker')).toBe(true);
   });
+  it('all backend frameworks support neon db as standard', () => {
+    const frameworks = ['express', 'hono', 'elysia', 'nextjs', 'python', 'go', 'rust'];
+    for (const fw of frameworks) {
+      expect(getCapability(fw, 'neon', 'local', 'none')).toBe('supported');
+      expect(isSupported(fw, 'neon', 'local', 'none')).toBe(true);
+    }
+  });
 });

@@ -356,6 +356,7 @@ export async function promptForProjectOptions(): Promise<ProjectOptions> {
       message: "Select your PostgreSQL environment target:",
       options: [
         { value: "supabase", label: "Supabase (remote cloud database)" },
+        { value: "neon", label: "Neon (serverless cloud PostgreSQL)" },
         { value: "local", label: "Local PostgreSQL (installed on host)" },
         { value: "docker", label: "Containerized PostgreSQL" },
       ],
