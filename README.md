@@ -2,7 +2,7 @@
 
 <img src="assets/logo-badge.svg" alt="qwykz logo" width="96" height="96" />
 
-# qwykz
+# qwykz 1
 
 **Quick & Ready Boilerplate Builder**
 
