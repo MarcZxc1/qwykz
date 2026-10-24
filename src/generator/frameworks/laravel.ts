@@ -203,7 +203,7 @@ export async function generateLaravelProject(options: ProjectOptions, rootDir = 
   const pkgPath = join(targetDir, "package.json");
   if (await Bun.file(pkgPath).exists()) {
     const pkg = await Bun.file(pkgPath).json();
-    pkg.name = options.projectName.split("/").pop() || "backend";
+    pkg.name = options.projectName.replace(/[\\/]/g, "-") || "backend";
     await Bun.write(pkgPath, JSON.stringify(pkg, null, 2));
   }
 }

@@ -26,6 +26,21 @@ function filePlan(files: ScaffoldPlan["files"]): ScaffoldPlan {
 }
 
 describe("scaffold reliability", () => {
+  test("monorepo package names are valid and unique across workspaces", async () => {
+    for (const backendFramework of ["express", "hono", "elysia"]) {
+      for (const frontendFramework of ["react", "vue"]) {
+        const plan = await buildScaffoldPlan(projectOptions({
+          framework: "monorepo", backendFramework, frontendFramework,
+        }));
+        const names = plan.files.filter((file) => file.path.endsWith("package.json"))
+          .map((file) => JSON.parse(file.content).name as string);
+        expect(names).toHaveLength(3);
+        expect(new Set(names).size).toBe(names.length);
+        for (const name of names) expect(name).toMatch(/^[a-z][a-z0-9-]*$/);
+      }
+    }
+  });
+
   test("planning concurrently keeps cwd stable and outputs isolated", async () => {
     const cwd = process.cwd();
     const cwdChanges = spyOn(process, "chdir");

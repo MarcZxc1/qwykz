@@ -115,7 +115,7 @@ export async function generatePluginProject(
   }
 
   const pkgJson: ProjectPackageJson = {
-    name: options.projectName,
+    name: options.projectName.replace(/[\\/]/g, "-"),
     version: "1.0.0",
     type: "module",
     scripts: { ...(plugin.manifest.scripts ?? {}) },

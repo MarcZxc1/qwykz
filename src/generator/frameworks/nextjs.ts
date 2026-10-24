@@ -54,7 +54,7 @@ export async function generateNextJsProject(options: ProjectOptions, rootDir = p
   }
 
   const pkgJson = {
-    name: options.projectName.split("/").pop() || "nextjs-app",
+    name: options.projectName.replace(/[\\/]/g, "-") || "nextjs-app",
     version: "0.1.0",
     private: true,
     scripts: {

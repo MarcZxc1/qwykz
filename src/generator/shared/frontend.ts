@@ -217,7 +217,7 @@ export async function createVitePackageJson(
   }
 
   return {
-    name: projectName,
+    name: projectName.replace(/[\\/]/g, "-"),
     version: "1.0.0",
     type: "module",
     scripts: {
