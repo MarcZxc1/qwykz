@@ -6,8 +6,8 @@ import type { PackageMap, ProjectOptions } from "../../types";
 import { generateDbPassword, generateJwtSecret } from "../shared/files";
 import { resolveDockerCompose } from "../shared/runtime";
 
-export async function generateNextJsProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateNextJsProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   const dbPassword = generateDbPassword();
 
   console.log(`\n🚀 Scaffolding Next.js App Router...`);
@@ -17,39 +17,40 @@ export async function generateNextJsProject(options: ProjectOptions) {
   const nextDependencies: PackageMap = {
     "@prisma/adapter-pg": packageVersions.dependencies["@prisma/adapter-pg"],
     "@prisma/client": packageVersions.dependencies["@prisma/client"],
-    next: "^16.2.10",
+    next: "16.4.3",
     pg: packageVersions.dependencies.pg,
-    react: "^19.2.7",
-    "react-dom": "^19.2.7",
+    react: "19.2.7",
+    "react-dom": "19.2.7",
   };
   const nextDevDependencies: PackageMap = {
+    "@types/bun": packageVersions.devDependencies["@types/bun"],
     "@prisma/config": packageVersions.devDependencies["@prisma/config"],
     "@types/node": packageVersions.devDependencies["@types/node"],
     "@types/pg": packageVersions.devDependencies["@types/pg"],
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    eslint: "^9.0.0",
-    "eslint-config-next": "^16.2.10",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    eslint: "9.0.0",
+    "eslint-config-next": "16.4.3",
     prisma: packageVersions.devDependencies.prisma,
     typescript: packageVersions.devDependencies.typescript,
   };
   if (options.authTarget === "local") {
-    nextDependencies.zod = "^3.23.0";
-    nextDependencies.bcryptjs = "^2.4.3";
+    nextDependencies.zod = packageVersions.dependencies.zod;
+    nextDependencies.bcryptjs = "2.4.3";
     nextDependencies.jsonwebtoken = packageVersions.dependencies.jsonwebtoken;
     nextDevDependencies["@types/jsonwebtoken"] = packageVersions.devDependencies["@types/jsonwebtoken"];
-    nextDevDependencies["@types/bcryptjs"] = "^2.4.6";
+    nextDevDependencies["@types/bcryptjs"] = "2.4.6";
   } else if (options.authTarget === "supabase") {
-    nextDependencies.zod = "^3.23.0";
-    nextDependencies["@supabase/supabase-js"] = "^2.43.0";
+    nextDependencies.zod = packageVersions.dependencies.zod;
+    nextDependencies["@supabase/supabase-js"] = "2.43.0";
   } else if (options.authTarget === "clerk") {
-    nextDependencies["@clerk/nextjs"] = "^7.0.0";
+    nextDependencies["@clerk/nextjs"] = "7.9.20";
   }
 
   if (options.cachingTarget === "docker") {
-    nextDependencies.ioredis = "^5.4.1";
+    nextDependencies.ioredis = "5.4.1";
   } else if (options.cachingTarget === "upstash") {
-    nextDependencies["@upstash/redis"] = "^1.31.5";
+    nextDependencies["@upstash/redis"] = "1.31.5";
   }
 
   const pkgJson = {
@@ -108,6 +109,7 @@ export async function generateNextJsProject(options: ProjectOptions) {
         lib: ["dom", "dom.iterable", "esnext"],
         allowJs: true,
         skipLibCheck: true,
+        types: ["node", "bun"],
         strict: true,
         noEmit: true,
         esModuleInterop: true,

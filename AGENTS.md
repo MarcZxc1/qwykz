@@ -9,7 +9,7 @@ Guidance and ground rules for AI agents and coding tools working on `qwykz`.
 `qwykz` is an inspectable multi-stack project scaffolder built with Bun and TypeScript. It generates backends (Express, Hono, Elysia, Laravel, FastAPI, Go Fiber, Rust Axum), frontends (React, Vue), fullstack setups (Next.js, monorepos), database configurations, authentication, and Docker Compose environments.
 
 Core principles:
-- **Deterministic & Inspectable**: Output is planned completely in-memory before writing (`ScaffoldPlan`). Staging prevents partial or corrupted writes.
+- **Inspectable Output**: Generators use an isolated staging workspace to build a complete `ScaffoldPlan` before publishing target files. Built-in npm stacks use exact direct dependency versions bundled with the release.
 - **Honest Capability Gating**: Combinations are defined in `capability-matrix.json`. If a combination isn't supported, fail fast before touching disk.
 - **No AI Slop**: Keep code lean, types precise, and documentation direct and human. Avoid vague marketing buzzwords.
 
@@ -22,9 +22,11 @@ Core principles:
 | `src/cli.ts` | CLI entry point, execution coordinator, command runners |
 | `src/prompts.ts` | Interactive prompt flows, non-interactive flag parsing |
 | `src/presets.ts` | Curated stack presets (`api-rust`, `api-go`, `web-nextjs`, etc.) |
-| `src/generator.ts` | Template resolution, overlay application, and staging pipeline |
-| `src/plan.ts` | In-memory `ScaffoldPlan` builder and file list aggregator |
-| `src/dispatcher.ts` | Target framework dispatchers (Node, Go, Python, Rust, etc.) |
+| `src/generator.ts` | Public generator facade |
+| `src/generator/scaffold-plan.ts` | Planning, metadata generation, and atomic publication |
+| `src/generator/dispatcher.ts` | Framework dispatch and monorepo composition |
+| `src/generator/frameworks/` | Framework-specific generators with explicit output roots |
+| `src/package-versions.ts` | Bundled direct npm dependency versions |
 | `src/manifest.ts` | `.qwykz-manifest.json` generation and audit serializer |
 | `src/capability/` | Capability matrix definitions and validation logic |
 | `src/plugins/` | Extensible plugin manifest and lifecycle management |

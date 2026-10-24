@@ -8,7 +8,7 @@ if (!JWT_SECRET) {
 }
 
 export const authMiddleware = new Elysia()
-  .derive(({ request: { headers } }) => {
+  .derive({ as: "scoped" }, ({ request: { headers } }) => {
     const authHeader = headers.get("authorization");
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -33,4 +33,5 @@ export const requireRole = (roles: string[]) => new Elysia()
     if (!roles.includes(user.role)) {
       throw new HttpError(403, "Forbidden: Insufficient role permissions");
     }
-  });
+  })
+  .as("scoped");

@@ -5,14 +5,14 @@ import type { ProjectOptions } from "../../types";
 import { generateDbPassword } from "../shared/files";
 import { resolveDockerCompose } from "../shared/runtime";
 
-export async function generateLaravelProject(options: ProjectOptions) {
+export async function generateLaravelProject(options: ProjectOptions, rootDir = process.cwd()) {
   if (!Bun.which("composer") || !Bun.which("php")) {
     throw new Error(
       "Laravel scaffolding requires 'composer' and 'php' (>= 8.2) to be installed and available in your PATH.",
     );
   }
 
-  const targetDir = join(process.cwd(), options.projectName);
+  const targetDir = join(rootDir, options.projectName);
   const dbPassword = generateDbPassword();
 
   console.log(`\n🚀Fetching the latest Laravel framework via Composer`);
@@ -26,7 +26,7 @@ export async function generateLaravelProject(options: ProjectOptions) {
       options.projectName,
       "--no-scripts",
     ],
-    cwd: process.cwd(),
+    cwd: rootDir,
     stdout: "pipe",
     stderr: "pipe",
     env: { ...process.env },

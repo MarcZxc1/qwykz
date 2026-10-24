@@ -245,11 +245,11 @@ Files: `src/types.ts`, `src/prompts.ts`.
 
 ### Dependency generation
 
-Files: `src/package-json.ts`, `src/package-versions.ts`, `src/npm-registry.ts`.
+Files: `src/package-json.ts`, `src/package-versions.ts`, `src/generator/shared/frontend.ts`.
 
 - [ ] Replace obsolete provider packages.
 - [ ] Resolve only packages required by the selected provider and framework.
-- [ ] Maintain offline fallback versions for every selected package.
+- [ ] Maintain bundled exact versions for every selected package; keep generation offline.
 - [ ] Add a test proving every generated import has a declared dependency.
 
 ### Templates and generator selection

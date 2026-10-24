@@ -18,8 +18,8 @@ import {
   resolveUserService,
 } from "../shared/runtime";
 
-export async function generateExpressProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateExpressProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
 
   // Generate cryptographically secure secrets once per scaffold run.
   // These are never printed to the terminal.
@@ -132,8 +132,8 @@ export async function generateExpressProject(options: ProjectOptions) {
 }
 
 
-export async function generateHonoProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateHonoProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
 
@@ -201,8 +201,8 @@ export async function generateHonoProject(options: ProjectOptions) {
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
     createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget, "hono").then((pkg) => {
       // Override for Hono
-      pkg.dependencies.hono = "^4.0.0";
-      pkg.dependencies["@hono/node-server"] = "^1.11.0";
+      pkg.dependencies.hono = "4.13.13";
+      pkg.dependencies["@hono/node-server"] = "2.1.5";
       delete pkg.dependencies.cors;
       delete pkg.dependencies.helmet;
       delete pkg.devDependencies["@types/cors"];
@@ -214,8 +214,8 @@ export async function generateHonoProject(options: ProjectOptions) {
 }
 
 
-export async function generateElysiaProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateElysiaProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   const jwtSecret = generateJwtSecret();
   const dbPassword = generateDbPassword();
 
@@ -283,9 +283,9 @@ export async function generateElysiaProject(options: ProjectOptions) {
     ...files.map(([path, content]) => writeFile(join(targetDir, path), content)),
     createPackageJson(options.projectName, options.dbTarget, options.extraPackages, options.cachingTarget, options.authTarget, "elysia").then((pkg) => {
       // Override for Elysia
-      pkg.dependencies.elysia = "^1.0.0";
-      if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "^1.0.2";
-      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "^3.1.0";
+      pkg.dependencies.elysia = "1.4.30";
+      if (options.extraPackages.includes("cors")) pkg.dependencies["@elysiajs/cors"] = "1.4.2";
+      if (options.extraPackages.includes("helmet")) pkg.dependencies["elysia-helmet"] = "3.1.0";
       delete pkg.dependencies.cors;
       delete pkg.dependencies.helmet;
       delete pkg.devDependencies["@types/cors"];

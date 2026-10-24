@@ -83,10 +83,11 @@ export async function applyPluginOverlay(
 export async function generatePluginProject(
   options: ProjectOptions,
   plugin: LoadedPlugin,
-  frameworkCap: PluginFrameworkCapability
+  frameworkCap: PluginFrameworkCapability,
+  rootDir: string,
 ) {
   console.log(`\n🚀 Scaffolding plugin framework ${frameworkCap.label}...`);
-  const targetDir = join(process.cwd(), options.projectName);
+  const targetDir = join(rootDir, options.projectName);
 
   const pluginTemplatePath = join(plugin.pluginDir, frameworkCap.templateDir);
   const templateFiles = getTemplatesInDirectory("", pluginTemplatePath);

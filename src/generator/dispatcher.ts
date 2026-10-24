@@ -45,14 +45,14 @@ function getBackendCommand(backendFramework: string): string {
   return "bun dev";
 }
 
-async function generateMonorepo(options: ProjectOptions): Promise<void> {
+async function generateMonorepo(options: ProjectOptions, rootDir: string): Promise<void> {
   if (!options.backendFramework || !options.frontendFramework) {
     throw new Error("Monorepo generation requires backendFramework and frontendFramework");
   }
 
   const rootName = options.projectName;
   const backendFramework = options.backendFramework;
-  const targetDir = join(process.cwd(), rootName);
+  const targetDir = join(rootDir, rootName);
   const backendOptions: ProjectOptions = {
     ...options,
     framework: backendFramework,
@@ -66,8 +66,8 @@ async function generateMonorepo(options: ProjectOptions): Promise<void> {
     extraPackages: [...options.extraPackages],
   };
 
-  await generateProjectFiles(backendOptions);
-  await generateProjectFiles(frontendOptions);
+  await generateProjectFiles(backendOptions, rootDir);
+  await generateProjectFiles(frontendOptions, rootDir);
 
   const includeBackendWorkspace = ["express", "hono", "elysia", "laravel"].includes(backendFramework);
   const hasPrismaBackend = ["express", "hono", "elysia"].includes(backendFramework);
@@ -95,15 +95,15 @@ async function generateMonorepo(options: ProjectOptions): Promise<void> {
   await Bun.write(join(targetDir, "package.json"), JSON.stringify(rootPackage, null, 2));
 }
 
-export async function generateProjectFiles(options: ProjectOptions): Promise<void> {
+export async function generateProjectFiles(options: ProjectOptions, rootDir: string): Promise<void> {
   if (options.framework === "monorepo") {
-    await generateMonorepo(options);
+    await generateMonorepo(options, rootDir);
     return;
   }
 
   const builtInGenerator = BUILT_IN_GENERATORS[options.framework];
   if (builtInGenerator) {
-    await builtInGenerator(options);
+    await builtInGenerator(options, rootDir);
     return;
   }
 
@@ -116,5 +116,5 @@ export async function generateProjectFiles(options: ProjectOptions): Promise<voi
     throw new Error(`Unknown framework: ${options.framework}`);
   }
 
-  await generatePluginProject(options, plugin, frameworkCapability);
+  await generatePluginProject(options, plugin, frameworkCapability, rootDir);
 }

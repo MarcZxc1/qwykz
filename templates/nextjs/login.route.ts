@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       where: { email: parsed.data.email },
     });
 
-    if (!user) {
+    if (!user?.password) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
