@@ -1,12 +1,13 @@
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import type { ProjectOptions, ScaffoldPlan } from "../types";
 import { generateProjectFiles } from "./dispatcher";
 import { buildPackageAudit, collectScaffoldFiles } from "./package-policy";
 import { applyPluginOverlay } from "./plugin-generation";
 
 export async function buildScaffoldPlan(options: ProjectOptions): Promise<ScaffoldPlan> {
+  validateProjectName(options.projectName);
   const { registry } = await import("../plugins/registry");
   const frameworkPlugin = registry.getPluginForFramework(options.framework);
   const authPlugin = registry.getAuthProvider(options.authTarget);
@@ -55,7 +56,6 @@ export async function buildScaffoldPlan(options: ProjectOptions): Promise<Scaffo
     }
   }
 
-  const originalCwd = process.cwd();
   const stagingRoot = await mkdtemp(join(tmpdir(), "qwykz-plan-"));
   const stagedOptions: ProjectOptions = {
     ...options,
@@ -66,8 +66,7 @@ export async function buildScaffoldPlan(options: ProjectOptions): Promise<Scaffo
   };
 
   try {
-    process.chdir(stagingRoot);
-    await generateProjectFiles(stagedOptions);
+    await generateProjectFiles(stagedOptions, stagingRoot);
     const projectRoot = join(stagingRoot, options.projectName);
     if (authPlugin) {
       await applyPluginOverlay(
@@ -144,27 +143,70 @@ export async function buildScaffoldPlan(options: ProjectOptions): Promise<Scaffo
     plan.files.sort((a, b) => a.path.localeCompare(b.path));
     return plan;
   } finally {
-    process.chdir(originalCwd);
     await rm(stagingRoot, { recursive: true, force: true }).catch(() => {});
   }
 }
 
-/** Write a completed scaffold plan to disk. */
+function validateProjectName(name: string): void {
+  if (!name || name === "." || name === ".." || /[\\/\0:]/.test(name) || isAbsolute(name)) {
+    throw new Error(`Invalid project name: ${JSON.stringify(name)}. Use a single directory name.`);
+  }
+}
+
+function validateFilePaths(plan: ScaffoldPlan): void {
+  const paths = new Set<string>();
+  for (const file of plan.files) {
+    // Use portable relative paths; reject aliases so two entries cannot name
+    // the same destination or escape the publication workspace.
+    if (!file.path || /[\\\0:]/.test(file.path) || isAbsolute(file.path) ||
+        file.path.split("/").some((part) => !part || part === "." || part === "..")) {
+      throw new Error(`Invalid scaffold file path: ${JSON.stringify(file.path)}`);
+    }
+    if (paths.has(file.path)) throw new Error(`Duplicate scaffold file path: ${file.path}`);
+    paths.add(file.path);
+  }
+}
+
+async function assertTargetAbsent(targetDir: string): Promise<void> {
+  try {
+    await lstat(targetDir);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return;
+    throw error;
+  }
+  throw new Error(`Target already exists: ${targetDir}`);
+}
+
+/** Publish a completed plan with a same-filesystem directory rename. */
 export async function writePlan(plan: ScaffoldPlan, rootDir = process.cwd()): Promise<void> {
-  const targetDir = join(rootDir, plan.projectName);
-  await Promise.all(
-    plan.files.map(async (file) => {
-      const destination = join(targetDir, file.path);
+  validateProjectName(plan.projectName);
+  validateFilePaths(plan);
+  const targetDir = resolve(rootDir, plan.projectName);
+  // All qwykz publishers for this target share an exclusive lock. Keep file
+  // writes under it until the whole directory is ready to publish.
+  const lockDir = resolve(rootDir, `.${plan.projectName}.qwykz-lock`);
+  await mkdir(lockDir, { mode: 0o700 });
+  try {
+    await assertTargetAbsent(targetDir);
+    const stagedDir = join(lockDir, "project");
+    await mkdir(stagedDir);
+    for (const file of plan.files) {
+      const destination = join(stagedDir, file.path);
       await mkdir(dirname(destination), { recursive: true });
       await Bun.write(destination, file.content);
-    }),
-  );
+    }
+    await assertTargetAbsent(targetDir);
+    await rename(stagedDir, targetDir);
+  } finally {
+    await rm(lockDir, { recursive: true, force: true });
+  }
 }
 
 /** Build and write a project using the same plan consumed by dry-run. */
 export async function generateProject(options: ProjectOptions): Promise<ScaffoldPlan> {
+  const rootDir = process.cwd();
   const plan = await buildScaffoldPlan(options);
-  await writePlan(plan);
+  await writePlan(plan, rootDir);
   return plan;
 }
 

@@ -1,13 +1,13 @@
 # Dependency Resolution
 
-`qwykz` doesn't hardcode package versions into the templates, which keeps generated projects from starting out with outdated dependencies.
+Built-in Node, Next.js, React, Vue, and monorepo scaffolds use exact direct npm dependency versions bundled with the qwykz release. Generating these projects does not query npm or read a local version cache. The same qwykz release and options produce the same package declarations online and offline.
 
-Instead, `src/npm-registry.ts` queries the NPM registry at runtime to resolve the `latest` tag for every required package.
+Shared versions live in `src/package-versions.ts`; framework-specific packages are declared in their generators. Missing shared versions fail explicitly instead of falling back to `latest`. Version updates are deliberate source changes, checked by generated application installs, typechecks, and builds in CI.
 
-### The 3-Tier Fallback Strategy
+`--strict` prints the dependency audit and its reasons. Exact versions apply with or without this flag.
 
-Network calls can be slow or fail. To guarantee the CLI always works quickly:
+Exact direct dependencies do not lock their transitive dependencies. Run `bun install`, commit the generated `bun.lock`, and use `bun install --frozen-lockfile` in the generated project's CI to preserve the resolved dependency graph.
 
-1. **Network Lookup**: It fires off concurrent `fetch` requests to `https://registry.npmjs.org/[package]`, with a strict 5-second timeout.
-2. **Local Cache**: If a request succeeds, it caches the result in `~/.cache/npm-versions.json`. If a request fails, it reads from this cache (which is considered fresh for 24 hours).
-3. **Hardcoded Fallback**: If there is no cache, or the cache is corrupted, it falls back to a statically defined `package-versions.ts` file bundled with the CLI. This ensures `qwykz` works completely offline.
+Laravel still bootstraps through Composer and retains upstream npm declarations. Plugins retain their authors' package specifications. Go, Rust, and Python retain the version constraints in their own templates. Those ecosystems are not covered by the built-in npm pinning guarantee.
+
+Generated secrets and timestamps intentionally change between scaffold runs. A dry run previews its own completed plan; a separate generation creates a new plan and new secrets.

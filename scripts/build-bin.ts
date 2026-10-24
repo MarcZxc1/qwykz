@@ -1,5 +1,5 @@
 /**
- * Build script: reads all template files from templates/mvc/ and
+ * Build script: reads all template files from templates/ and
  * generates a build-ready version of template-engine.ts with the
  * templates embedded as string literals. Then compiles the CLI binary.
  */

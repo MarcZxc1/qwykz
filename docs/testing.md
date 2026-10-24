@@ -17,6 +17,16 @@ bunx tsc --noEmit
 
 ## Runtime Smoke Tests
 
+Pull-request CI also installs, audits, typechecks, and builds generated Express, Hono, Elysia, React, Vue, and Next.js projects with local, Supabase, and Clerk auth, plus a React/Hono monorepo. Audits reject high and critical advisories. Each install produces a lockfile and verifies a second frozen install. These checks require registry access but do not need a database or provider credentials:
+
+```bash
+QWYKZ_RUN_GENERATED_BUILDS=1 bun test --timeout 600000 tests/generated-build.test.ts
+# Restrict to one framework, including its auth variants:
+QWYKZ_RUN_GENERATED_BUILDS=1 QWYKZ_BUILD_FILTER=react bun test --timeout 600000 tests/generated-build.test.ts
+```
+
+These checks validate generated code and dependency compatibility. The runtime smoke tests below exercise live database connections and authentication requests.
+
 Runtime smoke tests boot real generated applications, check container health, and issue HTTP requests against `/api/health`, `/api/auth/register`, and `/api/auth/login`.
 
 ```bash

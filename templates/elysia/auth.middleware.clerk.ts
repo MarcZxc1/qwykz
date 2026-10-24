@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { verifyToken } from "@clerk/backend";
 import { HttpError } from "./error.middleware";
 
-export const authMiddleware = new Elysia().derive(async ({ request }) => {
+export const authMiddleware = new Elysia().derive({ as: "scoped" }, async ({ request }) => {
   const authHeader = request.headers.get("authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -29,4 +29,5 @@ export const requireRole = (roles: string[]) => new Elysia()
     if (!user.role || !roles.includes(user.role)) {
       throw new HttpError(403, "Forbidden: Insufficient role permissions");
     }
-  });
+  })
+  .as("scoped");

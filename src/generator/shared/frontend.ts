@@ -1,17 +1,7 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { resolveLatestVersions } from "../../npm-registry";
+import { resolvePackageVersions } from "../../package-versions";
 import type { AuthTarget, PackageMap, ProjectPackageJson } from "../../types";
-
-async function resolveViteVersions(packageNames: string[]): Promise<Record<string, string>> {
-  const resolved = await resolveLatestVersions(packageNames);
-
-  for (const name of packageNames) {
-    if (!resolved[name]) resolved[name] = "latest";
-  }
-
-  return resolved;
-}
 
 async function writeViteIndexHtml(targetDir: string, framework: "react" | "vue") {
   const title = framework === "react" ? "React + Vite" : "Vue + Vite";
@@ -183,10 +173,11 @@ export async function createVitePackageJson(
         "@vitejs/plugin-vue",
         "@tailwindcss/vite",
         "@vue/compiler-sfc",
+        "vue-tsc",
         "@types/node",
       ];
 
-  const versions = await resolveViteVersions([...baseDeps, ...devDeps]);
+  const versions = resolvePackageVersions([...baseDeps, ...devDeps]);
 
   const dependencies: PackageMap = {
     ...(framework === "react"
@@ -214,6 +205,7 @@ export async function createVitePackageJson(
   } else {
     devDependencies["@vitejs/plugin-vue"] = versions["@vitejs/plugin-vue"]!;
     devDependencies["@vue/compiler-sfc"] = versions["@vue/compiler-sfc"]!;
+    devDependencies["vue-tsc"] = versions["vue-tsc"]!;
   }
 
   if (authTarget === "clerk") {
@@ -225,14 +217,14 @@ export async function createVitePackageJson(
   }
 
   return {
-    name: projectName,
+    name: projectName.replace(/[\\/]/g, "-"),
     version: "1.0.0",
     type: "module",
     scripts: {
       dev: "vite",
       build: "vite build",
       preview: "vite preview",
-      typecheck: "tsc --noEmit",
+      typecheck: framework === "vue" ? "vue-tsc --noEmit" : "tsc --noEmit",
     },
     dependencies,
     devDependencies,

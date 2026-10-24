@@ -34,9 +34,9 @@ function stripBackendStatus(content: string): string {
   );
 }
 
-export async function generateReactProject(options: ProjectOptions) {
+export async function generateReactProject(options: ProjectOptions, rootDir = process.cwd()) {
   console.log(`\n🚀 Scaffolding React + Vite...`);
-  const targetDir = join(process.cwd(), options.projectName);
+  const targetDir = join(rootDir, options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
   const viteConfig = await readTemplate("react/vite.config.ts.stub");
@@ -83,9 +83,9 @@ export async function generateReactProject(options: ProjectOptions) {
   }
 }
 
-export async function generateVueProject(options: ProjectOptions) {
+export async function generateVueProject(options: ProjectOptions, rootDir = process.cwd()) {
   console.log(`\n🚀 Scaffolding Vue + Vite...`);
-  const targetDir = join(process.cwd(), options.projectName);
+  const targetDir = join(rootDir, options.projectName);
   await mkdir(join(targetDir, "src", "lib"), { recursive: true });
 
   const viteConfig = await readTemplate("vue/vite.config.ts.stub");

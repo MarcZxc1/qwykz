@@ -68,7 +68,7 @@ export async function login(c: Context) {
     where: { email: parsed.data.email },
   });
 
-  if (!user) {
+  if (!user?.password) {
     throw new HttpError(401, "Invalid email or password");
   }
 

@@ -7,7 +7,7 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export const authMiddleware = new Elysia().derive(async ({ request }) => {
+export const authMiddleware = new Elysia().derive({ as: "scoped" }, async ({ request }) => {
   const authHeader = request.headers.get("authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -36,4 +36,5 @@ export const requireRole = (roles: string[]) => new Elysia()
     if (!user.role || !roles.includes(user.role)) {
       throw new HttpError(403, "Forbidden: Insufficient role permissions");
     }
-  });
+  })
+  .as("scoped");

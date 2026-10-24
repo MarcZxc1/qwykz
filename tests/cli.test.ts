@@ -363,7 +363,7 @@ describe("qwykz CLI integration", () => {
     expect(backendEnv).toContain("python-monorepo-backend");
   });
 
-  test("keeps Prisma packages on version 7 and rejects Prisma 8 / pre-releases", async () => {
+  test("pins matching stable Prisma 7 packages", async () => {
     const projectName = "prisma7-version-guard";
 
     const proc = Bun.spawn({
@@ -381,10 +381,11 @@ describe("qwykz CLI integration", () => {
     expect(await proc.exited).toBe(0);
 
     const pkgJson = JSON.parse(await Bun.file(join(testDir, projectName, "package.json")).text());
-    expect(pkgJson.devDependencies.prisma).toMatch(/^\^7\./);
-    expect(pkgJson.dependencies["@prisma/client"]).toMatch(/^\^7\./);
-    expect(pkgJson.devDependencies["@prisma/config"]).toMatch(/^\^7\./);
-    expect(pkgJson.dependencies["@prisma/adapter-pg"]).toMatch(/^\^7\./);
+    const prismaVersion = pkgJson.devDependencies.prisma;
+    expect(prismaVersion).toMatch(/^7\.\d+\.\d+$/);
+    expect(pkgJson.dependencies["@prisma/client"]).toBe(prismaVersion);
+    expect(pkgJson.devDependencies["@prisma/config"]).toBe(prismaVersion);
+    expect(pkgJson.dependencies["@prisma/adapter-pg"]).toBe(prismaVersion);
   });
 
   test("generates a project directly via --preset flag", async () => {

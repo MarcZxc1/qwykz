@@ -31,7 +31,7 @@ A lightning-fast, inspectable multi-stack project scaffolder built with [Bun](ht
 
 Starting a project shouldn't require an hour of repetitive setup: configuring databases, wiring auth, tuning environment variables, and explaining project structure to AI assistants from scratch.
 
-**qwykz** turns repeated architectural setup into an inspectable, deterministic scaffold. Choose your stack; qwykz builds your project in an isolated staging workspace, generates an exact package audit, records decisions in `.qwykz-manifest.json`, and leaves an `AGENTS.md` context pack for you and your AI coding tools.
+**qwykz** turns repeated architectural setup into an inspectable scaffold. Choose your stack; qwykz builds your project in an isolated staging workspace, generates an exact package audit, records decisions in `.qwykz-manifest.json`, and leaves an `AGENTS.md` context pack for you and your AI coding tools.
 
 ---
 
@@ -63,7 +63,7 @@ bun install -g qwykz
   - **Standard Mode**: Generates a tailored `LEARN.md` companion guide explaining the entry point, setup steps, request lifecycle flow, framework syntax & methods, and extension guidelines.
   - **Hands-On Mode (`--learn`)**: For developers mastering a new stack. Generates directory structures and configs with zero business boilerplate, providing a feature-based `GUIDE.md` milestone curriculum (pure English concepts, architectural best practices, exact methods to use, and verification commands without spoon-feeding).
 - **AI-Native Context (`AGENTS.md`)**: Generates a factual project guide out of the box so LLM assistants (Claude Code, Cursor, Copilot) immediately understand project layout, commands, and routes without wasting tokens.
-- **Deterministic & Inspectable**: Uses an isolated temporary staging workspace. Use `--dry-run` to preview exact files and diffs before writing, and `--strict` to audit every dependency justification.
+- **Inspectable Output**: Plans files in an isolated temporary workspace and publishes the completed directory atomically. Built-in npm stacks use exact direct dependency versions bundled with each release. Use `--dry-run` to preview files and diffs, and `--strict` to audit dependency justifications. See [reproducibility boundaries](docs/dependency-resolution.md).
 - **Universal API Alignment**: Frontends automatically configure `VITE_API_URL` to match backend ports (3000 for Go/Node, 8000 for Python/Laravel, 8080 for Rust) with matching API routes (`/api/auth/*`, `/api/health`).
 - **Database & Cache Orchestration**: Automated configuration for Local PostgreSQL, Docker Compose (with health checks and resource limits), Supabase Cloud, Neon Postgres, and Redis caching.
 - **Honest Capability Gating**: Supported combinations are guaranteed; experimental combinations require `--experimental` and cannot fail silently.

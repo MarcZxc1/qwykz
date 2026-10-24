@@ -8,8 +8,8 @@ import {
 } from "../shared/files";
 import { resolveDockerCompose, resolveEnvFile } from "../shared/runtime";
 
-export async function generatePythonProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generatePythonProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   console.log(`\n🚀 Scaffolding Python (FastAPI)...`);
 
   await copyDirectoryRecursive(
@@ -39,8 +39,8 @@ export async function generatePythonProject(options: ProjectOptions) {
   await Bun.write(join(targetDir, ".env"), envContent);
 }
 
-export async function generateGoProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateGoProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   console.log(`\n🚀 Scaffolding Go (Fiber)...`);
 
   await copyDirectoryRecursive(
@@ -71,8 +71,8 @@ export async function generateGoProject(options: ProjectOptions) {
   await Bun.write(join(targetDir, ".env"), envContent);
 }
 
-export async function generateRustProject(options: ProjectOptions) {
-  const targetDir = join(process.cwd(), options.projectName);
+export async function generateRustProject(options: ProjectOptions, rootDir = process.cwd()) {
+  const targetDir = join(rootDir, options.projectName);
   console.log(`\n🚀 Scaffolding Rust (Axum)...`);
 
   await copyDirectoryRecursive(

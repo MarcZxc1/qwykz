@@ -15,7 +15,7 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
     const payload = await verifyToken(token, {
       secretKey: process.env.CLERK_SECRET_KEY,
     });
-    c.set("user", { id: payload.sub, role: payload.claims?.role as string | undefined });
+    c.set("user", { id: payload.sub, role: typeof payload.role === "string" ? payload.role : undefined });
     await next();
   } catch (error) {
     throw new HttpError(401, "Invalid or expired Clerk token");

@@ -7,6 +7,27 @@ on:
     branches: ["main"]
 
 jobs:
+  generated-builds:
+    name: Generated ${{ matrix.framework }} builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [express, hono, elysia, react, vue, nextjs, monorepo]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile
+      - name: Install, typecheck, and build generated applications
+        run: bun test --timeout 600000 tests/generated-build.test.ts
+        env:
+          QWYKZ_RUN_GENERATED_BUILDS: "1"
+          QWYKZ_BUILD_FILTER: ${{ matrix.framework }}
+
   test-and-build:
     name: Build & Test
     runs-on: ubuntu-latest
@@ -24,7 +45,10 @@ jobs:
           bun-version: latest
 
       - name: Install Dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Audit Dependencies
+        run: bun audit --audit-level=high
 
       - name: Run Tests
         run: bun run test

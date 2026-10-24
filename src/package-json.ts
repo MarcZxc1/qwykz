@@ -1,5 +1,4 @@
-import { packageVersions } from "./package-versions";
-import { resolveLatestVersions } from "./npm-registry";
+import { resolvePackageVersions } from "./package-versions";
 import type {
   AuthTarget,
   DbTarget,
@@ -66,31 +65,6 @@ function collectAllPackageNames(extraPackages: ExtraPackage[]): string[] {
   return [...names];
 }
 
-/**
- * Build a version map by resolving latest versions dynamically.
- * Falls back to hardcoded versions if the network/cache fails.
- */
-async function resolveVersionMap(
-  extraPackages: ExtraPackage[],
-): Promise<Record<string, string>> {
-  const allNames = collectAllPackageNames(extraPackages);
-  const resolved = await resolveLatestVersions(allNames);
-
-  // Ensure we have a version for every package (fill gaps with hardcoded)
-  const hardcoded: Record<string, string> = {
-    ...packageVersions.dependencies,
-    ...packageVersions.devDependencies,
-  };
-
-  for (const name of allNames) {
-    if (!resolved[name]) {
-      resolved[name] = hardcoded[name] ?? "latest";
-    }
-  }
-
-  return resolved;
-}
-
 // ---------------------------------------------------------------------------
 // Package.json builder
 // ---------------------------------------------------------------------------
@@ -108,7 +82,7 @@ export async function createPackageJson(
   const requiredPackages = new Set(extraPackages);
   if (authTarget === "local") requiredPackages.add("zod");
   const selectedPackages = [...requiredPackages];
-  const versions = await resolveVersionMap(selectedPackages);
+  const versions = resolvePackageVersions(collectAllPackageNames(selectedPackages));
 
   const dependencies: PackageMap = {};
   for (const dep of CORE_DEPS) {
@@ -130,27 +104,27 @@ export async function createPackageJson(
   }
 
   if (cachingTarget === "docker") {
-    dependencies["ioredis"] = "^5.4.1";
+    dependencies["ioredis"] = "5.4.1";
   } else if (cachingTarget === "upstash") {
-    dependencies["@upstash/redis"] = "^1.31.5";
+    dependencies["@upstash/redis"] = "1.31.5";
   }
 
   if (authTarget === "local") {
-    dependencies["argon2"] = "^0.41.1";
-    dependencies["jsonwebtoken"] = "^9.0.2";
-    devDependencies["@types/jsonwebtoken"] = "^9.0.9";
+    dependencies["argon2"] = "0.41.1";
+    dependencies["jsonwebtoken"] = "9.0.2";
+    devDependencies["@types/jsonwebtoken"] = "9.0.9";
   } else if (authTarget === "clerk") {
     if (framework === "express") {
-      dependencies["@clerk/express"] = "^1.3.4";
+      dependencies["@clerk/express"] = "2.1.83";
     } else {
-      dependencies["@clerk/backend"] = "^1.0.0";
+      dependencies["@clerk/backend"] = "3.26.2";
     }
   } else if (authTarget === "supabase") {
-    dependencies["@supabase/supabase-js"] = "^2.43.0";
+    dependencies["@supabase/supabase-js"] = "2.43.0";
   }
 
   return {
-    name: projectName,
+    name: projectName.replace(/[\\/]/g, "-"),
     version: "1.0.0",
     type: "module",
     scripts: {

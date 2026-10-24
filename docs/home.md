@@ -17,6 +17,7 @@ Welcome to the `qwykz` documentation wiki!
 9. [Writing Plugins](plugins.md)
 10. [Roadmap](roadmap.md)
 11. [Contributing Guide](contributing.md)
+12. [Maintenance](maintenance.md)
 
 ---
 *Looking to just use the CLI? Head back to the [main README](../README.md).*
